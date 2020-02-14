@@ -35,6 +35,9 @@ new-VM -Name ServerDM1 -MemoryStartupBytes 3GB -BootDevice VHD -NewVHDPath C:\VM
 new-VM -Name ServerDM2 -MemoryStartupBytes 3GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name ServerSA1 -MemoryStartupBytes 3GB -BootDevice VHD -NewVHDPath C:\VMs\ServerSA1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 
+# Setup memory
+Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
+
 #Create Second NIC
 Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerDM1 -SwitchName Private
