@@ -1,5 +1,5 @@
 # Install Hyper-V and RRAS
-Install-WindowsFeature Routing, Hyper-V -IncludeManagementTools
+Install-WindowsFeature Routing, Hyper-V, RSAT-RemoteAccess -IncludeManagementTools
 New-VMSwitch -SwitchType Internal -Name Internal
 New-VMSwitch -SwitchType Private -Name Private
 
@@ -9,15 +9,15 @@ New-NetIPAddress -InterfaceAlias 'vEthernet (Internal)' -IPAddress 192.168.0.250
 Rename-NetAdapter -InterfaceAlias 'vEthernet (Internal)' -NewName Internal
 
 # Configure RRAS
-Install-RemoteAccess -VpnType Vpn
-$ExternalInterface='Public'
-$InternalInterface='Internal'
+#Install-RemoteAccess -VpnType Vpn
+#$ExternalInterface='Public'
+#$InternalInterface='Internal'
  
-cmd.exe /c "netsh routing ip nat install"
-cmd.exe /c "netsh routing ip nat add interface $ExternalInterface"
-cmd.exe /c "netsh routing ip nat set interface $ExternalInterface mode=full"
-cmd.exe /c "netsh routing ip nat add interface $InternalInterface"
-
+#cmd.exe /c "netsh routing ip nat install"
+#cmd.exe /c "netsh routing ip nat add interface $ExternalInterface"
+#cmd.exe /c "netsh routing ip nat set interface $ExternalInterface mode=full"
+#cmd.exe /c "netsh routing ip nat add interface $InternalInterface"
+Install-RemoteAccess -VpnType RoutingOnly
 
 #Download Windows ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
@@ -70,10 +70,12 @@ Set-VMDvdDrive -VMName ServerDM1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVA
 Set-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
 Set-VMDvdDrive -VMName ServerSA1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
 
-
 # Set all VMs to NOT autostart
-#hyper-v\Get-VM | hyper-v\Set-VM -AutomaticStartAction Nothing
 Get-VM | Set-VM -AutomaticStartAction Nothing
 
 # Set RDP idle logout (maybe???)
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value 600000 -Type "Dword"
+
+# enable PING on firewall
+netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+
