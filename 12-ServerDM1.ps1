@@ -1,14 +1,22 @@
+#######################################################################
+#
+# Run on ServerDM1 once OS is installed
+# NOTE: Will require several reboots
+#
+#######################################################################
+
 # Configure name 
+#######################################################################
+# NOTE: REBOOT!
+#######################################################################
 Rename-Computer -NewName ServerDM1 -force -restart 
+
 
 # Rename NICs 
 Rename-NetAdapter -Name Ethernet -NewName Internal 
-Rename-NetAdapter -Name "Ethernet 2" -NewName Private 
 
 # Set UP addresses 
 New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.2 -PrefixLength 24 -DefaultGateway 192.168.0.250 
-New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.2 -PrefixLength 24 
-Set-DnsClientServerAddress -InterfaceAlias Internal -ServerAddresses 192.168.0.1
 
 # Configure Power save 
 powercfg -change -monitor-timeout-ac 0 
@@ -21,4 +29,10 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Value 0 -Type "Dword" 
 
 # Join domain
-add-computer –domainname mcsa2016.local -Credential mcsa2016\administrator -restart –force
+#######################################################################
+# NOTE: REBOOT!
+#######################################################################
+$user = "mcsa2016\administrator"
+$pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+add-computer –domainname mcsa2016.local -Credential $cred -restart –force
