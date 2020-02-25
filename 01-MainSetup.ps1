@@ -5,6 +5,9 @@
 #
 #######################################################################
 
+# Setup first interface
+Get-NetAdapter | Rename-NetAdapter -NewName Public
+
 # Install Hyper-V and RRAS
 Install-WindowsFeature Hyper-V, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
 New-VMSwitch -SwitchType Internal -Name Internal
@@ -16,9 +19,6 @@ New-VMSwitch -SwitchType Internal -Name Internal
 # https://glennopedia.com/2017/08/25/how-to-re-deploy-vpn-in-2016-essentials-in-legacy-mode/
 #######################################################################
                 
-# Setup interfaces
-Rename-NetAdapter -InterfaceAlias Ethernet -NewName Public
-
 # Configure RRAS
 Install-RemoteAccess -VpnType RoutingOnly
 
