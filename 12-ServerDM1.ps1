@@ -10,7 +10,6 @@
 $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
-$sessionDC1 = New-PSSession -VMName ServerDC1 -Credential $credDom
 
 # Configure name 
 #######################################################################
@@ -20,6 +19,8 @@ Invoke-Command -VMName ServerDM1 -Credential $cred -ScriptBlock {
     Rename-Computer -NewName ServerDM1 -force -restart 
     }
 
+# Setup session (must be done after rebooting)
+$sessionDM1 = New-PSSession -VMName ServerDM1 -Credential $credDom
 
 # Rename NICs 
 Invoke-Command -Session $sessionDM1 -ScriptBlock { 
@@ -30,6 +31,7 @@ Invoke-Command -Session $sessionDM1 -ScriptBlock {
 # Set UP addresses 
 Invoke-Command -Session $sessionDM1 -ScriptBlock { 
     New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.2 -PrefixLength 24 -DefaultGateway 192.168.0.250 
+    Set-DnsClientServerAddress -InterfaceAlias Internal -ServerAddresses 192.168.0.1
     }
 
 # Configure Power save 
