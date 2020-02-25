@@ -6,8 +6,15 @@
 #######################################################################
 
 # Install Hyper-V and RRAS
-Install-WindowsFeature Routing, Hyper-V, RSAT-RemoteAccess, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
+Install-WindowsFeature Hyper-V, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
 New-VMSwitch -SwitchType Internal -Name Internal
+
+#######################################################################
+# Need to manually configure routing using the RRAS console
+# Otherwise routing doesnt seem to work
+# This was pulled from the following URL
+# https://glennopedia.com/2017/08/25/how-to-re-deploy-vpn-in-2016-essentials-in-legacy-mode/
+#######################################################################
                 
 # Setup interfaces
 Rename-NetAdapter -InterfaceAlias Ethernet -NewName Public
