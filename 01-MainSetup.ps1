@@ -115,6 +115,7 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Na
 
 #######################################################################
 #
+# Setup BGInfo, save as c:\bginfo\default.ino
 # Power on each VM and install the OS
 # When finished, run the second script
 #
