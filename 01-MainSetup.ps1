@@ -48,11 +48,7 @@ Set-VMHost -VirtualHardDiskPath "C:\VMs"
 Set-VMHost -VirtualMachinePath "C:\VMs"
 Set-VMHost -EnableEnhancedSessionMode:$true
 
-# Set all VMs to NOT autostart
-Get-VM | Set-VM -AutomaticStartAction Nothing
 
-# Set all VMs to shutdown at logoff
-Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 
 #Create VMs
@@ -98,7 +94,11 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Se
 # enable PING on firewall
 netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
 
+# Set all VMs to NOT autostart
+Get-VM | Set-VM -AutomaticStartAction Nothing
 
+# Set all VMs to shutdown at logoff
+Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 
 #######################################################################
