@@ -1,22 +1,16 @@
-# Install Hyper-V and RRAS
-Install-WindowsFeature Routing, Hyper-V, RSAT-RemoteAccess -IncludeManagementTools
-New-VMSwitch -SwitchType Internal -Name Internal
-New-VMSwitch -SwitchType Private -Name Private
+# First script for building Hyper-V environment for IT 160
 
+# Install Hyper-V and RRAS
+Install-WindowsFeature Routing, Hyper-V, RSAT-RemoteAccess, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
+New-VMSwitch -SwitchType Internal -Name Internal
+#New-VMSwitch -SwitchType Private -Name Private                # Moved to script #2
+                
 # Setup interfaces
 Rename-NetAdapter -InterfaceAlias Ethernet -NewName Public
-New-NetIPAddress -InterfaceAlias 'vEthernet (Internal)' -IPAddress 192.168.0.250 -PrefixLength 24
-Rename-NetAdapter -InterfaceAlias 'vEthernet (Internal)' -NewName Internal
+#New-NetIPAddress -InterfaceAlias 'vEthernet (Internal)' -IPAddress 192.168.0.250 -PrefixLength 24                # Moved to script #2
+#Rename-NetAdapter -InterfaceAlias 'vEthernet (Internal)' -NewName Internal                # Moved to script #2
 
 # Configure RRAS
-#Install-RemoteAccess -VpnType Vpn
-#$ExternalInterface='Public'
-#$InternalInterface='Internal'
- 
-#cmd.exe /c "netsh routing ip nat install"
-#cmd.exe /c "netsh routing ip nat add interface $ExternalInterface"
-#cmd.exe /c "netsh routing ip nat set interface $ExternalInterface mode=full"
-#cmd.exe /c "netsh routing ip nat add interface $InternalInterface"
 Install-RemoteAccess -VpnType RoutingOnly
 
 #Download Windows ISO
@@ -30,7 +24,7 @@ Start-BitsTransfer -Source $url -Destination $output
 Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 
 #Create VMs
-new-VM -Name ServerDC1 -MemoryStartupBytes 3GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDC1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name ServerDC1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDC1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name ServerDM1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name ServerSA1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerSA1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
@@ -38,11 +32,11 @@ new-VM -Name ServerSA1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VM
 # Setup memory
 Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
 
-#Create Second NIC
-Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
-Add-VMNetworkAdapter -VMName ServerDM1 -SwitchName Private
-Add-VMNetworkAdapter -VMName ServerDM2 -SwitchName Private
-Add-VMNetworkAdapter -VMName ServerSA1 -SwitchName Private
+#Create Second NIC                # Moved to script #2
+#Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
+#Add-VMNetworkAdapter -VMName ServerDM1 -SwitchName Private
+#Add-VMNetworkAdapter -VMName ServerDM2 -SwitchName Private
+#Add-VMNetworkAdapter -VMName ServerSA1 -SwitchName Private
 
 #Create additional HD
 New-VHD -Path C:\VMs\ServerDM1_01.vhdx -SizeBytes 20GB
@@ -81,4 +75,14 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Se
 
 # enable PING on firewall
 netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+
+
+
+
+#######################################################################
+#
+# Power on each VM and install the OS
+# When finished, run the second script
+#
+#######################################################################
 
