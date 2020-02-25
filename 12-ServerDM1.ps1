@@ -1,38 +1,69 @@
 #######################################################################
 #
 # Run on ServerDM1 once OS is installed
+# Updated to run remotely using Hyper-v Direct
 # NOTE: Will require several reboots
 #
 #######################################################################
+
+# Setup credentials
+$user = "administrator"
+$pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+$sessionDC1 = New-PSSession -VMName ServerDC1 -Credential $credDom
 
 # Configure name 
 #######################################################################
 # NOTE: REBOOT!
 #######################################################################
-Rename-Computer -NewName ServerDM1 -force -restart 
+Invoke-Command -VMName ServerDM1 -Credential $cred -ScriptBlock { 
+    Rename-Computer -NewName ServerDM1 -force -restart 
+    }
 
 
 # Rename NICs 
-Rename-NetAdapter -Name Ethernet -NewName Internal 
+Invoke-Command -Session $sessionDM1 -ScriptBlock { 
+    Get-NetAdapter | Rename-NetAdapter -NewName Internal 
+    }
+
 
 # Set UP addresses 
-New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.2 -PrefixLength 24 -DefaultGateway 192.168.0.250 
+Invoke-Command -Session $sessionDM1 -ScriptBlock { 
+    New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.2 -PrefixLength 24 -DefaultGateway 192.168.0.250 
+    }
 
 # Configure Power save 
-powercfg -change -monitor-timeout-ac 0 
+Invoke-Command -Session $sessionDM1 -ScriptBlock { 
+    powercfg -change -monitor-timeout-ac 0 
+    }
 
 # IE Enhaced mode 
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}" -Name IsInstalled -Value 0 
+Invoke-Command -Session $sessionDM1 -ScriptBlock { 
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}" -Name IsInstalled -Value 0 
+    }
 
 # Set UAC 
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 0 -Type "Dword" 
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Value 0 -Type "Dword" 
+Invoke-Command -Session $sessionDM1 -ScriptBlock { 
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 0 -Type "Dword" 
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Value 0 -Type "Dword" 
+    }
+
+# Copy BGInfo
+Copy-Item -ToSession $sessionDM1 -Path "C:\bginfo\" -Destination "C:\bginfo\" -Force -Recurse
+ # Set autorun
+Invoke-Command -Session $sessionDM1 -ScriptBlock {
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
+    }
+
+
 
 # Join domain
 #######################################################################
 # NOTE: REBOOT!
 #######################################################################
-$user = "mcsa2016\administrator"
-$pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
-$cred = New-Object System.Management.Automation.PSCredential($user, $pass)
-add-computer –domainname mcsa2016.local -Credential $cred -restart –force
+Invoke-Command -Session $sessionDM1 -ScriptBlock { 
+    $user = "mcsa2016\administrator"
+    $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+    $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+    add-computer –domainname mcsa2016.local -Credential $cred -restart –force
+    }
