@@ -14,6 +14,7 @@ New-VMSwitch -SwitchType Internal -Name Internal
 
 # Setup second interface
 Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
+New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
 
 # Add Hyper-V shortcut
 $SourceFileLocation = "%windir%\System32\virtmgmt.msc"
