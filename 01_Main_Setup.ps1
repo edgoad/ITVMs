@@ -1,14 +1,16 @@
+#######################################################################
+#
 # First script for building Hyper-V environment for IT 160
+# Installs Hyper-V and preps for OS installs
+#
+#######################################################################
 
 # Install Hyper-V and RRAS
 Install-WindowsFeature Routing, Hyper-V, RSAT-RemoteAccess, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
 New-VMSwitch -SwitchType Internal -Name Internal
-#New-VMSwitch -SwitchType Private -Name Private                # Moved to script #2
                 
 # Setup interfaces
 Rename-NetAdapter -InterfaceAlias Ethernet -NewName Public
-#New-NetIPAddress -InterfaceAlias 'vEthernet (Internal)' -IPAddress 192.168.0.250 -PrefixLength 24                # Moved to script #2
-#Rename-NetAdapter -InterfaceAlias 'vEthernet (Internal)' -NewName Internal                # Moved to script #2
 
 # Configure RRAS
 Install-RemoteAccess -VpnType RoutingOnly
@@ -32,11 +34,6 @@ new-VM -Name ServerSA1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VM
 # Setup memory
 Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
 
-#Create Second NIC                # Moved to script #2
-#Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
-#Add-VMNetworkAdapter -VMName ServerDM1 -SwitchName Private
-#Add-VMNetworkAdapter -VMName ServerDM2 -SwitchName Private
-#Add-VMNetworkAdapter -VMName ServerSA1 -SwitchName Private
 
 #Create additional HD
 New-VHD -Path C:\VMs\ServerDM1_01.vhdx -SizeBytes 20GB
