@@ -12,6 +12,9 @@ Get-NetAdapter | Rename-NetAdapter -NewName Public
 Install-WindowsFeature Hyper-V, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
 New-VMSwitch -SwitchType Internal -Name Internal
 
+# Setup second interface
+Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
+
 #######################################################################
 # Need to manually configure routing using the RRAS console
 # Otherwise routing doesnt seem to work
