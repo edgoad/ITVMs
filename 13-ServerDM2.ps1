@@ -30,7 +30,7 @@ Invoke-Command -Session $sessionDM2 -ScriptBlock {
 
 # Set UP addresses 
 Invoke-Command -Session $sessionDM2 -ScriptBlock { 
-    New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.2 -PrefixLength 24 -DefaultGateway 192.168.0.250 
+    New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.3 -PrefixLength 24 -DefaultGateway 192.168.0.250 
     }
 # Set UP addresses 
 Invoke-Command -Session $sessionDM2 -ScriptBlock { 
