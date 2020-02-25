@@ -100,6 +100,16 @@ Get-VM | Set-VM -AutomaticStartAction Nothing
 # Set all VMs to shutdown at logoff
 Get-VM | Set-VM -AutomaticStopAction Shutdown
 
+# setup bginfo
+#Download bginfo
+$url = "https://live.sysinternals.com/Bginfo.exe"
+$output = "C:\Users\Student\Documents\Bginfo.exe"
+
+Import-Module BitsTransfer
+Start-BitsTransfer -Source $url -Destination $output
+# Set autorun
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "C:\Users\Student\Documents\Bginfo.exe /timer:0 /nocliprompt"
+
 
 #######################################################################
 #
