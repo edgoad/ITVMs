@@ -103,13 +103,14 @@ Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 # setup bginfo
 #Download bginfo
+New-Item -ItemType Directory -Path c:\bginfo -Force
 $url = "https://live.sysinternals.com/Bginfo.exe"
-$output = "C:\Users\Student\Documents\Bginfo.exe"
+$output = "C:\bginfo\Bginfo.exe"
 
 Import-Module BitsTransfer
 Start-BitsTransfer -Source $url -Destination $output
 # Set autorun
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "C:\Users\Student\Documents\Bginfo.exe /timer:0"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
 
 
 #######################################################################
