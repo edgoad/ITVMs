@@ -32,6 +32,17 @@ Import-Module BitsTransfer
 Start-BitsTransfer -Source $url -Destination $output
 Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 
+# Setup Hyper-V default file locations
+Set-VMHost -VirtualHardDiskPath "C:\VMs"
+Set-VMHost -VirtualMachinePath "C:\VMs"
+
+# Set all VMs to NOT autostart
+Get-VM | Set-VM -AutomaticStartAction Nothing
+
+# Set all VMs to shutdown at logoff
+Get-VM | Set-VM -AutomaticStopAction Shutdown
+
+
 #Create VMs
 new-VM -Name ServerDC1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDC1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name ServerDM1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
@@ -68,11 +79,6 @@ Set-VMDvdDrive -VMName ServerDM1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVA
 Set-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
 Set-VMDvdDrive -VMName ServerSA1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
 
-# Set all VMs to NOT autostart
-Get-VM | Set-VM -AutomaticStartAction Nothing
-
-# Set all VMs to shutdown at logoff
-Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 # Set RDP idle logout (maybe???)
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value 600000 -Type "Dword"
