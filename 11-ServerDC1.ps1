@@ -1,21 +1,33 @@
+#######################################################################
+#
+# Run on ServerDM1 once OS is installed
+# NOTE: Will require several reboots
+#
+#######################################################################
+
 # Configure name 
+#######################################################################
+# NOTE: REBOOT!
+#######################################################################
 Rename-Computer -NewName ServerDC1 -force -restart 
 
 # Rename NICs 
 Rename-NetAdapter -Name Ethernet0 -NewName Internal 
-Rename-NetAdapter -Name Ethernet1 -NewName Private 
 
 # Set UP addresses 
 New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.1 -PrefixLength 24 -DefaultGateway 192.168.0.250 
-New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.1 -PrefixLength 24 
 Set-DnsClientServerAddress -InterfaceAlias Internal -ServerAddresses 127.0.0.1 
 
 # Install ADDS 
 Install-WindowsFeature AD-Domain-Services -IncludeManagementTools 
 
 # Configure AD 
+#######################################################################
+# NOTE: REBOOT!
+#######################################################################
 $smPass = ConvertTo-SecureString "Password01" -AsPlainText -Force 
 Install-ADDSForest -DomainName "MCSA2016.local" -SafeModeAdministratorPassword $smPass -Confirm:$false 
+
 
 # Fix DNS (if needed) 
 Get-DnsServerForwarder | Remove-DnsServerForwarder -Force 
