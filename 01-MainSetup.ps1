@@ -15,6 +15,14 @@ New-VMSwitch -SwitchType Internal -Name Internal
 # Setup second interface
 Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
 
+# Add Hyper-V shortcut
+$SourceFileLocation = "%windir%\System32\virtmgmt.msc"
+$ShortcutLocation = "C:\Users\Student\Desktop\Hyper-V Manager.lnk"
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
+$Shortcut.TargetPath = $SourceFileLocation
+$Shortcut.Save()
+
 #######################################################################
 # Need to manually configure routing using the RRAS console
 # Otherwise routing doesnt seem to work
