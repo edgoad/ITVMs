@@ -46,6 +46,7 @@ Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
 # Setup Hyper-V default file locations
 Set-VMHost -VirtualHardDiskPath "C:\VMs"
 Set-VMHost -VirtualMachinePath "C:\VMs"
+Set-VMHost -EnableEnhancedSessionMode:$true
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
