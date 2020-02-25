@@ -73,6 +73,9 @@ Set-VMDvdDrive -VMName ServerSA1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVA
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
 
+# Set all VMs to shutdown at logoff
+Get-VM | Set-VM -AutomaticStopAction Shutdown
+
 # Set RDP idle logout (maybe???)
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value 600000 -Type "Dword"
 
