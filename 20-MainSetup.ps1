@@ -11,10 +11,6 @@ Get-VM | Stop-VM
 # Add second VLAN
 New-VMSwitch -SwitchType Private -Name Private
  
-# Setup interfaces
-New-NetIPAddress -InterfaceAlias 'vEthernet (Internal)' -IPAddress 192.168.0.250 -PrefixLength 24
-Rename-NetAdapter -InterfaceAlias 'vEthernet (Internal)' -NewName Internal
-
 #Create Second NIC
 Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerDM1 -SwitchName Private
