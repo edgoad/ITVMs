@@ -5,16 +5,24 @@
 #
 #######################################################################
 
+# Disable Server Manager at startup
+Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
+
 # Setup first interface
 Get-NetAdapter | Rename-NetAdapter -NewName Public
 
 # Install Hyper-V and RRAS
-Install-WindowsFeature Hyper-V, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
+
+Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
+#Install-WindowsFeature Hyper-V, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
 New-VMSwitch -SwitchType Internal -Name Internal
 
 # Setup second interface
 Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
 New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
+
+# Setup ICS, requires function from https://mikefrobbins.com/2017/10/19/configure-internet-connection-sharing-with-powershell/
+Set-MrInternetConnectionSharing -InternetInterfaceName Public -LocalInterfaceName Internal -Enabled $true
 
 # Add Hyper-V shortcut
 $SourceFileLocation = "%windir%\System32\virtmgmt.msc"
@@ -32,7 +40,7 @@ $Shortcut.Save()
 #######################################################################
                 
 # Configure RRAS
-Install-RemoteAccess -VpnType RoutingOnly
+#Install-RemoteAccess -VpnType RoutingOnly
 
 #Download Windows ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
@@ -120,4 +128,3 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Na
 # When finished, run the second script
 #
 #######################################################################
-
