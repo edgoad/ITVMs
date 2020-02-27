@@ -20,7 +20,7 @@ Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock {
     }
 
 # Setup session (must be done after rebooting)
-$sessionSA1 = New-PSSession -VMName ServerSA1 -Credential $credDom
+$sessionSA1 = New-PSSession -VMName ServerSA1 -Credential $cred
 
 # Rename NICs 
 Invoke-Command -Session $sessionSA1 -ScriptBlock { 
