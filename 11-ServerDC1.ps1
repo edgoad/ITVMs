@@ -11,7 +11,6 @@
 $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
-$sessionDC1 = New-PSSession -VMName ServerDC1 -Credential $credDom
 
 # Configure name 
 #######################################################################
@@ -21,6 +20,7 @@ Invoke-Command -VMName ServerDC1 -Credential $cred -ScriptBlock {
     Rename-Computer -NewName ServerDC1 -force -restart 
     }
 
+$sessionDC1 = New-PSSession -VMName ServerDC1 -Credential $credDom
 # Rename NICs 
 Invoke-Command -Session $sessionDC1 -ScriptBlock { 
     Get-NetAdapter | Rename-NetAdapter -NewName Internal 
