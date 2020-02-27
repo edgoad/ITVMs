@@ -20,7 +20,7 @@ Invoke-Command -VMName ServerDC1 -Credential $cred -ScriptBlock {
     Rename-Computer -NewName ServerDC1 -force -restart 
     }
 
-$sessionDC1 = New-PSSession -VMName ServerDC1 -Credential $credDom
+$sessionDC1 = New-PSSession -VMName ServerDC1 -Credential $cred
 # Rename NICs 
 Invoke-Command -Session $sessionDC1 -ScriptBlock { 
     Get-NetAdapter | Rename-NetAdapter -NewName Internal 
