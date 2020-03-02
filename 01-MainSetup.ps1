@@ -14,15 +14,14 @@ Get-NetAdapter | Rename-NetAdapter -NewName Public
 # Install Hyper-V and RRAS
 
 Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
-#Install-WindowsFeature Hyper-V, RSAT-RemoteAccess-Mgmt -IncludeManagementTools
 New-VMSwitch -SwitchType Internal -Name Internal
 
 # Setup second interface
 Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
 New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
 
-# Setup ICS, requires function from https://mikefrobbins.com/2017/10/19/configure-internet-connection-sharing-with-powershell/
-Set-MrInternetConnectionSharing -InternetInterfaceName Public -LocalInterfaceName Internal -Enabled $true
+# Configure routing / NAT
+New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
 
 # Add Hyper-V shortcut
 $SourceFileLocation = "%windir%\System32\virtmgmt.msc"
@@ -32,15 +31,6 @@ $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
 $Shortcut.TargetPath = $SourceFileLocation
 $Shortcut.Save()
 
-#######################################################################
-# Need to manually configure routing using the RRAS console
-# Otherwise routing doesnt seem to work
-# This was pulled from the following URL
-# https://glennopedia.com/2017/08/25/how-to-re-deploy-vpn-in-2016-essentials-in-legacy-mode/
-#######################################################################
-                
-# Configure RRAS
-#Install-RemoteAccess -VpnType RoutingOnly
 
 #Download Windows ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
