@@ -63,7 +63,7 @@ Invoke-Command -VMName ServerDC1 -Credential $credDom -ScriptBlock {
 Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock { 
     dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
     }
-Invoke-Command -VMName ServerDM2 -Credential $cred -ScriptBlock { 
+Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
     dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
     }
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
@@ -86,7 +86,7 @@ Invoke-Command -VMName ServerDC1 -Credential $credDom -ScriptBlock {
 Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock { 
     cscript //B %windir%\system32\slmgr.vbs /ipk TMJ3Y-NTRTM-FJYXT-T22BY-CWG3J
     }
-Invoke-Command -VMName ServerDM2 -Credential $cred -ScriptBlock { 
+Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
     cscript //B %windir%\system32\slmgr.vbs /ipk TMJ3Y-NTRTM-FJYXT-T22BY-CWG3J
     }
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
