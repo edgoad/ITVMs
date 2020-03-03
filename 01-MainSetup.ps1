@@ -107,6 +107,12 @@ $output = "C:\bginfo\Bginfo.exe"
 
 Import-Module BitsTransfer
 Start-BitsTransfer -Source $url -Destination $output
+
+#Download default.bgi
+$url = "https://github.com/edgoad/ITVMs/raw/master/default.bgi"
+$output = "C:\bginfo\default.bgi"
+
+Start-BitsTransfer -Source $url -Destination $output
 # Set autorun
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
 
