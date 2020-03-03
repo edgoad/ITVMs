@@ -19,10 +19,10 @@ Add-VMNetworkAdapter -VMName ServerDM2 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerSA1 -SwitchName Private
 #endregion
 
-#region Configure Private IP addresses
 # Start VMs
 Get-VM | Start-VM
 
+#region Configure Private IP addresses
 # Setup credentials
 $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
