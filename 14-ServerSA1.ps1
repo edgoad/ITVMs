@@ -6,6 +6,7 @@
 #
 #######################################################################
 
+#region Rename server
 # Setup credentials
 $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
@@ -18,7 +19,9 @@ $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
     Rename-Computer -NewName ServerSA1 -force -restart 
     }
+#endregion
 
+#region Configure OS
 # Setup session (must be done after rebooting)
 $sessionSA1 = New-PSSession -VMName ServerSA1 -Credential $cred
 
@@ -56,4 +59,4 @@ Copy-Item -ToSession $sessionSA1 -Path "C:\bginfo\" -Destination "C:\bginfo\" -F
 Invoke-Command -Session $sessionSA1 -ScriptBlock {
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
     }
-
+#endregion
