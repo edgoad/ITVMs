@@ -6,6 +6,7 @@
 #
 #######################################################################
 
+#region Rename server
 # Setup credentials
 $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
@@ -18,7 +19,9 @@ $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 Invoke-Command -VMName ServerDM2 -Credential $cred -ScriptBlock { 
     Rename-Computer -NewName ServerDM2 -force -restart 
     }
+#endregion
 
+#region Configure OS
 # Setup session (must be done after rebooting)
 $sessionDM2 = New-PSSession -VMName ServerDM2 -Credential $cred
 
@@ -48,9 +51,9 @@ Invoke-Command -Session $sessionDM2 -ScriptBlock {
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 0 -Type "Dword" 
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Value 0 -Type "Dword" 
     }
+#endregion
 
-
-
+#region Join Domain
 # Join domain
 #######################################################################
 # NOTE: REBOOT!
@@ -61,3 +64,4 @@ Invoke-Command -Session $sessionDM2 -ScriptBlock {
     $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
     add-computer –domainname mcsa2016.local -Credential $cred -restart –force
     }
+#endregion
