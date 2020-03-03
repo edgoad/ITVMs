@@ -7,6 +7,7 @@
 #
 #######################################################################
 
+#region Rename server
 # Setup credentials
 $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
@@ -19,7 +20,9 @@ $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 Invoke-Command -VMName ServerDC1 -Credential $cred -ScriptBlock { 
     Rename-Computer -NewName ServerDC1 -force -restart 
     }
+#endregion
 
+#region Install Domain Controller
 $sessionDC1 = New-PSSession -VMName ServerDC1 -Credential $cred
 # Rename NICs 
 Invoke-Command -Session $sessionDC1 -ScriptBlock { 
@@ -45,8 +48,9 @@ Invoke-Command -Session $sessionDC1 -ScriptBlock {
     $smPass = ConvertTo-SecureString "Password01" -AsPlainText -Force 
     Install-ADDSForest -DomainName "MCSA2016.local" -SafeModeAdministratorPassword $smPass -Confirm:$false 
     }
+#endregion
 
-
+#region Configure OS
 # Update credentials for AD domain
 $userDom = "mcsa2016\administrator"
 $passDom = ConvertTo-SecureString "Password01" -AsPlainText -Force
@@ -81,4 +85,4 @@ Copy-Item -ToSession $sessDomDC1 -Path "C:\bginfo\" -Destination "C:\bginfo\" -F
 Invoke-Command -Session $sessDomDC1 -ScriptBlock {
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
     }
-
+#endregion
