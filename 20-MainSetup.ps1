@@ -5,6 +5,7 @@
 #
 #######################################################################
 
+#region Setup Private VLAN
 # Shutdown VMs, if not already
 Get-VM | Stop-VM 
 
@@ -16,9 +17,9 @@ Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerDM1 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerDM2 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerSA1 -SwitchName Private
+#endregion
 
-
-
+#region Configure Private IP addresses
 # Start VMs
 Get-VM | Start-VM
 
@@ -49,3 +50,4 @@ Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock {
     Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
     New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.4 -PrefixLength 24 
     }
+#endregion
