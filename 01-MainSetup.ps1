@@ -11,9 +11,14 @@ Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 # Setup first interface
 Get-NetAdapter | Rename-NetAdapter -NewName Public
 
-# Install Hyper-V and RRAS
-
+# Install Hyper-V
 Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
+
+#######################################################################
+# automatic reboot here
+#######################################################################
+
+# Create virtual swith
 New-VMSwitch -SwitchType Internal -Name Internal
 
 # Setup second interface
@@ -31,7 +36,6 @@ $Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
 $Shortcut.TargetPath = $SourceFileLocation
 $Shortcut.Save()
 
-
 #Download Windows ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
 $url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
@@ -47,9 +51,6 @@ Set-VMHost -VirtualHardDiskPath "C:\VMs"
 Set-VMHost -VirtualMachinePath "C:\VMs"
 Set-VMHost -EnableEnhancedSessionMode:$true
 
-
-
-
 #Create VMs
 new-VM -Name ServerDC1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDC1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name ServerDM1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
@@ -58,7 +59,6 @@ new-VM -Name ServerSA1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VM
 
 # Setup memory
 Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
-
 
 #Create additional HD
 New-VHD -Path C:\VMs\ServerDM1_01.vhdx -SizeBytes 20GB
@@ -85,7 +85,6 @@ Set-VMDvdDrive -VMName ServerDC1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVA
 Set-VMDvdDrive -VMName ServerDM1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
 Set-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
 Set-VMDvdDrive -VMName ServerSA1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
-
 
 # Set RDP idle logout (maybe???)
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value 600000 -Type "Dword"
