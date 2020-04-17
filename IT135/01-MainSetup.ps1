@@ -16,10 +16,7 @@ $InstallFile = "lithnet.idlelogoff.setup.msi"
 $url = "https://github.com/lithnet/idle-logoff/releases/download/v1.1.6999/lithnet.idlelogoff.setup.msi"
 $output = "$LocalTempDir\$InstallFile"
 
-#Import-Module BitsTransfer
-#Start-BitsTransfer -Source $url -Destination $output
 (new-object System.Net.WebClient).DownloadFile($url, $output)
-
 Start-Process $output -ArgumentList "/qn" -Wait
 
 # Configure idel-logoff timeout
@@ -34,7 +31,7 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Na
 
 ############################################
 # setup bginfo
-#Download bginfo
+# Download bginfo
 New-Item -ItemType Directory -Path c:\bginfo -Force
 $url = "https://live.sysinternals.com/Bginfo.exe"
 $output = "C:\bginfo\Bginfo.exe"
@@ -42,7 +39,7 @@ $output = "C:\bginfo\Bginfo.exe"
 Import-Module BitsTransfer
 Start-BitsTransfer -Source $url -Destination $output
 
-#Download default.bgi
+ #Download default.bgi
 $url = "https://github.com/edgoad/ITVMs/raw/master/default.bgi"
 $output = "C:\bginfo\default.bgi"
 
