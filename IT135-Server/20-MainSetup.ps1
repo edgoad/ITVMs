@@ -9,27 +9,29 @@
 Get-VM | Start-VM
 
 # Setup credentials
-$user = "administrator"
+$user = "Student"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 
-#region Use DISM to change Server Edition
-#######################################################################
-# NOTE: REBOOT!
-# Will also return an error code - this is expected
-#######################################################################
+
+
+# Change from Eval mode
 Invoke-Command -VMName Win10VM -Credential $cred -ScriptBlock { 
-    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:W269N-WFGWX-YVC9B-4J6C9-T83GX
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name EditionID -Value "Enterprise"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name CompositionEditionID -Value "Enterprise"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows NT\CurrentVersion" -Name ProductName -Value "Windows 10 Enterprise"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion" -Name EditionID -Value "Enterprise"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion" -Name CompositionEditionID -Value "Enterprise"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\WOW6432Node\Microsoft\Windows NT\CurrentVersion" -Name ProductName -Value "Windows 10 Enterprise"
     }
-#endregion
 
 #region Use SLMGR to setup AVMA license key
 # Setup credentials
-$user = "administrator"
+$user = "Student"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 
 Invoke-Command -VMName Win10VM -Credential $cred -ScriptBlock { 
-    cscript //B %windir%\system32\slmgr.vbs /ipk VK7JG-NPHTM-C97JM-9MPGT-3V66T
+    cscript //B %windir%\system32\slmgr.vbs /ipk NPPR9-FWDCX-D2C8J-H872K-2YT43
     }
 #endregion
