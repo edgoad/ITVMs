@@ -30,6 +30,6 @@ $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 
 Invoke-Command -VMName Win10VM -Credential $cred -ScriptBlock { 
-    cscript //B %windir%\system32\slmgr.vbs /ipk TMJ3Y-NTRTM-FJYXT-T22BY-CWG3J
+    cscript //B %windir%\system32\slmgr.vbs /ipk VK7JG-NPHTM-C97JM-9MPGT-3V66T
     }
 #endregion
