@@ -55,21 +55,21 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 Set-VMHost -EnableEnhancedSessionMode:$true
 
 #Create VMs
-new-VM -Name ServerDC1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDC1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name Win10VM -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Win10VM.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 
 # Setup memory
 Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
 
 #Create additional HD
-#New-VHD -Path C:\VMs\ServerDC1_01.vhdx -SizeBytes 20GB
-#New-VHD -Path C:\VMs\ServerDC1_02.vhdx -SizeBytes 15GB
-#New-VHD -Path C:\VMs\ServerDC1_03.vhdx -SizeBytes 10GB
-#Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDC1_01.vhdx
-#Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDC1_02.vhdx
-#Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDC1_03.vhdx
+#New-VHD -Path C:\VMs\Win10VM_01.vhdx -SizeBytes 20GB
+#New-VHD -Path C:\VMs\Win10VM_02.vhdx -SizeBytes 15GB
+#New-VHD -Path C:\VMs\Win10VM_03.vhdx -SizeBytes 10GB
+#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_01.vhdx
+#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_02.vhdx
+#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_03.vhdx
 
 #Mount ISO
-Set-VMDvdDrive -VMName ServerDC1 -Path c:\VMs\Win10_1909_English_x64.iso
+Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\Win10_1909_English_x64.iso
 
 
 ############################################
