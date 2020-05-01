@@ -40,10 +40,11 @@ $Shortcut.Save()
 # Likely will need to update download URL
 New-Item -ItemType Directory -Path c:\VMs -Force
 #$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso?t=4385b35e-5f09-429b-b404-fc405e6d403c&e=1588434711&h=a8be8c67e4aef0a73125b0169ca73936"
+#$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso?t=4385b35e-5f09-429b-b404-fc405e6d403c&e=1588434711&h=a8be8c67e4aef0a73125b0169ca73936"
 #$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso"
+$url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
 
-$output = "c:\VMs\Win10_1909_English_x64.iso"
+$output = "c:\VMs\18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
 $start_time = Get-Date
 
 Import-Module BitsTransfer
@@ -70,7 +71,7 @@ Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
 #Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_03.vhdx
 
 #Mount ISO
-Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\Win10_1909_English_x64.iso
+Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso
 
 
 ############################################
