@@ -19,7 +19,7 @@ $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 # Will also return an error code - this is expected
 #######################################################################
 Invoke-Command -VMName Win10VM -Credential $cred -ScriptBlock { 
-    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
+    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:W269N-WFGWX-YVC9B-4J6C9-T83GX
     }
 #endregion
 
