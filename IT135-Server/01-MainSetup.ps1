@@ -1,6 +1,6 @@
 #######################################################################
 #
-# First script for building Hyper-V environment for IT 35
+# First script for building Hyper-V environment for IT 135
 # Installs Hyper-V and preps for OS installs
 #
 #######################################################################
@@ -37,10 +37,11 @@ $Shortcut.TargetPath = $SourceFileLocation
 $Shortcut.Save()
 
 #Download Windows ISO
+# Likely will need to update download URL
 New-Item -ItemType Directory -Path c:\VMs -Force
 #$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-#$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso?t=4385b35e-5f09-429b-b404-fc405e6d403c&e=1588434711&h=a8be8c67e4aef0a73125b0169ca73936"
-$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso"
+$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso?t=4385b35e-5f09-429b-b404-fc405e6d403c&e=1588434711&h=a8be8c67e4aef0a73125b0169ca73936"
+#$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso"
 
 $output = "c:\VMs\Win10_1909_English_x64.iso"
 $start_time = Get-Date
@@ -88,6 +89,8 @@ $output = "$LocalTempDir\$InstallFile"
 Start-Process $output -ArgumentList "/qn" -Wait
 
 # Configure idle-logoff timeout
+New-Item -Path "HKLM:\SOFTWARE\Lithnet"
+New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Action" -Value 2 -Type "Dword"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Enabled" -Value 1 -Type "Dword"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IdleLimit" -Value 10 -Type "Dword"
