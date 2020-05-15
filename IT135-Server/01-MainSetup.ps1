@@ -1,6 +1,6 @@
 #######################################################################
 #
-# First script for building Hyper-V environment for IT 160
+# First script for building Hyper-V environment for IT 135
 # Installs Hyper-V and preps for OS installs
 #
 #######################################################################
@@ -37,9 +37,14 @@ $Shortcut.TargetPath = $SourceFileLocation
 $Shortcut.Save()
 
 #Download Windows ISO
+# Likely will need to update download URL
 New-Item -ItemType Directory -Path c:\VMs -Force
-$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-$output = "c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
+#$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
+#$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso?t=4385b35e-5f09-429b-b404-fc405e6d403c&e=1588434711&h=a8be8c67e4aef0a73125b0169ca73936"
+#$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso"
+$url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
+
+$output = "c:\VMs\18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
 $start_time = Get-Date
 
 Import-Module BitsTransfer
@@ -52,46 +57,49 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 Set-VMHost -EnableEnhancedSessionMode:$true
 
 #Create VMs
-new-VM -Name ServerDC1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDC1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
-new-VM -Name ServerDM1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
-new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
-new-VM -Name ServerSA1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerSA1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name Win10VM -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Win10VM.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 
 # Setup memory
 Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
 
 #Create additional HD
-New-VHD -Path C:\VMs\ServerDM1_01.vhdx -SizeBytes 20GB
-New-VHD -Path C:\VMs\ServerDM1_02.vhdx -SizeBytes 15GB
-New-VHD -Path C:\VMs\ServerDM1_03.vhdx -SizeBytes 10GB
-Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDM1_01.vhdx
-Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDM1_02.vhdx
-Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDM1_03.vhdx
-New-VHD -Path C:\VMs\ServerDM2_01.vhdx -SizeBytes 20GB
-New-VHD -Path C:\VMs\ServerDM2_02.vhdx -SizeBytes 15GB
-New-VHD -Path C:\VMs\ServerDM2_03.vhdx -SizeBytes 10GB
-Add-VMHardDiskDrive -VMName ServerDM2 -Path C:\VMs\ServerDM2_01.vhdx
-Add-VMHardDiskDrive -VMName ServerDM2 -Path C:\VMs\ServerDM2_02.vhdx
-Add-VMHardDiskDrive -VMName ServerDM2 -Path C:\VMs\ServerDM2_03.vhdx
-New-VHD -Path C:\VMs\ServerSA1_01.vhdx -SizeBytes 20GB
-New-VHD -Path C:\VMs\ServerSA1_02.vhdx -SizeBytes 15GB
-New-VHD -Path C:\VMs\ServerSA1_03.vhdx -SizeBytes 10GB
-Add-VMHardDiskDrive -VMName ServerSA1 -Path C:\VMs\ServerSA1_01.vhdx
-Add-VMHardDiskDrive -VMName ServerSA1 -Path C:\VMs\ServerSA1_02.vhdx
-Add-VMHardDiskDrive -VMName ServerSA1 -Path C:\VMs\ServerSA1_03.vhdx
+#New-VHD -Path C:\VMs\Win10VM_01.vhdx -SizeBytes 20GB
+#New-VHD -Path C:\VMs\Win10VM_02.vhdx -SizeBytes 15GB
+#New-VHD -Path C:\VMs\Win10VM_03.vhdx -SizeBytes 10GB
+#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_01.vhdx
+#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_02.vhdx
+#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_03.vhdx
 
 #Mount ISO
-Set-VMDvdDrive -VMName ServerDC1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
-Set-VMDvdDrive -VMName ServerDM1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
-Set-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
-Set-VMDvdDrive -VMName ServerSA1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
+Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso
 
-# Set RDP idle logout (maybe???)
-# The MaxIdleTime is in milliseconds; by default, this script sets MaxIdleTime to 1 minutes.
-$maxIdleTime = 10 * 60 * 1000
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value $maxIdleTime -Force
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
+
+############################################
+# Set RDP idle logout (via local policy)
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value 600000 -Type "Dword"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
+
+############################################
+# Setup idle-logoff (https://github.com/lithnet/idle-logoff/)
+$LocalTempDir = $env:TEMP
+$InstallFile = "lithnet.idlelogoff.setup.msi"
+$url = "https://github.com/lithnet/idle-logoff/releases/download/v1.1.6999/lithnet.idlelogoff.setup.msi"
+$output = "$LocalTempDir\$InstallFile"
+
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+Start-Process $output -ArgumentList "/qn" -Wait
+
+# Configure idle-logoff timeout
+New-Item -Path "HKLM:\SOFTWARE\Lithnet"
+New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Action" -Value 2 -Type "Dword"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Enabled" -Value 1 -Type "Dword"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IdleLimit" -Value 10 -Type "Dword"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IgnoreDisplayRequested" -Value 1 -Type "Dword"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningEnabled" -Value 1 -Type "Dword"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningMessage" -Value "Your session has been idle for too long, and you will be logged out in {0} seconds" -Type "String"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningPeriod" -Value 60 -Type "Dword"
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Lithnet.idlelogoff -Value '"C:\Program Files (x86)\Lithnet\IdleLogoff\Lithnet.IdleLogoff.exe" /start'
 
 # enable PING on firewall
 netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
