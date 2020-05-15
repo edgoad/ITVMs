@@ -18,78 +18,29 @@ Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
 # automatic reboot here
 #######################################################################
 
-# Create virtual switc
-# Set switch as Private -- no routing to the internet
-New-VMSwitch -SwitchType Private -Name private
 
+#######################################################################
+# Install some common tools
+#######################################################################
+# Install 7-Zip
+$url = "https://www.7-zip.org/a/7z1900-x64.msi"
+$output = $(Join-Path $env:TEMP '7zip.msi')
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
 
-# Add Hyper-V shortcut
-$SourceFileLocation = "%windir%\System32\virtmgmt.msc"
-$ShortcutLocation = "C:\Users\Student\Desktop\Hyper-V Manager.lnk"
-$WScriptShell = New-Object -ComObject WScript.Shell
-$Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
-$Shortcut.TargetPath = $SourceFileLocation
-$Shortcut.Save()
+# Install Microsoft Virtual Machine Converter
+$url = "https://download.microsoft.com/download/9/1/E/91E9F42C-3F1F-4AD9-92B7-8DD65DA3B0C2/mvmc_setup.msi"
+$output = $(Join-Path $env:TEMP 'mvmc_setup.msi')
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
 
-# Download Kali ISO
-# Review URL for latest version
-# https://cdimage.kali.org/kali-2020.2/kali-linux-2020.2-installer-amd64.iso
-
-# Download Windows Server 2008 R2
-# https://archive.org/download/windowsserver2008r2x64/Windows%20Server%202008%20R2%20x64.iso
-# https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso
-
-# Download Ubuntu 14.04
-# http://releases.ubuntu.com/trusty/ubuntu-14.04.6-desktop-amd64.iso
-
-#Download Windows ISO
-# Likely will need to update download URL
-New-Item -ItemType Directory -Path c:\VMs -Force
-#$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-#$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso?t=4385b35e-5f09-429b-b404-fc405e6d403c&e=1588434711&h=a8be8c67e4aef0a73125b0169ca73936"
-#$url = "https://software-download.microsoft.com/pr/Win10_1909_English_x64.iso"
-$url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
-
-$output = "c:\VMs\Windows_Server_2016_Datacenter.iso"
-$start_time = Get-Date
-
-Import-Module BitsTransfer
-Start-BitsTransfer -Source $url -Destination $output
-Write-Output "Time taken: $((Get-Date).Subtract($start_time).Seconds) second(s)"
-
-# Setup Hyper-V default file locations
-Set-VMHost -VirtualHardDiskPath "C:\VMs"
-Set-VMHost -VirtualMachinePath "C:\VMs"
-Set-VMHost -EnableEnhancedSessionMode:$true
-
-#Create VMs
-new-VM -Name Win10VM -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Win10VM.vhdx -NewVHDSizeBytes 60GB -SwitchName private
-
-# Setup memory
-Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
-
-#Create additional HD
-#New-VHD -Path C:\VMs\Win10VM_01.vhdx -SizeBytes 20GB
-#New-VHD -Path C:\VMs\Win10VM_02.vhdx -SizeBytes 15GB
-#New-VHD -Path C:\VMs\Win10VM_03.vhdx -SizeBytes 10GB
-#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_01.vhdx
-#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_02.vhdx
-#Add-VMHardDiskDrive -VMName Win10VM -Path C:\VMs\Win10VM_03.vhdx
-
-#Mount ISO
-Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\Windows_Server_2016_Datacenter.iso
-
-
-############################################
 # Set RDP idle logout (via local policy)
-# Set RDP idle logout (maybe???)
 # The MaxIdleTime is in milliseconds; by default, this script sets MaxIdleTime to 1 minutes.
 $maxIdleTime = 10 * 60 * 1000
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value $maxIdleTime -Force
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
 #Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
 
-############################################
 # Setup idle-logoff (https://github.com/lithnet/idle-logoff/)
 $LocalTempDir = $env:TEMP
 $InstallFile = "lithnet.idlelogoff.setup.msi"
@@ -111,8 +62,101 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningMessage
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningPeriod" -Value 60 -Type "Dword"
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Lithnet.idlelogoff -Value '"C:\Program Files (x86)\Lithnet\IdleLogoff\Lithnet.IdleLogoff.exe" /start'
 
-# enable PING on firewall
-netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+
+#######################################################################
+# Start setting up Hyper-V
+#######################################################################
+# Create virtual switch
+# Set switch as Private -- no routing to the internet
+New-VMSwitch -SwitchType Private -Name private
+
+# Add Hyper-V shortcut
+$SourceFileLocation = "%windir%\System32\virtmgmt.msc"
+$ShortcutLocation = "C:\Users\Student\Desktop\Hyper-V Manager.lnk"
+$WScriptShell = New-Object -ComObject WScript.Shell
+$Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
+$Shortcut.TargetPath = $SourceFileLocation
+$Shortcut.Save()
+
+# Setup Hyper-V default file locations
+Set-VMHost -VirtualHardDiskPath "C:\VMs"
+Set-VMHost -VirtualMachinePath "C:\VMs"
+Set-VMHost -EnableEnhancedSessionMode:$true
+
+
+##############################################################################
+# Download ISO files for installation
+##############################################################################
+New-Item -ItemType Directory -Path c:\VMs -Force
+
+# Download Kali ISO
+# Review URL for latest version
+$url = "https://cdimage.kali.org/kali-2020.2/kali-linux-2020.2-installer-amd64.iso"
+$output = "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+
+# Download Windows Server 2008 R2
+# https://archive.org/download/windowsserver2008r2x64/Windows%20Server%202008%20R2%20x64.iso
+# https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso
+$url = "https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso"
+$output = "c:\VMs\windowsserver2008r2x64.iso"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+
+# Download Ubuntu 14.04
+$url = "http://releases.ubuntu.com/trusty/ubuntu-14.04.6-desktop-amd64.iso"
+$output = "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+
+# Download Metasploitable
+$url = "http://downloads.metasploit.com/data/metasploitable/metasploitable-linux-2.0.0.zip"
+$output = "c:\VMs\metasploitable-linux-2.0.0.zip"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+
+
+#Download Windows 10 ISO
+$url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
+$output = "c:\VMs\Windows10.iso"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+
+
+##############################################################################
+# Setup VMs
+##############################################################################
+#Create New VMs
+new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\KaliLinux.vhdx -NewVHDSizeBytes 60GB -SwitchName private
+new-VM -Name "Windows 2008 R2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Win2008R2.vhdx -NewVHDSizeBytes 60GB -SwitchName private
+new-VM -Name "Ubuntu 14.04" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Ubuntu1404.vhdx -NewVHDSizeBytes 60GB -SwitchName private
+new-VM -Name "Win10VM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Win10VM.vhdx -NewVHDSizeBytes 60GB -SwitchName private
+
+#Mount ISO
+Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
+Set-VMDvdDrive -VMName "Windows 2008 R2" -Path "c:\VMs\windowsserver2008r2x64.iso"
+Set-VMDvdDrive -VMName "Ubuntu 14.04" -Path "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
+Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\Windows10.iso
+
+# Extract, convert, and import Metasploitable
+	# Extract
+$metasploitableZipFile = "c:\VMs\metasploitable-linux-2.0.0.zip"
+$metasploitableHardDiskFilePath = "c:\VMs\Virtual Hard Disks\Metasploitable.vhdx"
+Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
+	# Import MS VM Converter
+Import-Module "$env:ProgramFiles\Microsoft Virtual Machine Converter\MvmcCmdlet.psd1"
+	# Convert Metasploitable
+Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
+$vmdkFile = Get-ChildItem "$env:TEMP\*.vmdk" -Recurse | Select-Object -expand FullName
+#todo: test to make sure this returns
+ConvertTo-MvmcVirtualHardDisk -SourceLiteralPath $vmdkFile -DestinationLiteralPath $metasploitableHardDiskFilePath -VhdType DynamicHardDisk -VhdFormat vhdx | Out-Host
+	# Import Metasploitable
+new-vm -Name "Metasploitable" -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
+	# configure NIC
+get-vm -Name "Metasploitable" | Add-VMNetworkAdapter -SwitchName "Public" -IsLegacy $true
+
+
+##############################################################################
+# Configure VMs
+##############################################################################
+# Setup memory
+Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
@@ -132,8 +176,8 @@ Start-BitsTransfer -Source $url -Destination $output
 #Download default.bgi
 $url = "https://github.com/edgoad/ITVMs/raw/master/default.bgi"
 $output = "C:\bginfo\default.bgi"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
 
-Start-BitsTransfer -Source $url -Destination $output
 # Set autorun
 Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
 
