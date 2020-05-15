@@ -24,15 +24,17 @@ Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
 #######################################################################
 # Install 7-Zip
 $url = "https://www.7-zip.org/a/7z1900-x64.msi"
-$output = $(Join-Path $env:TEMP '7zip.msi')
+$output = $(Join-Path $env:TEMP '/7zip.msi')
 (new-object System.Net.WebClient).DownloadFile($url, $output)
-Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
+#Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
+Start-Process $output -ArgumentList "/qn" -Wait
 
 # Install Microsoft Virtual Machine Converter
 $url = "https://download.microsoft.com/download/9/1/E/91E9F42C-3F1F-4AD9-92B7-8DD65DA3B0C2/mvmc_setup.msi"
 $output = $(Join-Path $env:TEMP 'mvmc_setup.msi')
 (new-object System.Net.WebClient).DownloadFile($url, $output)
-Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
+#Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
+Start-Process $output -ArgumentList "/qn" -Wait
 
 # Set RDP idle logout (via local policy)
 # The MaxIdleTime is in milliseconds; by default, this script sets MaxIdleTime to 1 minutes.
@@ -66,6 +68,8 @@ Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Na
 #######################################################################
 # Start setting up Hyper-V
 #######################################################################
+New-Item -ItemType Directory -Path c:\VMs -Force
+
 # Create virtual switch
 # Set switch as Private -- no routing to the internet
 New-VMSwitch -SwitchType Private -Name private
@@ -87,8 +91,6 @@ Set-VMHost -EnableEnhancedSessionMode:$true
 ##############################################################################
 # Download ISO files for installation
 ##############################################################################
-New-Item -ItemType Directory -Path c:\VMs -Force
-
 # Download Kali ISO
 # Review URL for latest version
 $url = "https://cdimage.kali.org/kali-2020.2/kali-linux-2020.2-installer-amd64.iso"
@@ -149,7 +151,7 @@ ConvertTo-MvmcVirtualHardDisk -SourceLiteralPath $vmdkFile -DestinationLiteralPa
 	# Import Metasploitable
 new-vm -Name "Metasploitable" -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
 	# configure NIC
-get-vm -Name "Metasploitable" | Add-VMNetworkAdapter -SwitchName "Public" -IsLegacy $true
+get-vm -Name "Metasploitable" | Add-VMNetworkAdapter -SwitchName "private" -IsLegacy $true
 
 
 ##############################################################################
