@@ -1,6 +1,6 @@
 #######################################################################
 #
-# First script for building Hyper-V environment for IT 460
+# First script for building Hyper-V environment for IT 340
 # Installs Hyper-V and preps for OS installs
 #
 #######################################################################
@@ -76,13 +76,19 @@ New-VMSwitch -SwitchType Private -Name Servers
 New-VMSwitch -SwitchType Private -Name Desktop1
 New-VMSwitch -SwitchType Private -Name Desktop2
 New-VMSwitch -SwitchType Private -Name Guest
-New-VMSwitch -SwitchType Internal -Name ISP
 New-VMSwitch -SwitchType Internal -Name MGMT
+# Setup MGMT interface
+Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName MGMT
+New-NetIPAddress -InterfaceAlias 'MGMT' -IPAddress 192.168.1.250 -PrefixLength 24
+
+
+# Setup ISP Interface
+New-VMSwitch -SwitchType Internal -Name ISP
 
 # Use 203.0.113.0/24 for simulated ISP routing
 # https://en.wikipedia.org/wiki/Reserved_IP_addresses
 # Setup second interface
-Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
+Get-NetAdapter | where Name -NE 'Public' | where Name -NE 'MGMT' | Rename-NetAdapter -NewName ISP
 #New-NetIPAddress -InterfaceAlias 'ISP' -IPAddress 192.168.0.250 -PrefixLength 24
 New-NetIPAddress -InterfaceAlias 'ISP' -IPAddress 203.0.113.1 -PrefixLength 24
 
@@ -147,16 +153,18 @@ Set-VMDvdDrive -VMName "LabDesk1" -Path "c:\VMs\Windows_Server_2016.ISO"
 	# Extract
 $PanFWZipFile = "c:\VMs\OS9_FW.ova"
 $PanFWHardDiskFilePath = "c:\VMs\Virtual Hard Disks\PanFW.vhdx"
-Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
+& "c:\Program Files\7-Zip\7z.exe" e $PanFWZipFile -o"$env:TEMP"
 	# Import MS VM Converter
 Import-Module "$env:ProgramFiles\Microsoft Virtual Machine Converter\MvmcCmdlet.psd1"
-	# Convert Metasploitable
+	# Convert PanFW
+    # NOTE: May need to repair VMDK to enable conversion
+    # https://www.mysysadmintips.com/windows/servers/801-convertto-mvmcvirtualharddisk-the-entry-is-not-a-supported-disk-database-entry-for-the-descriptor
 Write-Host "Converting PanFW image files to Hyper-V hard disk file.  Warning: This may take several minutes."
 $vmdkFile = Get-ChildItem "$env:TEMP\*.vmdk" -Recurse | Select-Object -expand FullName
 #todo: test to make sure this returns
 ConvertTo-MvmcVirtualHardDisk -SourceLiteralPath $vmdkFile -DestinationLiteralPath $PanFWHardDiskFilePath -VhdType DynamicHardDisk -VhdFormat vhdx | Out-Host
 	# Import PanFW
-new-vm -Name "PanFW" -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
+new-vm -Name "PanFW" -VHDPath $PanFWHardDiskFilePath -MemoryStartupBytes 512MB
 	# configure NIC
 get-vm -Name "PanFW" | Add-VMNetworkAdapter -SwitchName "ISP" -IsLegacy $true
 
