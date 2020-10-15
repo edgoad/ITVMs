@@ -474,3 +474,26 @@ function Install-Starwind{
         Start-Process $output -ArgumentList "/verysilent" -Wait
     }
 }
+
+function Set-DesktopDefaults{
+    # setup bginfo
+    #Download bginfo
+    New-Item -ItemType Directory -Path c:\bginfo -Force
+    $url = "https://live.sysinternals.com/Bginfo.exe"
+    $output = "C:\bginfo\Bginfo.exe"
+
+    Import-Module BitsTransfer
+    Start-BitsTransfer -Source $url -Destination $output
+
+    #Download default.bgi
+    $url = "https://github.com/edgoad/ITVMs/raw/master/default.bgi"
+    $output = "C:\bginfo\default.bgi"
+    (new-object System.Net.WebClient).DownloadFile($url, $output)
+
+    # Set autorun
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
+
+    # install chrome
+    $LocalTempDir = $env:TEMP; $ChromeInstaller = "ChromeInstaller.exe"; (new-object    System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/375.126/chrome_installer.exe', "$LocalTempDir\$ChromeInstaller"); & "$LocalTempDir\$ChromeInstaller" /silent /install; $Process2Monitor =  "ChromeInstaller"; Do { $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name; If ($ProcessesFound) { "Still running: $($ProcessesFound -join ', ')" | Write-Host; Start-Sleep -Seconds 2 } else { rm "$LocalTempDir\$ChromeInstaller" -ErrorAction SilentlyContinue -Verbose } } Until (!$ProcessesFound)
+
+}
