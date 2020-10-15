@@ -75,12 +75,10 @@ New-Item -ItemType Directory -Path c:\VMs -Force
 New-VMSwitch -SwitchType Private -Name private
 
 # Add Hyper-V shortcut
-$SourceFileLocation = "%windir%\System32\virtmgmt.msc"
-$ShortcutLocation = "C:\Users\Student\Desktop\Hyper-V Manager.lnk"
-$WScriptShell = New-Object -ComObject WScript.Shell
-$Shortcut = $WScriptShell.CreateShortcut($ShortcutLocation)
-$Shortcut.TargetPath = $SourceFileLocation
+$Shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($(Join-Path "c:\users\public\Desktop" "Hyper-V Manager.lnk"))
+$Shortcut.TargetPath = "$env:SystemRoot\System32\virtmgmt.msc"
 $Shortcut.Save()
+
 
 # Setup Hyper-V default file locations
 Set-VMHost -VirtualHardDiskPath "C:\VMs"
