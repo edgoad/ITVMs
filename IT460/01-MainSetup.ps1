@@ -145,3 +145,6 @@ Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 # setup bginfo
 Set-DesktopDefaults
+
+# Clean up temp files
+Clear-TempFiles
