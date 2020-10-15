@@ -16,22 +16,23 @@ param(
 #
 # PowerShell configurations
 #
+function Set-PSConfigurations{
+    # NOTE: Because the $ErrorActionPreference is "Stop", this script will stop on first failure.
+    #       This is necessary to ensure we capture errors inside the try-catch-finally block.
+    $ErrorActionPreference = "Stop"
 
-# NOTE: Because the $ErrorActionPreference is "Stop", this script will stop on first failure.
-#       This is necessary to ensure we capture errors inside the try-catch-finally block.
-$ErrorActionPreference = "Stop"
+    # Hide any progress bars, due to downloads and installs of remote components.
+    $ProgressPreference = "SilentlyContinue"
 
-# Hide any progress bars, due to downloads and installs of remote components.
-$ProgressPreference = "SilentlyContinue"
+    # Ensure we set the working directory to that of the script.
+    Push-Location $PSScriptRoot
 
-# Ensure we set the working directory to that of the script.
-Push-Location $PSScriptRoot
+    # Discard any collected errors from a previous execution.
+    $Error.Clear()
 
-# Discard any collected errors from a previous execution.
-$Error.Clear()
-
-# Configure strict debugging.
+    # Configure strict debugging.
 Set-PSDebug -Strict
+}
 
 ###################################################################################################
 #
@@ -241,8 +242,45 @@ function Select-ResourceByProperty {
 }
 
 function New-Shortcut {}
-###################################################################################################
-#
-# Main execution block.
-#
 
+function Install-7Zip{
+    Write-Host "Installing 7Zip, if needed"
+    # Install 7-Zip
+    $url = "https://www.7-zip.org/a/7z1900-x64.msi"
+    $output = $(Join-Path $env:TEMP '/7zip.msi')
+    (new-object System.Net.WebClient).DownloadFile($url, $output)
+    #Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
+    Start-Process $output -ArgumentList "/qn" -Wait
+}
+
+function Set-AutoLogout{
+    # Set RDP idle logout (via local policy)
+    # The MaxIdleTime is in milliseconds; by default, this script sets MaxIdleTime to 1 minutes.
+    $maxIdleTime = 10 * 60 * 1000
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value $maxIdleTime -Force
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
+    #Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
+
+    # Setup idle-logoff (https://github.com/lithnet/idle-logoff/)
+    $LocalTempDir = $env:TEMP
+    $InstallFile = "lithnet.idlelogoff.setup.msi"
+    $url = "https://github.com/lithnet/idle-logoff/releases/download/v1.1.6999/lithnet.idlelogoff.setup.msi"
+    $output = "$LocalTempDir\$InstallFile"
+
+    (new-object System.Net.WebClient).DownloadFile($url, $output)
+    Start-Process $output -ArgumentList "/qn" -Wait
+
+    # Configure idle-logoff timeout
+    New-Item -Path "HKLM:\SOFTWARE\Lithnet"
+    New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Action" -Value 2 -Type "Dword"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Enabled" -Value 1 -Type "Dword"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IdleLimit" -Value 10 -Type "Dword"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IgnoreDisplayRequested" -Value 1 -Type "Dword"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningEnabled" -Value 1 -Type "Dword"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningMessage" -Value "Your session has been idle for too long, and you will be logged out in {0} seconds" -Type "String"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningPeriod" -Value 60 -Type "Dword"
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Lithnet.idlelogoff -Value '"C:\Program Files (x86)\Lithnet\IdleLogoff\Lithnet.IdleLogoff.exe" /start'
+
+
+}
