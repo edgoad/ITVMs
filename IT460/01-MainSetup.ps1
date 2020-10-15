@@ -49,7 +49,6 @@ $output = $(Join-Path $env:TEMP 'mvmc_setup.msi')
 Start-Process $output -ArgumentList "/qn" -Wait
 
 #Install starwind converter
-$swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Converter\V2V_ConverterConsole.exe'
 Install-Starwind
 
 # Configure logout after 10 minutes
@@ -120,6 +119,7 @@ $output = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 Write-Host "Extracting Metasploitable ZIP file"
 $metasploitableZipFile = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 $metasploitableHardDiskFilePath = "c:\VMs\Virtual Hard Disks\Metasploitable.vhdx"
+$swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Converter\V2V_ConverterConsole.exe'
 Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
 	# Convert Metasploitable
 Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
@@ -148,4 +148,4 @@ Get-VM | Set-VM -AutomaticStopAction Shutdown
 Set-DesktopDefaults
 
 # Clean up temp files
-Clear-TempFiles
+#Clear-TempFiles
