@@ -5,6 +5,12 @@
 #
 #######################################################################
 
+# Dowload and import CommonFunctions module
+$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
+$output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+Import-Module $output
+
 # Disable Server Manager at startup
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 
@@ -12,7 +18,8 @@ Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 Get-NetAdapter | Rename-NetAdapter -NewName Public
 
 # Install Hyper-V
-Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
+#Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
+Install-HypervAndTools
 
 #######################################################################
 # automatic reboot here
@@ -23,11 +30,12 @@ Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
 # Install some common tools
 #######################################################################
 # Install 7-Zip
-$url = "https://www.7-zip.org/a/7z1900-x64.msi"
-$output = $(Join-Path $env:TEMP '/7zip.msi')
-(new-object System.Net.WebClient).DownloadFile($url, $output)
-#Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
-Start-Process $output -ArgumentList "/qn" -Wait
+Install-7Zip
+#$url = "https://www.7-zip.org/a/7z1900-x64.msi"
+#$output = $(Join-Path $env:TEMP '/7zip.msi')
+#(new-object System.Net.WebClient).DownloadFile($url, $output)
+##Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
+#Start-Process $output -ArgumentList "/qn" -Wait
 
 # Install Microsoft Virtual Machine Converter
 $url = "https://download.microsoft.com/download/9/1/E/91E9F42C-3F1F-4AD9-92B7-8DD65DA3B0C2/mvmc_setup.msi"
@@ -36,33 +44,35 @@ $output = $(Join-Path $env:TEMP 'mvmc_setup.msi')
 #Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
 Start-Process $output -ArgumentList "/qn" -Wait
 
+# Configure logout after 10 minutes
+Set-Autologout
 # Set RDP idle logout (via local policy)
 # The MaxIdleTime is in milliseconds; by default, this script sets MaxIdleTime to 1 minutes.
-$maxIdleTime = 10 * 60 * 1000
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value $maxIdleTime -Force
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
+#$maxIdleTime = 10 * 60 * 1000
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value $maxIdleTime -Force
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
+##Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
 
 # Setup idle-logoff (https://github.com/lithnet/idle-logoff/)
-$LocalTempDir = $env:TEMP
-$InstallFile = "lithnet.idlelogoff.setup.msi"
-$url = "https://github.com/lithnet/idle-logoff/releases/download/v1.1.6999/lithnet.idlelogoff.setup.msi"
-$output = "$LocalTempDir\$InstallFile"
+#$LocalTempDir = $env:TEMP
+#$InstallFile = "lithnet.idlelogoff.setup.msi"
+#$url = "https://github.com/lithnet/idle-logoff/releases/download/v1.1.6999/lithnet.idlelogoff.setup.msi"
+#$output = "$LocalTempDir\$InstallFile"
 
-(new-object System.Net.WebClient).DownloadFile($url, $output)
-Start-Process $output -ArgumentList "/qn" -Wait
+#(new-object System.Net.WebClient).DownloadFile($url, $output)
+#Start-Process $output -ArgumentList "/qn" -Wait
 
 # Configure idle-logoff timeout
-New-Item -Path "HKLM:\SOFTWARE\Lithnet"
-New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Action" -Value 2 -Type "Dword"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Enabled" -Value 1 -Type "Dword"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IdleLimit" -Value 10 -Type "Dword"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IgnoreDisplayRequested" -Value 1 -Type "Dword"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningEnabled" -Value 1 -Type "Dword"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningMessage" -Value "Your session has been idle for too long, and you will be logged out in {0} seconds" -Type "String"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningPeriod" -Value 60 -Type "Dword"
-Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Lithnet.idlelogoff -Value '"C:\Program Files (x86)\Lithnet\IdleLogoff\Lithnet.IdleLogoff.exe" /start'
+#New-Item -Path "HKLM:\SOFTWARE\Lithnet"
+#New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff"
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Action" -Value 2 -Type "Dword"
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Enabled" -Value 1 -Type "Dword"
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IdleLimit" -Value 10 -Type "Dword"
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IgnoreDisplayRequested" -Value 1 -Type "Dword"
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningEnabled" -Value 1 -Type "Dword"
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningMessage" -Value "Your session has been idle for too long, and you will be logged out in {0} seconds" -Type "String"
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningPeriod" -Value 60 -Type "Dword"
+#Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Lithnet.idlelogoff -Value '"C:\Program Files (x86)\Lithnet\IdleLogoff\Lithnet.IdleLogoff.exe" /start'
 
 
 #######################################################################
