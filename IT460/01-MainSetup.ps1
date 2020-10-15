@@ -67,11 +67,13 @@ Set-HypervDefaults
 ##############################################################################
 # Download Kali ISO
 # Review URL for latest version
+#Write-Host "Downloading Kali (this may take some time)"
 #$url = "https://cdimage.kali.org/kali-2020.2/kali-linux-2020.2-installer-amd64.iso"
 #$output = "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
 #(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 # Download Windows Server 2008 R2
+#Write-Host "Downloading Windows Server 2008 R2 (this may take some time)"
 # https://archive.org/download/windowsserver2008r2x64/Windows%20Server%202008%20R2%20x64.iso
 # https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso
 #$url = "https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso"
@@ -79,17 +81,20 @@ Set-HypervDefaults
 #(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 # Download Ubuntu 14.04
+#Write-Host "Downloading Ubuntu 14.04 (this may take some time)"
 #$url = "http://releases.ubuntu.com/trusty/ubuntu-14.04.6-desktop-amd64.iso"
 #$output = "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
 #(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 # Download Metasploitable
+Write-Host "Downloading Metasploitable (this may take some time)"
 $url = "http://downloads.metasploit.com/data/metasploitable/metasploitable-linux-2.0.0.zip"
 $output = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
 
 #Download Windows 10 ISO
+#Write-Host "Downloading Windows 10 (this may take some time)"
 #$url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
 #$output = "c:\VMs\Windows10.iso"
 #(new-object System.Net.WebClient).DownloadFile($url, $output)
@@ -112,16 +117,11 @@ $output = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 
 # Extract, convert, and import Metasploitable
 	# Extract
+Write-Host "Extracting Metasploitable ZIP file"
 $metasploitableZipFile = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 $metasploitableHardDiskFilePath = "c:\VMs\Virtual Hard Disks\Metasploitable.vhdx"
 Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
-	# Import MS VM Converter
-#Import-Module "$env:ProgramFiles\Microsoft Virtual Machine Converter\MvmcCmdlet.psd1"
 	# Convert Metasploitable
-Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
-$vmdkFile = Get-ChildItem "$env:TEMP\*.vmdk" -Recurse | Select-Object -expand FullName
-#todo: test to make sure this returns
-#ConvertTo-MvmcVirtualHardDisk -SourceLiteralPath $vmdkFile -DestinationLiteralPath $metasploitableHardDiskFilePath -VhdType DynamicHardDisk -VhdFormat vhdx | Out-Host
 Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
 start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin"
 
