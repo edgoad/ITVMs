@@ -126,6 +126,7 @@ Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Wa
 start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin"
 
 	# Import Metasploitable
+Write-Host "Importing Metasploitable VM"
 new-vm -Name "Metasploitable" -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
 	# configure NIC
 get-vm -Name "Metasploitable" | Add-VMNetworkAdapter -SwitchName "private" -IsLegacy $true

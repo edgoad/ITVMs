@@ -417,6 +417,9 @@ function Set-AutoLogout{
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
     #Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
 
+    # enable TLS 1.2
+    [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+    
     # Setup idle-logoff (https://github.com/lithnet/idle-logoff/)
     $LocalTempDir = $env:TEMP
     $InstallFile = "lithnet.idlelogoff.setup.msi"
