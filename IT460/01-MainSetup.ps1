@@ -21,6 +21,9 @@ Get-NetAdapter | Rename-NetAdapter -NewName Public
 #Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
 Install-HypervAndTools
 
+# Setup Hyper-V defaults
+
+
 #######################################################################
 # automatic reboot here
 #######################################################################
@@ -46,54 +49,12 @@ Start-Process $output -ArgumentList "/qn" -Wait
 
 # Configure logout after 10 minutes
 Set-Autologout
-# Set RDP idle logout (via local policy)
-# The MaxIdleTime is in milliseconds; by default, this script sets MaxIdleTime to 1 minutes.
-#$maxIdleTime = 10 * 60 * 1000
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value $maxIdleTime -Force
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
-##Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
-
-# Setup idle-logoff (https://github.com/lithnet/idle-logoff/)
-#$LocalTempDir = $env:TEMP
-#$InstallFile = "lithnet.idlelogoff.setup.msi"
-#$url = "https://github.com/lithnet/idle-logoff/releases/download/v1.1.6999/lithnet.idlelogoff.setup.msi"
-#$output = "$LocalTempDir\$InstallFile"
-
-#(new-object System.Net.WebClient).DownloadFile($url, $output)
-#Start-Process $output -ArgumentList "/qn" -Wait
-
-# Configure idle-logoff timeout
-#New-Item -Path "HKLM:\SOFTWARE\Lithnet"
-#New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff"
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Action" -Value 2 -Type "Dword"
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Enabled" -Value 1 -Type "Dword"
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IdleLimit" -Value 10 -Type "Dword"
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IgnoreDisplayRequested" -Value 1 -Type "Dword"
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningEnabled" -Value 1 -Type "Dword"
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningMessage" -Value "Your session has been idle for too long, and you will be logged out in {0} seconds" -Type "String"
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningPeriod" -Value 60 -Type "Dword"
-#Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Lithnet.idlelogoff -Value '"C:\Program Files (x86)\Lithnet\IdleLogoff\Lithnet.IdleLogoff.exe" /start'
 
 
 #######################################################################
 # Start setting up Hyper-V
 #######################################################################
-New-Item -ItemType Directory -Path c:\VMs -Force
-
-# Create virtual switch
-# Set switch as Private -- no routing to the internet
-New-VMSwitch -SwitchType Private -Name private
-
-# Add Hyper-V shortcut
-$Shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($(Join-Path "c:\users\public\Desktop" "Hyper-V Manager.lnk"))
-$Shortcut.TargetPath = "$env:SystemRoot\System32\virtmgmt.msc"
-$Shortcut.Save()
-
-
-# Setup Hyper-V default file locations
-Set-VMHost -VirtualHardDiskPath "C:\VMs"
-Set-VMHost -VirtualMachinePath "C:\VMs"
-Set-VMHost -EnableEnhancedSessionMode:$true
+Set-HypervDefaults
 
 
 ##############################################################################

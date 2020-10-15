@@ -241,6 +241,160 @@ function Select-ResourceByProperty {
     return $returnValue
 }
 
+<#
+.SYNOPSIS
+Funtion will download file from specified url.
+.PARAMETER DownloadUrl
+Url where to get file.
+.PARAMETER TargetFilePath
+Path where download file will be saved.
+.PARAMETER SkipIfAlreadyExists
+Skip download if TargetFilePath already exists.
+#>
+function Get-WebFile {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)][string]$DownloadUrl ,
+        [Parameter(Mandatory = $true)][string]$TargetFilePath,
+        [Parameter(Mandatory = $false)][bool]$SkipIfAlreadyExists = $true
+    )
+
+    Write-Verbose ("Downloading installation files from URL: $DownloadUrl to $TargetFilePath")
+    $targetFolder = Split-Path $TargetFilePath
+
+    #See if file already exists and skip download if told to do so
+    if ($SkipIfAlreadyExists -and (Test-Path $TargetFilePath)) {
+        Write-Verbose "File $TargetFilePath already exists.  Skipping download."
+        return $TargetFilePath
+        
+    }
+
+    #Make destination folder, if it doesn't already exist
+    if ((Test-Path -path $targetFolder) -eq $false) {
+        Write-Verbose "Creating folder $targetFolder"
+        New-Item -ItemType Directory -Force -Path $targetFolder | Out-Null
+    }
+
+    #Download the file
+    for ($i = 1; $i -le 5; $i++) {
+        try {
+            [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 ; # Enable TLS 1.2 as Security Protocol
+            $WebClient = New-Object System.Net.WebClient
+            $WebClient.DownloadFile($DownloadUrl, $TargetFilePath)
+            Write-Verbose "File $TargetFilePath download."
+            return $TargetFilePath
+        }
+        catch [Exception] {
+            Write-Verbose "Caught exception during download..."
+            if ($_.Exception.InnerException) {
+                $exceptionMessage = $_.InnerException.Message
+                Write-Verbose "InnerException: $exceptionMessage"
+            }
+            else {
+                $exceptionMessage = $_.Message
+                Write-Verbose "Exception: $exceptionMessage"
+            }
+        }
+    }
+    Write-Error "Download of $DownloadUrl failed $i times. Aborting download."
+}
+
+<#
+.SYNOPSIS
+Invokes process and waits for process to exit.
+.PARAMETER FileName
+Name of executable file to run.  This can be full path to file or file available through the system paths.
+.PARAMETER Arguments
+Arguments to pass to executable file.
+.PARAMETER ValidExitCodes
+List of valid exit code when process ends.  By default 0 and 3010 (restart needed) are accepted.
+#>
+function Invoke-Process {
+    [CmdletBinding()]
+    param (
+        [string] $FileName = $(throw 'The FileName must be provided'),
+        [string] $Arguments = '',
+        [Array] $ValidExitCodes = @()
+    )
+
+    Write-Host "Running command '$FileName $Arguments'"
+
+    # Prepare specifics for starting the process that will install the component.
+    $startInfo = New-Object System.Diagnostics.ProcessStartInfo -Property @{
+        Arguments              = $Arguments
+        CreateNoWindow         = $true
+        ErrorDialog            = $false
+        FileName               = $FileName
+        RedirectStandardError  = $true
+        RedirectStandardInput  = $true
+        RedirectStandardOutput = $true
+        UseShellExecute        = $false
+        Verb                   = 'runas'
+        WindowStyle            = [System.Diagnostics.ProcessWindowStyle]::Hidden
+        WorkingDirectory       = $PSScriptRoot
+    }
+
+    # Initialize a new process.
+    $process = New-Object System.Diagnostics.Process
+    try {
+        # Configure the process so we can capture all its output.
+        $process.EnableRaisingEvents = $true
+        # Hook into the standard output and error stream events
+        $errEvent = Register-ObjectEvent -SourceIdentifier OnErrorDataReceived $process "ErrorDataReceived" `
+            `
+        {
+            param
+            (
+                [System.Object] $sender,
+                [System.Diagnostics.DataReceivedEventArgs] $e
+            )
+            foreach ($s in $e.Data) { if ($s) { Write-Host $err $s -ForegroundColor Red } }
+        }
+        $outEvent = Register-ObjectEvent -SourceIdentifier OnOutputDataReceived $process "OutputDataReceived" `
+            `
+        {
+            param
+            (
+                [System.Object] $sender,
+                [System.Diagnostics.DataReceivedEventArgs] $e
+            )
+            foreach ($s in $e.Data) { if ($s -and $s.Trim('. ').Length -gt 0) { Write-Host $s } }
+        }
+        $process.StartInfo = $startInfo;
+        # Attempt to start the process.
+        if ($process.Start()) {
+            # Read from all redirected streams before waiting to prevent deadlock.
+            $process.BeginErrorReadLine()
+            $process.BeginOutputReadLine()
+            # Wait for the application to exit for no more than 5 minutes.
+            $process.WaitForExit(300000) | Out-Null
+        }
+        # Ensure we extract an exit code, if not from the process itself.
+        $exitCode = $process.ExitCode
+        # Determine if process requires a reboot.
+        if ($exitCode -eq 3010) {
+            Write-Host 'The recent changes indicate a reboot is necessary. Please reboot at your earliest convenience.'
+        }
+        elseif ($ValidExitCodes.Contains($exitCode)) {
+            Write-Host "$FileName exited with expected valid exit code: $exitCode"
+            # Override to ensure the overall script doesn't fail.
+            $LASTEXITCODE = 0
+        }
+        # Determine if process failed to execute.
+        elseif ($exitCode -gt 0) {
+            # Throwing an exception at this point will stop any subsequent
+            # attempts for deployment.
+            throw "$FileName exited with code: $exitCode"
+        }
+    }
+    finally {
+        # Free all resources associated to the process.
+        $process.Close();
+        # Remove any previous event handlers.
+        Unregister-Event OnErrorDataReceived -Force | Out-Null
+        Unregister-Event OnOutputDataReceived -Force | Out-Null
+    }
+}
 function New-Shortcut {}
 
 function Install-7Zip{
@@ -283,4 +437,27 @@ function Set-AutoLogout{
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Lithnet.idlelogoff -Value '"C:\Program Files (x86)\Lithnet\IdleLogoff\Lithnet.IdleLogoff.exe" /start'
 
 
+}
+
+function Set-HypervDefaults{
+    New-Item -ItemType Directory -Path c:\VMs -Force
+
+    # Create virtual switch
+    # Set switch as Private -- no routing to the internet
+    if ((Get-VMSwitch | Where-Object -Property Name -EQ "private").count -eq 0)
+    {
+        write-host "Creating private VMswitch"
+        New-VMSwitch -SwitchType Private -Name private
+    }
+
+    # Add Hyper-V shortcut
+    $Shortcut = (New-Object -ComObject WScript.Shell).CreateShortcut($(Join-Path "c:\users\public\Desktop" "Hyper-V Manager.lnk"))
+    $Shortcut.TargetPath = "$env:SystemRoot\System32\virtmgmt.msc"
+    $Shortcut.Save()
+
+
+    # Setup Hyper-V default file locations
+    Set-VMHost -VirtualHardDiskPath "C:\VMs"
+    Set-VMHost -VirtualMachinePath "C:\VMs"
+    Set-VMHost -EnableEnhancedSessionMode:$true
 }
