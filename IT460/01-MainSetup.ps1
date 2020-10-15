@@ -49,15 +49,8 @@ $output = $(Join-Path $env:TEMP 'mvmc_setup.msi')
 Start-Process $output -ArgumentList "/qn" -Wait
 
 #Install starwind converter
-Write-Host "Installing Starwind V2V Converter, if needed"
 $swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Converter\V2V_ConverterConsole.exe'
-if (-not (Test-Path $swcExePath)){
-	#Main download page is at https://www.starwindsoftware.com/download-starwind-products#download, choose 'Starwind V2V Converter'.
-	$url = "https://www.starwindsoftware.com/tmplink/starwindconverter.exe"
-	$output = $(Join-Path $env:TEMP 'starwindconverter.exe')
-	(new-object System.Net.WebClient).DownloadFile($url, $output)
-	Start-Process $output -ArgumentList "/verysilent" -Wait
-}
+Install-Starwind
 
 # Configure logout after 10 minutes
 Set-Autologout
