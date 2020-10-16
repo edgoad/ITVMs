@@ -21,9 +21,7 @@ Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 # Setup first interface
 Get-NetAdapter | Rename-NetAdapter -NewName Public
 
-
 # Install Hyper-V
-#Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
 Install-HypervAndTools
 
 # Create virtual swith
@@ -35,12 +33,6 @@ New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLeng
 
 # Configure routing / NAT
 New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
-
-
-#######################################################################
-# automatic reboot here
-#######################################################################
-
 
 #######################################################################
 # Install some common tools
@@ -54,12 +46,10 @@ Install-Starwind
 # Configure logout after 10 minutes
 Set-Autologout
 
-
 #######################################################################
 # Start setting up Hyper-V
 #######################################################################
 Set-HypervDefaults
-
 
 ##############################################################################
 # Download ISO files for installation
@@ -91,12 +81,11 @@ $url = "http://releases.ubuntu.com/trusty/ubuntu-14.04.6-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
-# Download Metasploitable
+# Download Metasploitable 2
 Write-Host "Downloading Metasploitable (this may take some time)"
 $url = "http://downloads.metasploit.com/data/metasploitable/metasploitable-linux-2.0.0.zip"
 $output = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
-
 
 #Download Windows 10 ISO
 Write-Host "Downloading Windows 10 (this may take some time)"
@@ -104,28 +93,17 @@ $url = "https://software-download.microsoft.com/download/pr/18363.418.191007-014
 $output = "c:\VMs\Windows10.iso"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
-
 ##############################################################################
 # Setup VMs
 ##############################################################################
 #Create New VMs
 new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
-new-VM -Name "Metasploitable 3" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu1404.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
-#new-VM -Name "DVWA" -MemoryStartupBytes 512MB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DVWA.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
-#new-VM -Name "Windows 2008 R2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win2008R2.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
-#new-VM -Name "Ubuntu 14.04" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu1404.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
-#new-VM -Name "Win10VM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win10VM.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
 
 #Create Second NIC
 Add-VMNetworkAdapter -VMName "Kali Linux" -SwitchName Internal
 
 #Mount ISO
 Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
-Set-VMDvdDrive -VMName "Metasploitable 3" -Path "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
-#Set-VMDvdDrive -VMName "DVWA" -Path "c:\VMs\DVWA-1.0.7.iso"
-#Set-VMDvdDrive -VMName "Windows 2008 R2" -Path "c:\VMs\windowsserver2008r2x64.iso"
-#Set-VMDvdDrive -VMName "Ubuntu 14.04" -Path "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
-#Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\Windows10.iso
 
 # Extract, convert, and import Metasploitable
 	# Extract
@@ -185,6 +163,6 @@ Write-Host "####################################################################
 
 #########################
 # configuration notes
-# metasploitable static IP instructions: https://www.howtoforge.com/community/threads/setting-static-ip-on-ubuntu-8-04-server.25277/
-# DVWA requires internet access to setup, then back to Private
-# Kali needs both Private and Internal networks
+# metasploitable2 static IP instructions: https://www.howtoforge.com/community/threads/setting-static-ip-on-ubuntu-8-04-server.25277/
+# Kali needs both Private and Internal networks, you may need to add the connection
+# Metasploitable3 instructions at https://github.com/rapid7/metasploitable3/#to-build-automatically
