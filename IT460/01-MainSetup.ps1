@@ -160,10 +160,9 @@ Set-DesktopDefaults
 Clear-TempFiles
 
 # Download logon information
-#Download Windows 10 ISO
-Write-Host "Downloading Windows 10 (this may take some time)"
-$url = "https://raw.githubusercontent.com/edgoad/ITVMs/IT460/Logon Information.txt"
-$output = "c:\Users\Public\Logon Information.txt"
+Write-Host "Downloading Logon Information"
+$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT460/Logon%20Information.txt"
+$output = "c:\Users\Public\Desktop\Logon Information.txt"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
 
