@@ -5,6 +5,9 @@
 #
 #######################################################################
 
+# Change directory to %TEMP% for working
+cd $env:TEMP
+
 # Dowload and import CommonFunctions module
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
 $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
