@@ -450,9 +450,9 @@ function Set-HypervDefaults{
 
     # Create virtual switch
     # Set switch as Private -- no routing to the internet
-    if ((Get-VMSwitch | Where-Object -Property Name -EQ "private").count -eq 0)
+    if ((Get-VMSwitch | Where-Object -Property Name -EQ "Private").count -eq 0)
     {
-        write-host "Creating private VMswitch"
+        write-host "Creating Private VMswitch"
         New-VMSwitch -SwitchType Private -Name private
     }
 

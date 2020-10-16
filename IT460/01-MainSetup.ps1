@@ -106,11 +106,14 @@ $output = "c:\VMs\Windows10.iso"
 # Setup VMs
 ##############################################################################
 #Create New VMs
-new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
-new-VM -Name "DVWA" -MemoryStartupBytes 512MB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DVWA.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
-new-VM -Name "Windows 2008 R2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win2008R2.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
-new-VM -Name "Ubuntu 14.04" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu1404.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
-new-VM -Name "Win10VM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win10VM.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
+new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
+new-VM -Name "DVWA" -MemoryStartupBytes 512MB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DVWA.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
+new-VM -Name "Windows 2008 R2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win2008R2.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
+new-VM -Name "Ubuntu 14.04" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu1404.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
+new-VM -Name "Win10VM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win10VM.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
+
+#Create Second NIC
+Add-VMNetworkAdapter -VMName "Kali Linux" -SwitchName Public
 
 #Mount ISO
 Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
@@ -135,7 +138,7 @@ Write-Host "Importing Metasploitable VM"
 $vmdkFile = Get-ChildItem "$env:TEMP\*.vmdk" -Recurse | Select-Object -expand FullName
 new-vm -Name "Metasploitable" -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
 	# configure NIC
-get-vm -Name "Metasploitable" | Add-VMNetworkAdapter -SwitchName "private" -IsLegacy $true
+get-vm -Name "Metasploitable" | Add-VMNetworkAdapter -SwitchName "Private" -IsLegacy $true
 
 
 ##############################################################################
