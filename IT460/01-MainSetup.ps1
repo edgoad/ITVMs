@@ -134,7 +134,7 @@ $swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Conver
 Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
 	# Convert Metasploitable
 Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
-start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin"
+start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
 
 	# Import Metasploitable
 Write-Host "Importing Metasploitable VM"
