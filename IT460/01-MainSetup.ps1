@@ -66,10 +66,10 @@ Set-HypervDefaults
 ##############################################################################
 # Download Kali ISO
 # Review URL for latest version
-#Write-Host "Downloading Kali (this may take some time)"
-#$url = "https://cdimage.kali.org/kali-2020.2/kali-linux-2020.2-installer-amd64.iso"
-#$output = "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
-#(new-object System.Net.WebClient).DownloadFile($url, $output)
+Write-Host "Downloading Kali (this may take some time)"
+$url = "https://cdimage.kali.org/kali-2020.2/kali-linux-2020.2-installer-amd64.iso"
+$output = "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 # Download Windows Server 2008 R2
 #Write-Host "Downloading Windows Server 2008 R2 (this may take some time)"
@@ -103,13 +103,13 @@ $output = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 # Setup VMs
 ##############################################################################
 #Create New VMs
-#new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\KaliLinux.vhdx -NewVHDSizeBytes 60GB -SwitchName private
+new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\KaliLinux.vhdx -NewVHDSizeBytes 60GB -SwitchName private
 #new-VM -Name "Windows 2008 R2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Win2008R2.vhdx -NewVHDSizeBytes 60GB -SwitchName private
 #new-VM -Name "Ubuntu 14.04" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Ubuntu1404.vhdx -NewVHDSizeBytes 60GB -SwitchName private
 #new-VM -Name "Win10VM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Win10VM.vhdx -NewVHDSizeBytes 60GB -SwitchName private
 
 #Mount ISO
-#Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
+Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
 #Set-VMDvdDrive -VMName "Windows 2008 R2" -Path "c:\VMs\windowsserver2008r2x64.iso"
 #Set-VMDvdDrive -VMName "Ubuntu 14.04" -Path "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
 #Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\Windows10.iso
