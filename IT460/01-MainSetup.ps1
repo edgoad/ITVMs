@@ -164,6 +164,8 @@ Clear-TempFiles
 # Final Messages
 ##############################################################################
 Write-Host "\n\n##############################################################################"
-Write-Host "Initial setup complete, Install and configure OSs now"
-Write-Host "Then snapshot all VMs"
+Write-Host "# Initial setup complete, Install and configure OSs now"
+Write-Host "# Then snapshot all VMs by running the following"
+Write-Host" #     Get-VM | Stop-VM"
+Write-Host "#     Get-VM | Checkpoint-VM -SnapshotName 'Initial snapshot'"
 Write-Host "##############################################################################"
