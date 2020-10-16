@@ -1,5 +1,10 @@
 Machine Name	Internal IP	Private IP	Username	Password
 Kali		192.168.0.10	192.168.38.10	justincase	Password01
-Metasploitable	 - 		192.168.38.30	msfadmin	msfadmin
+Metasploitable2	 - 		192.168.38.20	msfadmin	msfadmin
  -	DVWA Web Page				admin		Password
-Windows 10	 - 		192.168.38.40	justincase	Password01
+Metasploitable3	 - 		192.168.38.30	msfadmin	msfadmin
+ -	DVWA Web Page				admin		Password
+
+
+
+NOTE: Additional ISOs available at c:\VMs
