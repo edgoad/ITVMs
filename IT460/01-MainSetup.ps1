@@ -127,6 +127,7 @@ start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_
 
 	# Import Metasploitable
 Write-Host "Importing Metasploitable VM"
+$vmdkFile = Get-ChildItem "$env:TEMP\*.vmdk" -Recurse | Select-Object -expand FullName
 new-vm -Name "Metasploitable" -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
 	# configure NIC
 get-vm -Name "Metasploitable" | Add-VMNetworkAdapter -SwitchName "private" -IsLegacy $true
