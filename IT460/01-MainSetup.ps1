@@ -178,3 +178,9 @@ Write-Host "# Then snapshot all VMs by running the following"
 Write-Host" #     Get-VM | Stop-VM"
 Write-Host "#     Get-VM | Checkpoint-VM -SnapshotName 'Initial snapshot'"
 Write-Host "##############################################################################"
+
+
+
+#########################
+# configuration notes
+# metasploitable static IP instructions: https://www.howtoforge.com/community/threads/setting-static-ip-on-ubuntu-8-04-server.25277/
