@@ -1,0 +1,6 @@
+Machine Name	Internal IP	Private IP	Username	Password
+Kali		192.168.0.10	192.168.38.10	justincase	Password01
+DVWA		 - 		192.168.38.20	justincase	Password01
+DVWA Web Page	 - 				admin		dvwa
+Metasploitable	 - 		192.168.38.30	justincase	Password01
+Windows 10	 - 		192.168.38.40	justincase	Password01
