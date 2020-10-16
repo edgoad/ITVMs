@@ -60,24 +60,6 @@ Set-Autologout
 #######################################################################
 Set-HypervDefaults
 
-# Setup DHCP
-# Ip addresses and range information.
-#$ipAddress = "192.168.0.1"
-#$ipAddressPrefixRange = "24"
-#$ipAddressPrefix = "192.168.0.0/$ipAddressPrefixRange"
-#$startRangeForClientIps = "192.168.0.100"
-#$endRangeForClientIps = "192.168.0.200"
-#$subnetMaskForClientIps = "255.255.255.0"
-	
-#Install-DHCP
-#$scopeName = "PrivateDHCPScope"
-#$dhcpScope = Select-ResourceByProperty `
-#	-PropertyName 'Name' -ExpectedPropertyValue $scopeName `
-#	-List @(Get-DhcpServerV4Scope) `
-#	-NewObjectScriptBlock { Add-DhcpServerv4Scope -name $scopeName -StartRange $startRangeForClientIps -EndRange $endRangeForClientIps -SubnetMask $subnetMaskForClientIps -State Active
-#							Set-DhcpServerV4OptionValue -DnsServer $dnsServerIp -Router $ipAddress
-#						}
-#Write-Output "Using $dhcpScope"
 
 ##############################################################################
 # Download ISO files for installation
