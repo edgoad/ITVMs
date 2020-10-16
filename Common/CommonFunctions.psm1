@@ -453,7 +453,7 @@ function Set-HypervDefaults{
     if ((Get-VMSwitch | Where-Object -Property Name -EQ "Private").count -eq 0)
     {
         write-host "Creating Private VMswitch"
-        New-VMSwitch -SwitchType Private -Name private
+        New-VMSwitch -SwitchType Private -Name Private
     }
 
     # Add Hyper-V shortcut
