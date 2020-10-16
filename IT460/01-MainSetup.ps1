@@ -114,6 +114,8 @@ $swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Conver
 Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
 	# Convert Metasploitable
 Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
+# run twice, because the first time doesnt seem to work
+start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
 start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
 
 	# Import Metasploitable
@@ -140,7 +142,7 @@ Get-VM | Set-VM -AutomaticStopAction Shutdown
 Set-DesktopDefaults
 
 # Clean up temp files
-Clear-TempFiles
+# Clear-TempFiles
 
 # Download logon information
 Write-Host "Downloading Logon Information"
