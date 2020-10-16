@@ -113,7 +113,7 @@ new-VM -Name "Ubuntu 14.04" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath 
 new-VM -Name "Win10VM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win10VM.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
 
 #Create Second NIC
-Add-VMNetworkAdapter -VMName "Kali Linux" -SwitchName Public
+Add-VMNetworkAdapter -VMName "Kali Linux" -SwitchName Internal
 
 #Mount ISO
 Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
