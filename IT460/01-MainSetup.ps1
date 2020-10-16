@@ -18,11 +18,20 @@ Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 # Setup first interface
 Get-NetAdapter | Rename-NetAdapter -NewName Public
 
+
 # Install Hyper-V
 #Install-WindowsFeature Hyper-V -IncludeManagementTools -Restart
 Install-HypervAndTools
 
+# Create virtual swith
+New-VMSwitch -SwitchType Internal -Name Internal
 
+# Setup second interface
+Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
+New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
+
+# Configure routing / NAT
+New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
 
 
 #######################################################################
@@ -35,18 +44,6 @@ Install-HypervAndTools
 #######################################################################
 # Install 7-Zip
 Install-7Zip
-#$url = "https://www.7-zip.org/a/7z1900-x64.msi"
-#$output = $(Join-Path $env:TEMP '/7zip.msi')
-#(new-object System.Net.WebClient).DownloadFile($url, $output)
-##Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
-#Start-Process $output -ArgumentList "/qn" -Wait
-
-# Install Microsoft Virtual Machine Converter
-$url = "https://download.microsoft.com/download/9/1/E/91E9F42C-3F1F-4AD9-92B7-8DD65DA3B0C2/mvmc_setup.msi"
-$output = $(Join-Path $env:TEMP 'mvmc_setup.msi')
-(new-object System.Net.WebClient).DownloadFile($url, $output)
-#Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
-Start-Process $output -ArgumentList "/qn" -Wait
 
 #Install starwind converter
 Install-Starwind
