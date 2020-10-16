@@ -157,4 +157,13 @@ Get-VM | Set-VM -AutomaticStopAction Shutdown
 Set-DesktopDefaults
 
 # Clean up temp files
-#Clear-TempFiles
+Clear-TempFiles
+
+
+##############################################################################
+# Final Messages
+##############################################################################
+Write-Host "\n\n##############################################################################"
+Write-Host "Initial setup complete, Install and configure OSs now"
+Write-Host "Then snapshot all VMs"
+Write-Host "##############################################################################"
