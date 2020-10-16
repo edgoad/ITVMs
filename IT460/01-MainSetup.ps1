@@ -78,18 +78,18 @@ $output = "c:\VMs\DVWA-1.0.7.iso"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
 # Download Windows Server 2008 R2
-#Write-Host "Downloading Windows Server 2008 R2 (this may take some time)"
+Write-Host "Downloading Windows Server 2008 R2 (this may take some time)"
 # https://archive.org/download/windowsserver2008r2x64/Windows%20Server%202008%20R2%20x64.iso
 # https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso
-#$url = "https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso"
-#$output = "c:\VMs\windowsserver2008r2x64.iso"
-#(new-object System.Net.WebClient).DownloadFile($url, $output)
+$url = "https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso"
+$output = "c:\VMs\windowsserver2008r2x64.iso"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 # Download Ubuntu 14.04
-#Write-Host "Downloading Ubuntu 14.04 (this may take some time)"
-#$url = "http://releases.ubuntu.com/trusty/ubuntu-14.04.6-desktop-amd64.iso"
-#$output = "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
-#(new-object System.Net.WebClient).DownloadFile($url, $output)
+Write-Host "Downloading Ubuntu 14.04 (this may take some time)"
+$url = "http://releases.ubuntu.com/trusty/ubuntu-14.04.6-desktop-amd64.iso"
+$output = "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 # Download Metasploitable
 Write-Host "Downloading Metasploitable (this may take some time)"
@@ -99,10 +99,10 @@ $output = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 
 
 #Download Windows 10 ISO
-#Write-Host "Downloading Windows 10 (this may take some time)"
-#$url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
-#$output = "c:\VMs\Windows10.iso"
-#(new-object System.Net.WebClient).DownloadFile($url, $output)
+Write-Host "Downloading Windows 10 (this may take some time)"
+$url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
+$output = "c:\VMs\Windows10.iso"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 
 ##############################################################################
@@ -111,16 +111,16 @@ $output = "$env:TEMP\metasploitable-linux-2.0.0.zip"
 #Create New VMs
 new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
 new-VM -Name "DVWA" -MemoryStartupBytes 512MB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DVWA.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
-#new-VM -Name "Windows 2008 R2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win2008R2.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
-#new-VM -Name "Ubuntu 14.04" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu1404.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
-#new-VM -Name "Win10VM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win10VM.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
+new-VM -Name "Windows 2008 R2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win2008R2.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
+new-VM -Name "Ubuntu 14.04" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu1404.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
+new-VM -Name "Win10VM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Win10VM.vhdx" -NewVHDSizeBytes 60GB -SwitchName private
 
 #Mount ISO
 Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
 Set-VMDvdDrive -VMName "DVWA" -Path "c:\VMs\DVWA-1.0.7.iso"
-#Set-VMDvdDrive -VMName "Windows 2008 R2" -Path "c:\VMs\windowsserver2008r2x64.iso"
-#Set-VMDvdDrive -VMName "Ubuntu 14.04" -Path "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
-#Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\Windows10.iso
+Set-VMDvdDrive -VMName "Windows 2008 R2" -Path "c:\VMs\windowsserver2008r2x64.iso"
+Set-VMDvdDrive -VMName "Ubuntu 14.04" -Path "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
+Set-VMDvdDrive -VMName Win10VM -Path c:\VMs\Windows10.iso
 
 # Extract, convert, and import Metasploitable
 	# Extract
