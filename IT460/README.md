@@ -12,29 +12,31 @@ If multiple reboots needed, restart the script after reboot
 
 ## Post-Setup tasks
 **Desktop**
-timezone
-background
+1. timezone
+2. background
+
 **KALI VM**
-Full Install
-Configure Network
-  Internal Network
-    IP: 192.168.0.10/24
-    GW: 192.168.0.250
-    DNS: 8.8.8.8
-  Private Network
-    IP: 192.168.38.10/24
-    GW: 192.168.38.1
-Screen Resolution issues
-  Inside the Kali VM, run the following:
-    ```
-    git clone https://github.com/mimura1133/linux-vm-tools
-    chmod 0755 linux-vm-tools/kali/2020.x/install.sh
-    sudo linux-vm-tools/kali/2020.x/install.sh
-    ```
-  Shutdown Kali, then in PowerShell
-    > Set-VM "Kali Linux" -EnhancedSessionTransportType HvSocket
+1. Full Install
+2. Configure Network
+   - Internal Network
+     - IP: 192.168.0.10/24
+     - GW: 192.168.0.250
+     - DNS: 8.8.8.8
+   - Private Network
+     - IP: 192.168.38.10/24
+     - GW: 192.168.38.1
+3. Screen Resolution issues
+   - Inside the Kali VM, run the following:
+```
+git clone https://github.com/mimura1133/linux-vm-tools
+chmod 0755 linux-vm-tools/kali/2020.x/install.sh
+sudo linux-vm-tools/kali/2020.x/install.sh
+```
+   - Shutdown Kali, then in PowerShell
+`Set-VM "Kali Linux" -EnhancedSessionTransportType HvSocket`
+
 **Metasploitable VM**
-Configure Network
-  Private Network
-    IP: 192.168.38.30/24
-    GW: 192.168.38.1
+1. Configure Network
+   - Private Network
+     - IP: 192.168.38.30/24
+     - GW: 192.168.38.1
