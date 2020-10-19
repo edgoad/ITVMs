@@ -41,3 +41,11 @@ sudo linux-vm-tools/kali/2020.x/install.sh
    - Private Network
      - IP: 192.168.38.30/24
      - GW: 192.168.38.1
+   - metasploitable2 static IP instructions: https://www.howtoforge.com/community/threads/setting-static-ip-on-ubuntu-8-04-server.25277/
+
+**All VMs**
+When finished customizing
+```
+Get-VM | Stop-VM
+Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot"
+```
