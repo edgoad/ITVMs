@@ -18,6 +18,10 @@ Remove-Item $output
 # Disable Server Manager at startup
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 
+# Set timezone
+Set-TimeZone -Name "Pacific Standard Time" -Confirm:$false
+
+
 # Setup first interface
 Get-NetAdapter | Rename-NetAdapter -NewName Public
 
@@ -148,6 +152,12 @@ Set-DesktopDefaults
 Write-Host "Downloading Logon Information"
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT460/Logon%20Information.txt"
 $output = "c:\Users\Public\Desktop\Logon Information.txt"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+
+# Download Network Diagram
+Write-Host "Downloading Network Diagram"
+$url = "https://github.com/edgoad/ITVMs/raw/master/IT460/IT460.png"
+$output = "c:\Users\Public\Desktop\Network Diagram.png"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
 
