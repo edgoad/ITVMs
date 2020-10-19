@@ -17,6 +17,7 @@ If multiple reboots needed, restart the script after reboot
 
 **KALI VM**
 1. Full Install
+   - Username/Password: justincase:Password01
 2. Configure Network
    - Internal Network
      - IP: 192.168.0.10/24
@@ -33,7 +34,7 @@ chmod 0755 linux-vm-tools/kali/2020.x/install.sh
 sudo linux-vm-tools/kali/2020.x/install.sh
 ```
    - Shutdown Kali, then in PowerShell
-`Set-VM "Kali Linux" -EnhancedSessionTransportType HvSocket`
+```Set-VM "Kali Linux" -EnhancedSessionTransportType HvSocket```
 
 **Metasploitable VM**
 1. Configure Network
