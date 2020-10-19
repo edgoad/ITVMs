@@ -26,9 +26,11 @@ Configure Network
     GW: 192.168.38.1
 Screen Resolution issues
   Inside the Kali VM, run the following:
-    > git clone https://github.com/mimura1133/linux-vm-tools
-    > chmod 0755 linux-vm-tools/kali/2020.x/install.sh
-    > sudo linux-vm-tools/kali/2020.x/install.sh
+    ```
+    git clone https://github.com/mimura1133/linux-vm-tools
+    chmod 0755 linux-vm-tools/kali/2020.x/install.sh
+    sudo linux-vm-tools/kali/2020.x/install.sh
+    ```
   Shutdown Kali, then in PowerShell
     > Set-VM "Kali Linux" -EnhancedSessionTransportType HvSocket
 **Metasploitable VM**
