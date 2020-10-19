@@ -12,8 +12,4 @@ If multiple reboots needed, restart the script after reboot
 
 ## Post-Setup tasks
 **All VMs**
-When finished customizing
-```
-Get-VM | Stop-VM
-Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot"
-```
+None
