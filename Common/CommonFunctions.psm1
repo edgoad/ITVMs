@@ -466,6 +466,8 @@ function Set-HypervDefaults{
     Set-VMHost -VirtualHardDiskPath "C:\VMs"
     Set-VMHost -VirtualMachinePath "C:\VMs"
     Set-VMHost -EnableEnhancedSessionMode:$true
+
+    Add-DefenderExclusions
 }
 
 function Install-Starwind{
@@ -515,4 +517,8 @@ function Clear-TempFiles{
 
     Set-Location "C:\Users"
     Remove-Item ".\*\Appdata\Local\Temp\*" -recurse -force
+}
+
+function Add-DefenderExclusions{
+    Add-MpPreference -ExclusionExtension "iso","vhdx","vmdk"
 }
