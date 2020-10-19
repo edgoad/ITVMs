@@ -87,9 +87,18 @@ $output = "c:\VMs\Fedora-Workstation-Live-x86_64-32-1.6.iso"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
 #Create New VMs
-new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
+new-VM -Name "Windows 10" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows10.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name "Windows 7" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows7.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name "Windows 8.1" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows81.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name "Ubuntu" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name "Fedora" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Fedora.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+
 #Mount ISO
-Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
+Set-VMDvdDrive -VMName "Windows 10" -Path "c:\VMs\Windows10.iso"
+Set-VMDvdDrive -VMName "Windows 7" -Path "c:\VMs\Windows7.iso"
+Set-VMDvdDrive -VMName "Windows 8.1" -Path "c:\VMs\Windows81.iso"
+Set-VMDvdDrive -VMName "Ubuntu" -Path "c:\VMs\Ubuntu.iso"
+Set-VMDvdDrive -VMName "Fedora" -Path "c:\VMs\Fedora.iso"
 
 
 
@@ -112,10 +121,10 @@ Set-DesktopDefaults
 # Clear-TempFiles
 
 # Download logon information
-Write-Host "Downloading Logon Information"
-$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT460/Logon%20Information.txt"
-$output = "c:\Users\Public\Desktop\Logon Information.txt"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+#Write-Host "Downloading Logon Information"
+#$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT460/Logon%20Information.txt"
+#$output = "c:\Users\Public\Desktop\Logon Information.txt"
+#(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 
 ##############################################################################
