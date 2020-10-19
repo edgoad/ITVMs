@@ -3,7 +3,7 @@ This image allows students to install their VMs individually. Multiple OSs are p
 
 ## To run open Powershell on VM and run:
 ```
-Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT460/01-MainSetup.ps1" -OutFile $env:TEMP\01-MainSetup.ps1
+Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT114/01-MainSetup.ps1" -OutFile $env:TEMP\01-MainSetup.ps1
 ."$env:Temp\01-MainSetup.ps1"
 ```
 
