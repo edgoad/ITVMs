@@ -48,9 +48,6 @@ Set-Autologout
 #######################################################################
 Set-HypervDefaults
 
-
-
-
 ##############################################################################
 # Download ISO files for installation
 ##############################################################################
@@ -67,10 +64,10 @@ $output = "c:\VMs\Windows7.iso"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
 #Download Windows 8 ISO
-Write-Host "Downloading Windows 8.1 (this may take some time)"
-$url = "https://software-download.microsoft.com/pr/Win8.1_English_x64.iso"
-$output = "c:\VMs\Windows81.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+#Write-Host "Downloading Windows 8.1 (this may take some time)"
+#$url = "https://software-download.microsoft.com/pr/Win8.1_English_x64.iso"
+#$output = "c:\VMs\Windows81.iso"
+#(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 
 #Download Ubuntu ISO
@@ -89,14 +86,14 @@ $output = "c:\VMs\Fedora-Workstation-Live-x86_64-32-1.6.iso"
 #Create New VMs
 new-VM -Name "Windows 10" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows10.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name "Windows 7" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows7.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
-new-VM -Name "Windows 8.1" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows81.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+#new-VM -Name "Windows 8.1" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows81.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name "Ubuntu" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name "Fedora" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Fedora.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
 
 #Mount ISO
 Set-VMDvdDrive -VMName "Windows 10" -Path "c:\VMs\Windows10.iso"
 Set-VMDvdDrive -VMName "Windows 7" -Path "c:\VMs\Windows7.iso"
-Set-VMDvdDrive -VMName "Windows 8.1" -Path "c:\VMs\Windows81.iso"
+#Set-VMDvdDrive -VMName "Windows 8.1" -Path "c:\VMs\Windows81.iso"
 Set-VMDvdDrive -VMName "Ubuntu" -Path "c:\VMs\Ubuntu.iso"
 Set-VMDvdDrive -VMName "Fedora" -Path "c:\VMs\Fedora.iso"
 
@@ -130,16 +127,4 @@ Write-Host "Downloading Network Diagram"
 $url = "https://github.com/edgoad/ITVMs/raw/master/IT114/IT114.png"
 $output = "c:\Users\Public\Desktop\Network Diagram.png"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
-
-
-##############################################################################
-# Final Messages
-##############################################################################
-Write-Host "\n\n##############################################################################"
-Write-Host "# Initial setup complete, Install and configure OSs now"
-Write-Host "# Then snapshot all VMs by running the following"
-Write-Host" #     Get-VM | Stop-VM"
-Write-Host "#     Get-VM | Checkpoint-VM -SnapshotName 'Initial snapshot'"
-Write-Host "##############################################################################"
-
 
