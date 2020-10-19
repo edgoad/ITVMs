@@ -125,6 +125,11 @@ Set-DesktopDefaults
 #$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT460/Logon%20Information.txt"
 #$output = "c:\Users\Public\Desktop\Logon Information.txt"
 #(new-object System.Net.WebClient).DownloadFile($url, $output)
+# Download Network Diagram
+Write-Host "Downloading Network Diagram"
+$url = "https://github.com/edgoad/ITVMs/raw/master/IT114/IT114.png"
+$output = "c:\Users\Public\Desktop\Network Diagram.png"
+(new-object System.Net.WebClient).DownloadFile($url, $output)
 
 
 ##############################################################################
