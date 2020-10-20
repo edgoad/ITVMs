@@ -94,8 +94,8 @@ new-VM -Name "Fedora" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VM
 Set-VMDvdDrive -VMName "Windows 10" -Path "c:\VMs\Windows10.iso"
 Set-VMDvdDrive -VMName "Windows 7" -Path "c:\VMs\Windows7.iso"
 #Set-VMDvdDrive -VMName "Windows 8.1" -Path "c:\VMs\Windows81.iso"
-Set-VMDvdDrive -VMName "Ubuntu" -Path "c:\VMs\Ubuntu.iso"
-Set-VMDvdDrive -VMName "Fedora" -Path "c:\VMs\Fedora.iso"
+Set-VMDvdDrive -VMName "Ubuntu" -Path "c:\VMs\ubuntu-20.04.1-desktop-amd64.iso"
+Set-VMDvdDrive -VMName "Fedora" -Path "c:\VMs\Fedora-Workstation-Live-x86_64-32-1.6.iso"
 
 
 
