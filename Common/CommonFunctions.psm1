@@ -173,6 +173,7 @@ function Install-DHCP {
         $roleInstallStatus = Install-WindowsFeature -Name DHCP -IncludeManagementTools
         if ($roleInstallStatus.RestartNeeded -eq 'Yes') {
             Write-Error "Restart required to finish installing the DHCP role .  Please restart and re-run this script."
+            Exit
         }  
     } 
 
@@ -180,6 +181,30 @@ function Install-DHCP {
     Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ServerManager\Roles\12 -Name ConfigurationState -Value 2
 }
 
+function Setup-InternalDHCPScope{
+    Write-Output "Installing DHCP, if needed."
+    Install-DHCP 
+
+    $ipAddress = "192.168.0.250"
+    $ipAddressPrefixRange = "24"
+    $ipAddressPrefix = "192.168.0.0/$ipAddressPrefixRange"
+    $startRangeForClientIps = "192.168.0.100"
+    $endRangeForClientIps = "192.168.0.200"
+    $subnetMaskForClientIps = "255.255.255.0"
+    # Azure Static DNS Server IP
+    $dnsServerIp = "8.8.8.8"
+
+    # Add scope for client vm ip address
+    $scopeName = "InternalDhcpScope"
+
+    $dhcpScope = Select-ResourceByProperty `
+        -PropertyName 'Name' -ExpectedPropertyValue $scopeName `
+        -List @(Get-DhcpServerV4Scope) `
+        -NewObjectScriptBlock { Add-DhcpServerv4Scope -name $scopeName -StartRange $startRangeForClientIps -EndRange $endRangeForClientIps -SubnetMask $subnetMaskForClientIps -State Active
+                                Set-DhcpServerV4OptionValue -DnsServer $dnsServerIp -Router $ipAddress
+                            }
+    Write-Output "Using $dhcpScope"
+}
 <#
 .SYNOPSIS
 Funtion will find object in given list with specified property of the specified expected value.  If object cannot be found, a new one is created by executing scropt in the NewObjectScriptBlock parameter.
