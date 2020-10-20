@@ -117,7 +117,7 @@ function Install-HypervAndToolsServer {
         Write-Output "Installing Hyper-V, if needed."
         $roleInstallStatus = Install-WindowsFeature -Name Hyper-V -IncludeManagementTools
         if ($roleInstallStatus.RestartNeeded -eq 'Yes') {
-            Write-Error "Restart required to finish installing the Hyper-V role .  Please restart and re-run this script."
+            Write-Error "\n\nRestart required to finish installing the Hyper-V role .  Please restart and re-run this script.\n\n"
             Exit
         }  
     } 
@@ -125,7 +125,7 @@ function Install-HypervAndToolsServer {
     # Install PowerShell cmdlets
     $featureStatus = Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell
     if ($featureStatus.RestartNeeded -eq $true) {
-        Write-Error "Restart required to finish installing the Hyper-V PowerShell Module.  Please restart and re-run this script."
+        Write-Error "\n\nRestart required to finish installing the Hyper-V PowerShell Module.  Please restart and re-run this script.\n\n"
     }
 }
 
@@ -172,7 +172,7 @@ function Install-DHCP {
     else {
         $roleInstallStatus = Install-WindowsFeature -Name DHCP -IncludeManagementTools
         if ($roleInstallStatus.RestartNeeded -eq 'Yes') {
-            Write-Error "Restart required to finish installing the DHCP role .  Please restart and re-run this script."
+            Write-Error "\n\nRestart required to finish installing the DHCP role .  Please restart and re-run this script.\n\n"
             Exit
         }  
     } 
