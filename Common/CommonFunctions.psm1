@@ -401,12 +401,16 @@ function New-Shortcut {}
 
 function Install-7Zip{
     Write-Host "Installing 7Zip, if needed"
-    # Install 7-Zip
-    $url = "https://www.7-zip.org/a/7z1900-x64.msi"
-    $output = $(Join-Path $env:TEMP '/7zip.msi')
-    (new-object System.Net.WebClient).DownloadFile($url, $output)
-    #Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
-    Start-Process $output -ArgumentList "/qn" -Wait
+    $regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip"
+    if(-not(Test-Path -Path $regPath))
+    {
+        # Install 7-Zip
+        $url = "https://www.7-zip.org/a/7z1900-x64.msi"
+        $output = $(Join-Path $env:TEMP '/7zip.msi')
+        (new-object System.Net.WebClient).DownloadFile($url, $output)
+        #Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
+        Start-Process $output -ArgumentList "/qn" -Wait
+    }
 }
 
 function Set-AutoLogout{
