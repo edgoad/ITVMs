@@ -488,6 +488,9 @@ function Install-Starwind{
 }
 
 function Set-DesktopDefaults{
+    # Set timezone
+    Set-TimeZone -Name "Pacific Standard Time" -Confirm:$false
+
     # setup bginfo
     #Download bginfo
     New-Item -ItemType Directory -Path c:\bginfo -Force
