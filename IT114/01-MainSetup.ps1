@@ -87,8 +87,8 @@ $output = "c:\VMs\Fedora-Workstation-Live-x86_64-32-1.6.iso"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
 #Create New VMs
-new-VM -Name "Windows 10" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows10.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
-new-VM -Name "Windows 7" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows7.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name "Windows 10" -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows10.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
+new-VM -Name "Windows 7" -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows7.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
 #new-VM -Name "Windows 8.1" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows81.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name "Ubuntu" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
 new-VM -Name "Fedora" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Fedora.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
@@ -106,7 +106,7 @@ Set-VMDvdDrive -VMName "Fedora" -Path "c:\VMs\Fedora-Workstation-Live-x86_64-32-
 # Configure VMs
 ##############################################################################
 # Setup memory
-Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
+#Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
