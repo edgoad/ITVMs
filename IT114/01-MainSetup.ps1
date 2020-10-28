@@ -132,5 +132,5 @@ $output = "c:\Users\Public\Desktop\Network Diagram.png"
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 
 # Snapshotting VMs
-Get-VM | Stop-VM
-Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot"
+Set-InitialCheckpoint
+
