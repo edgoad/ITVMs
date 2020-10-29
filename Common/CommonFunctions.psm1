@@ -438,14 +438,8 @@ function Install-7Zip{
     }
 }
 
-function Set-AutoLogout{
-    # Set RDP idle logout (via local policy)
-    # The MaxIdleTime is in milliseconds; by default, this script sets MaxIdleTime to 1 minutes.
-    $maxIdleTime = 10 * 60 * 1000
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value $maxIdleTime -Force
-    Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
-    #Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
-
+function Install-Lithnet{
+    write-host "Installing LithNet (if needed)"
     # enable TLS 1.2
     [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
@@ -457,7 +451,18 @@ function Set-AutoLogout{
 
     (new-object System.Net.WebClient).DownloadFile($url, $output)
     Start-Process $output -ArgumentList "/qn" -Wait
+}
 
+function Set-AutoLogout{
+    # Set RDP idle logout (via local policy)
+    # The MaxIdleTime is in milliseconds; by default, this script sets MaxIdleTime to 1 minutes.
+    $maxIdleTime = 10 * 60 * 1000
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value $maxIdleTime -Force
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxDisconnectionTime" -Value $maxIdleTime -Type "Dword" -Force
+    #Set-ItemProperty -Path "HKLM:\SOFTWARE\Policies\Microsoft\Windows NT\Terminal Services" -Name "MaxIdleTime" -Value 600000 -Type "Dword"
+
+
+    Install-Lithnet
     # Configure idle-logoff timeout
     New-Item -Path "HKLM:\SOFTWARE\Lithnet"
     New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff"
@@ -469,8 +474,6 @@ function Set-AutoLogout{
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningMessage" -Value "Your session has been idle for too long, and you will be logged out in {0} seconds" -Type "String" -Force
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "WarningPeriod" -Value 60 -Type "Dword" -Force
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name Lithnet.idlelogoff -Value '"C:\Program Files (x86)\Lithnet\IdleLogoff\Lithnet.IdleLogoff.exe" /start' -Force
-
-
 }
 
 function Set-HypervDefaults{
@@ -496,6 +499,7 @@ function Set-HypervDefaults{
     Set-VMHost -VirtualMachinePath "C:\VMs"
     #Set-VMHost -EnableEnhancedSessionMode:$true
 
+    Set-AdminNeverExpire
     Add-DefenderExclusions
 }
 
@@ -582,4 +586,8 @@ function Set-InitialCheckpoint{
     Get-VM | Get-VMCheckpoint | Remove-VMSnapshot -IncludeAllChildSnapshots
 
     Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot"
+}
+
+function Set-AdminNeverExpire{
+    Get-LocalUser | Where-Object Description -ne 'Built-in account for guest access to the computer/domain' | Set-LocalUser -PasswordNeverExpires $true
 }
