@@ -494,7 +494,7 @@ function Set-HypervDefaults{
     # Setup Hyper-V default file locations
     Set-VMHost -VirtualHardDiskPath "C:\VMs"
     Set-VMHost -VirtualMachinePath "C:\VMs"
-    Set-VMHost -EnableEnhancedSessionMode:$true
+    #Set-VMHost -EnableEnhancedSessionMode:$true
 
     Add-DefenderExclusions
 }
@@ -561,12 +561,12 @@ function Add-DefenderExclusions{
     Add-MpPreference -ExclusionPath "C:\VMs"
     # Exclude Hyper-V Processes
     Add-MpPreference -ExclusionProcess "%systemroot%\System32\Vmms.exe","%systemroot%\System32\Vmwp.exe","%systemroot%\System32\Vmsp.exe","%systemroot%\System32\Vmcompute.exe"
+    Start-QuickScan
 }
 
 function Add-RenameAfterReboot{
     $command = 'powershell -Command "& { rename-computer -newname $( $( read-host `"Enter your username:`" ) + \"-\" + $( -join ((65..90) + (97..122) | Get-Random -Count 12 | %{[char]$_})) ).SubString(0,12) }"'
     New-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name "Rename" -Value $Command -PropertyType ExpandString
-    Start-QuickScan
 }
 
 function Start-QuickScan{
