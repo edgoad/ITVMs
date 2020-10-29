@@ -25,9 +25,11 @@ Get-NetAdapter | Rename-NetAdapter -NewName Public
 Install-HypervAndTools
 
 # Create virtual swith
+# TODO: Make sure switch doesnt exist before creating
 New-VMSwitch -SwitchType Internal -Name Internal
 
 # Setup second interface
+# TODO: Make sure adapter isnt already named and IP'd
 Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
 New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
 

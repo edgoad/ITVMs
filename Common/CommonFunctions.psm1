@@ -566,6 +566,13 @@ function Add-DefenderExclusions{
 function Add-RenameAfterReboot{
     $command = 'powershell -Command "& { rename-computer -newname $( $( read-host `"Enter your username:`" ) + \"-\" + $( -join ((65..90) + (97..122) | Get-Random -Count 12 | %{[char]$_})) ).SubString(0,12) }"'
     New-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name "Rename" -Value $Command -PropertyType ExpandString
+    Start-QuickScan
+}
+
+function Start-QuickScan{
+    # Update AV signatures and start a quick scan
+    Update-MpSignature
+    Start-MpScan -ScanType QuickScan -AsJob
 }
 
 function Set-InitialCheckpoint{
