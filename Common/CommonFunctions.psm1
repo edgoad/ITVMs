@@ -433,7 +433,7 @@ function Install-7Zip{
         $url = "https://www.7-zip.org/a/7z1900-x64.msi"
         $output = $(Join-Path $env:TEMP '/7zip.msi')
         #(new-object System.Net.WebClient).DownloadFile($url, $output)
-        Get-WebFile($url, $output)
+        Get-WebFile -DownloadUrl $url -TargetFilePath $output
         #Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
         Start-Process $output -ArgumentList "/qn" -Wait
     }
@@ -451,7 +451,7 @@ function Install-Lithnet{
     $output = "$LocalTempDir\$InstallFile"
 
     #(new-object System.Net.WebClient).DownloadFile($url, $output)
-    Get-WebFile($url, $output)
+    Get-WebFile -DownloadUrl $url -TargetFilePath $output
     Start-Process $output -ArgumentList "/qn" -Wait
 }
 
@@ -514,7 +514,7 @@ function Install-Starwind{
         $url = "https://www.starwindsoftware.com/tmplink/starwindconverter.exe"
         $output = $(Join-Path $env:TEMP 'starwindconverter.exe')
         #(new-object System.Net.WebClient).DownloadFile($url, $output)
-        Get-WebFile($url, $output)
+        Get-WebFile -DownloadUrl $url -TargetFilePath $output
         Start-Process $output -ArgumentList "/verysilent" -Wait
     }
 }
@@ -536,7 +536,7 @@ function Set-DesktopDefaults{
     $url = "https://github.com/edgoad/ITVMs/raw/master/default.bgi"
     $output = "C:\bginfo\default.bgi"
     #(new-object System.Net.WebClient).DownloadFile($url, $output)
-    Get-WebFile($url, $output)
+    Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
     # Set autorun
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
