@@ -19,20 +19,28 @@ Remove-Item $output
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 
 # Setup first interface
-Get-NetAdapter | Rename-NetAdapter -NewName Public
-
+if ($(Get-NetAdapter).count -eq 1){
+    Write-Host "Setting Public adapter name"
+    Get-NetAdapter | Rename-NetAdapter -NewName Public
+}
+else{
+    Write-Host "Cannot set Public interface name. Confirm interfaces manually."
+}
 # Install Hyper-V
 Install-HypervAndTools
 
 # Create virtual swith
-if ($(Get-VMSwitch | Where-Object Name -eq 'Internal').Count -lt 1){
+if ( ! (Get-VMSwitch | Where-Object Name -eq 'Internal')){
+    Write-Host "Creating Internal vswitch"
     New-VMSwitch -SwitchType Internal -Name Internal
-}
+} else { Write-Host "Internal vSwitch already created" }
 
 # Setup second interface
-# TODO: Make sure adapter isnt already named and IP'd
-Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
-New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
+if ( ! (Get-NetAdapter | Where-Object Name -EQ 'Internal')){
+    Write-Host "Configuring Internal adapter"
+    Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
+    New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
+} else { Write-Host "Internal adapter already exists. Confirm interfaces manually" }
 
 # Configure routing / NAT
 New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
