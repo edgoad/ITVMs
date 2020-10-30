@@ -100,11 +100,23 @@ $output = "c:\VMs\Fedora-Workstation-Live-x86_64-32-1.6.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 #Create New VMs
-new-VM -Name "Windows 10" -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows10.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
-new-VM -Name "Windows 7" -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows7.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+if ( ! (Get-VM | Where-Object Name -EQ "Windows 10")){
+    Write-Host "Creating VM: Windows 10"
+    new-VM -Name "Windows 10" -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows10.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
+}
+if ( ! (Get-VM | Where-Object Name -EQ "Windows 7")){
+    Write-Host "Creating VM: Windows 7"
+    new-VM -Name "Windows 7" -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows7.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+}
 #new-VM -Name "Windows 8.1" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows81.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
-new-VM -Name "Ubuntu" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
-new-VM -Name "Fedora" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Fedora.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+if ( ! (Get-VM | Where-Object Name -EQ "Ubuntu")){
+    Write-Host "Creating VM: Ubuntu"
+    new-VM -Name "Ubuntu" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Ubuntu.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+}
+if ( ! (Get-VM | Where-Object Name -EQ "Fedora")){
+    Write-Host "Creating VM: Fedora"
+    new-VM -Name "Fedora" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Fedora.vhdx" -NewVHDSizeBytes 60GB -SwitchName Internal
+}
 
 #Mount ISO
 Set-VMDvdDrive -VMName "Windows 10" -Path "c:\VMs\Windows10.iso"
