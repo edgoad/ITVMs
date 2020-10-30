@@ -432,7 +432,8 @@ function Install-7Zip{
         # Install 7-Zip
         $url = "https://www.7-zip.org/a/7z1900-x64.msi"
         $output = $(Join-Path $env:TEMP '/7zip.msi')
-        (new-object System.Net.WebClient).DownloadFile($url, $output)
+        #(new-object System.Net.WebClient).DownloadFile($url, $output)
+        Get-WebFile($url, $output)
         #Invoke-Process -FileName "msiexec.exe" -Arguments "/i $output /quiet"
         Start-Process $output -ArgumentList "/qn" -Wait
     }
@@ -449,7 +450,8 @@ function Install-Lithnet{
     $url = "https://github.com/lithnet/idle-logoff/releases/download/v1.1.6999/lithnet.idlelogoff.setup.msi"
     $output = "$LocalTempDir\$InstallFile"
 
-    (new-object System.Net.WebClient).DownloadFile($url, $output)
+    #(new-object System.Net.WebClient).DownloadFile($url, $output)
+    Get-WebFile($url, $output)
     Start-Process $output -ArgumentList "/qn" -Wait
 }
 
@@ -511,7 +513,8 @@ function Install-Starwind{
         #Main download page is at https://www.starwindsoftware.com/download-starwind-products#download, choose 'Starwind V2V Converter'.
         $url = "https://www.starwindsoftware.com/tmplink/starwindconverter.exe"
         $output = $(Join-Path $env:TEMP 'starwindconverter.exe')
-        (new-object System.Net.WebClient).DownloadFile($url, $output)
+        #(new-object System.Net.WebClient).DownloadFile($url, $output)
+        Get-WebFile($url, $output)
         Start-Process $output -ArgumentList "/verysilent" -Wait
     }
 }
@@ -532,7 +535,8 @@ function Set-DesktopDefaults{
     #Download default.bgi
     $url = "https://github.com/edgoad/ITVMs/raw/master/default.bgi"
     $output = "C:\bginfo\default.bgi"
-    (new-object System.Net.WebClient).DownloadFile($url, $output)
+    #(new-object System.Net.WebClient).DownloadFile($url, $output)
+    Get-WebFile($url, $output)
 
     # Set autorun
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
