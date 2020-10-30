@@ -60,13 +60,15 @@ Setup-InternalDHCPScope
 Write-Host "Downloading Windows 10 (this may take some time)"
 $url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
 $output = "c:\VMs\Windows10.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+#(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile($url, $output)
+
 
 #Download Windows 7 ISO
 Write-Host "Downloading Windows 7 (this may take some time)"
 $url = "http://care.dlservice.microsoft.com/dl/download/evalx/win7/x64/EN/7600.16385.090713-1255_x64fre_enterprise_en-us_EVAL_Eval_Enterprise-GRMCENXEVAL_EN_DVD.iso"
 $output = "c:\VMs\Windows7.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile($url, $output)
 
 #Download Windows 8 ISO
 #Write-Host "Downloading Windows 8.1 (this may take some time)"
@@ -79,14 +81,14 @@ $output = "c:\VMs\Windows7.iso"
 Write-Host "Downloading Ubuntu 20.04 (this may take some time)"
 $url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.1-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-20.04.1-desktop-amd64.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile($url, $output)
 
 
 #Download Fedora ISO
 Write-Host "Downloading Fedora 32 (this may take some time)"
 $url = "https://download.fedoraproject.org/pub/fedora/linux/releases/32/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-32-1.6.iso"
 $output = "c:\VMs\Fedora-Workstation-Live-x86_64-32-1.6.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile($url, $output)
 
 #Create New VMs
 new-VM -Name "Windows 10" -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Windows10.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
