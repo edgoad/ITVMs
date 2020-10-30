@@ -25,8 +25,9 @@ Get-NetAdapter | Rename-NetAdapter -NewName Public
 Install-HypervAndTools
 
 # Create virtual swith
-# TODO: Make sure switch doesnt exist before creating
-New-VMSwitch -SwitchType Internal -Name Internal
+if ($(Get-VMSwitch | Where-Object Name -eq 'Internal').Count -lt 1){
+    New-VMSwitch -SwitchType Internal -Name Internal
+}
 
 # Setup second interface
 # TODO: Make sure adapter isnt already named and IP'd
