@@ -589,5 +589,5 @@ function Set-InitialCheckpoint{
 }
 
 function Set-AdminNeverExpire{
-    Get-LocalUser | Where-Object Description -ne 'Built-in account for guest access to the computer/domain' | Set-LocalUser -PasswordNeverExpires $true
+    Get-LocalUser | Where-Object Enabled -EQ True | Set-LocalUser -PasswordNeverExpires $true
 }
