@@ -19,7 +19,7 @@ Remove-Item $output
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 
 # Setup first interface
-if ($(Get-NetAdapter).count -eq 1){
+if ( $(Get-NetAdapter | Measure-Object).Count -eq 1 ){
     Write-Host "Setting Public adapter name"
     Get-NetAdapter | Rename-NetAdapter -NewName Public
 }
