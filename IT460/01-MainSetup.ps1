@@ -89,7 +89,7 @@ Get-WebFile -DownloadUrl $url -TargetFilePath $output
 # Download Ubuntu 20.04
 Write-Host "Downloading Ubuntu 20.04 (this may take some time)"
 $url = "http://releases.ubuntu.com/20.04//ubuntu-20.04.1-live-server-amd64.iso"
-$output = "c:\VMs\ubuntu-20.04.1-live-server-amd64"
+$output = "c:\VMs\ubuntu-20.04.1-live-server-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Download Metasploitable 2
