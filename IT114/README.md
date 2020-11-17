@@ -1,6 +1,8 @@
 # IT 114 Introduction to IT
 This image allows students to install their VMs individually. Multiple OSs are present and more can be added.
 
+## Pre-Setup tasks
+Run Windows Update and AV scan prior to installation
 
 ## To run open Powershell on VM and run:
 ```
