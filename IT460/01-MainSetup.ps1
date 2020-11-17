@@ -155,7 +155,7 @@ Remove-Item "$env:TEMP\$msVersion" -Force -Recurse
 
 $msVersion = "metasploitable3-ub1404"
 Write-Host "Extracting $msVersion"
-$metasploitableZipFile = "$env:TEMP\$msVersion.ovf"
+$metasploitableZipFile = "$env:TEMP\$msVersion.ova"
 $metasploitableHardDiskFilePath = "c:\VMs\Virtual Hard Disks\$msVersion.vhdx"
 $swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Converter\V2V_ConverterConsole.exe'
 #Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
