@@ -50,6 +50,7 @@ sudo linux-vm-tools/kali/2020.x/install.sh
    - Private Network
      - IP: 192.168.38.30/24
      - GW: 192.168.38.1
+   - Static IP instructions: https://www.unixmen.com/setup-static-ip-ubuntu-14-04/ 
 
 **Metasploitable 3 Windows**
 1. Configure Network
