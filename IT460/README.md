@@ -2,6 +2,8 @@
 Based on https://github.com/Azure/azure-devtestlab/blob/master/samples/ClassroomLabs/Scripts/EthicalHacking/Setup-EthicalHacking.ps1
 
 ## To run:
+Download Metasploitable3 VMs and put OVA files in %TEMP%
+
 ```
 Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT460/01-MainSetup.ps1" -OutFile $env:TEMP\01-MainSetup.ps1
 ."$env:Temp\01-MainSetup.ps1"
@@ -36,16 +38,42 @@ sudo linux-vm-tools/kali/2020.x/install.sh
    - Shutdown Kali, then in PowerShell
 ```Set-VM "Kali Linux" -EnhancedSessionTransportType HvSocket```
 
-**Metasploitable VM**
+**Metasploitable 2**
+1. Configure Network
+   - Private Network
+     - IP: 192.168.38.20/24
+     - GW: 192.168.38.1
+   - metasploitable2 static IP instructions: https://www.howtoforge.com/community/threads/setting-static-ip-on-ubuntu-8-04-server.25277/
+
+**Metasploitable 3 Ubuntu**
 1. Configure Network
    - Private Network
      - IP: 192.168.38.30/24
      - GW: 192.168.38.1
-   - metasploitable2 static IP instructions: https://www.howtoforge.com/community/threads/setting-static-ip-on-ubuntu-8-04-server.25277/
+
+**Metasploitable 3 Windows**
+1. Configure Network
+   - Private Network
+     - IP: 192.168.38.40/24
+     - GW: 192.168.38.1
+2. Login and ensure devices are discovered properly
+
+**DVWA**
+1. Configure Network (temporary)
+2. Install DVWA - https://edgoad.com/2020/02/setting-up-dvwa.html
+3. Reconfigure Network
+   - Private Network
+     - IP: 192.168.38.50/24
+     - GW: 192.168.38.1
 
 **All VMs**
 When finished customizing
 ```
 Get-VM | Stop-VM
 Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot"
+```
+Run the following to re-ask for username on first boot
+```
+$command = 'powershell -Command "& { rename-computer -newname $( $( read-host `"Enter your username:`" ) + \"-\" + $( -join ((65..90) + (97..122) | Get-Random -Count 12 | %{[char]$_})) ).SubString(0,12) }"'
+New-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name "Rename" -Value $Command -PropertyType ExpandString
 ```

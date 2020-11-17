@@ -11,7 +11,7 @@ cd $env:TEMP
 # Dowload and import CommonFunctions module
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
 $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 Import-Module $output
 Remove-Item $output
 
@@ -19,17 +19,28 @@ Remove-Item $output
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 
 # Setup first interface
-Get-NetAdapter | Rename-NetAdapter -NewName Public
-
+if ( $(Get-NetAdapter | Measure-Object).Count -eq 1 ){
+    Write-Host "Setting Public adapter name"
+    Get-NetAdapter | Rename-NetAdapter -NewName Public
+}
+else{
+    Write-Host "Cannot set Public interface name. Confirm interfaces manually."
+}
 # Install Hyper-V
 Install-HypervAndTools
 
 # Create virtual swith
-New-VMSwitch -SwitchType Internal -Name Internal
+if ( ! (Get-VMSwitch | Where-Object Name -eq 'Internal')){
+    Write-Host "Creating Internal vswitch"
+    New-VMSwitch -SwitchType Internal -Name Internal
+} else { Write-Host "Internal vSwitch already created" }
 
 # Setup second interface
-Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
-New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
+if ( ! (Get-NetAdapter | Where-Object Name -EQ 'Internal')){
+    Write-Host "Configuring Internal adapter"
+    Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
+    New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
+} else { Write-Host "Internal adapter already exists. Confirm interfaces manually" }
 
 # Configure routing / NAT
 New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
@@ -59,13 +70,13 @@ Set-HypervDefaults
 Write-Host "Downloading Kali (this may take some time)"
 $url = "https://cdimage.kali.org/kali-2020.2/kali-linux-2020.2-installer-amd64.iso"
 $output = "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Download DVWA
 Write-Host "Downloading DVWA (this may take some time)"
 $url = "http://www.dvwa.co.uk/DVWA-1.0.7.iso"
 $output = "c:\VMs\DVWA-1.0.7.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Download Windows Server 2008 R2
 Write-Host "Downloading Windows Server 2008 R2 (this may take some time)"
@@ -73,64 +84,138 @@ Write-Host "Downloading Windows Server 2008 R2 (this may take some time)"
 # https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso
 $url = "https://download.microsoft.com/download/7/5/E/75EC4E54-5B02-42D6-8879-D8D3A25FBEF7/7601.17514.101119-1850_x64fre_server_eval_en-us-GRMSXEVAL_EN_DVD.iso"
 $output = "c:\VMs\windowsserver2008r2x64.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
-# Download Ubuntu 14.04
-Write-Host "Downloading Ubuntu 14.04 (this may take some time)"
-$url = "http://releases.ubuntu.com/trusty/ubuntu-14.04.6-desktop-amd64.iso"
-$output = "c:\VMs\ubuntu-14.04.6-desktop-amd64.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+# Download Ubuntu 20.04
+Write-Host "Downloading Ubuntu 20.04 (this may take some time)"
+$url = "http://releases.ubuntu.com/20.04//ubuntu-20.04.1-live-server-amd64.iso"
+$output = "c:\VMs\ubuntu-20.04.1-live-server-amd64"
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Download Metasploitable 2
 Write-Host "Downloading Metasploitable (this may take some time)"
 $url = "http://downloads.metasploit.com/data/metasploitable/metasploitable-linux-2.0.0.zip"
 $output = "$env:TEMP\metasploitable-linux-2.0.0.zip"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 #Download Windows 10 ISO
 Write-Host "Downloading Windows 10 (this may take some time)"
 $url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
 $output = "c:\VMs\Windows10.iso"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 ##############################################################################
 # Setup VMs
 ##############################################################################
 #Create New VMs
-new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
-
-#Create Second NIC
-Add-VMNetworkAdapter -VMName "Kali Linux" -SwitchName Internal
+if ( ! (Get-VM | Where-Object Name -EQ "Kali Linux")){
+    Write-Host "Creating VM: Kali Linux"
+	new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
+	Add-VMNetworkAdapter -VMName "Kali Linux" -SwitchName Internal
+}
+if ( ! (Get-VM | Where-Object Name -EQ "DVWA")){
+    Write-Host "Creating VM: DVWA"
+    new-VM -Name "DVWA" -MemoryStartupBytes 512MB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DVWA.vhdx" -NewVHDSizeBytes 20GB -SwitchName Private
+}
 
 #Mount ISO
 Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
+Set-VMDvdDrive -VMName "DVWA" -Path "c:\VMs\ubuntu-20.04.1-live-server-amd64"
 
-# Extract, convert, and import Metasploitable
+##############################################################################
+# Setup Metasploitable
+##############################################################################
+# Extract, convert, and import Metasploitable2
 	# Extract
-Write-Host "Extracting Metasploitable ZIP file"
-$metasploitableZipFile = "$env:TEMP\metasploitable-linux-2.0.0.zip"
-$metasploitableHardDiskFilePath = "c:\VMs\Virtual Hard Disks\Metasploitable.vhdx"
+$msVersion = "metasploitable-linux-2.0.0"
+Write-Host "Extracting $msVersion ZIP file"
+$metasploitableZipFile = "$env:TEMP\$msVersion.zip"
+$metasploitableHardDiskFilePath = "c:\VMs\Virtual Hard Disks\$msVersion.vhdx"
 $swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Converter\V2V_ConverterConsole.exe'
-Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
-	# Convert Metasploitable
+#Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
+Start-Process 'C:\Program Files\7-Zip\7z.exe' -ArgumentList "x $metasploitableZipFile -o$env:TEMP\$msVersion\" -Wait
+
+# Convert Metasploitable
 Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
+$vmdkFile = Get-ChildItem "$env:TEMP\$msVersion\*.vmdk" -Recurse | Select-Object -expand FullName
 # run twice, because the first time doesnt seem to work
 start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
 start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
 
 	# Import Metasploitable
-Write-Host "Importing Metasploitable VM"
-$vmdkFile = Get-ChildItem "$env:TEMP\*.vmdk" -Recurse | Select-Object -expand FullName
-new-vm -Name "Metasploitable 2" -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
+Write-Host "Importing $msVersion"
+new-vm -Name $msVersion -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
 	# configure NIC
-get-vm -Name "Metasploitable 2" | Add-VMNetworkAdapter -SwitchName "Private" -IsLegacy $true
+get-vm -Name $msVersion | Add-VMNetworkAdapter -SwitchName "Private" -IsLegacy $true
+# Set all adapters to private
+get-vm -Name $msVersion | Get-VMNetworkAdapter | Connect-VMNetworkAdapter -SwitchName "Private"
+# Delete %TEMP% files
+Remove-Item $metasploitableZipFile -Force
+Remove-Item "$env:TEMP\$msVersion" -Force -Recurse
+
+$msVersion = "metasploitable3-ub1404"
+Write-Host "Extracting $msVersion"
+$metasploitableZipFile = "$env:TEMP\$msVersion.ovf"
+$metasploitableHardDiskFilePath = "c:\VMs\Virtual Hard Disks\$msVersion.vhdx"
+$swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Converter\V2V_ConverterConsole.exe'
+#Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
+#& 'C:\Program Files\7-Zip\7z.exe' x .\Metasploitable3-ub1404.ovf -oMetasploitable3-ub1404\
+Start-Process 'C:\Program Files\7-Zip\7z.exe' -ArgumentList "x $metasploitableZipFile -o$env:TEMP\$msVersion\" -Wait
+
+	# Convert Metasploitable
+Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
+$vmdkFile = Get-ChildItem "$env:TEMP\$msVersion\*.vmdk" -Recurse | Select-Object -expand FullName
+# run twice, because the first time doesnt seem to work
+start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
+start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
+
+	# Import Metasploitable
+Write-Host "Importing $msVersion"
+new-vm -Name $msVersion -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
+		# configure NIC
+get-vm -Name $msVersion | Add-VMNetworkAdapter -SwitchName "Private" -IsLegacy $true
+# Set all adapters to private
+get-vm -Name $msVersion | Get-VMNetworkAdapter | Connect-VMNetworkAdapter -SwitchName "Private"
+
+# Delete %TEMP% files
+Remove-Item $metasploitableZipFile -Force
+Remove-Item "$env:TEMP\$msVersion" -Force -Recurse
+
+
+$msVersion = "metasploitable3-win2k8"
+Write-Host "Extracting $msVersion ZIP file"
+$metasploitableZipFile = "$env:TEMP\$msVersion.ova"
+$metasploitableHardDiskFilePath = "c:\VMs\Virtual Hard Disks\$msVersion.vhdx"
+$swcExePath = Join-Path $env:ProgramFiles 'StarWind Software\StarWind V2V Converter\V2V_ConverterConsole.exe'
+#Expand-Archive $metasploitableZipFile -DestinationPath $env:TEMP
+#& 'C:\Program Files\7-Zip\7z.exe' x $metasploitableZipFile -o"$env:TEMP\$msVersion\"
+Start-Process 'C:\Program Files\7-Zip\7z.exe' -ArgumentList "x $metasploitableZipFile -o$env:TEMP\$msVersion\" -Wait
+
+	# Convert Metasploitable
+Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
+$vmdkFile = Get-ChildItem "$env:TEMP\$msVersion\*.vmdk" -Recurse | Select-Object -expand FullName
+# run twice, because the first time doesnt seem to work
+start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
+start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$metasploitableHardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
+
+	# Import Metasploitable
+Write-Host "Importing $msVersion"
+new-vm -Name $msVersion -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 2048MB
+	# configure NIC
+#get-vm -Name $msVersion | Add-VMNetworkAdapter -SwitchName "Private" -IsLegacy $true
+# Set all adapters to private
+get-vm -Name $msVersion | Get-VMNetworkAdapter | Connect-VMNetworkAdapter -SwitchName "Private"
+
+# Delete %TEMP% files
+Remove-Item $metasploitableZipFile -Force
+Remove-Item "$env:TEMP\$msVersion" -Force -Recurse
 
 
 ##############################################################################
 # Configure VMs
 ##############################################################################
 # Setup memory
-Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
+#Get-VM | Set-VMMemory -DynamicMemoryEnabled $true
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
@@ -148,13 +233,13 @@ Set-DesktopDefaults
 Write-Host "Downloading Logon Information"
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT460/Logon%20Information.txt"
 $output = "c:\Users\Public\Desktop\Logon Information.txt"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Download Network Diagram
 Write-Host "Downloading Network Diagram"
 $url = "https://github.com/edgoad/ITVMs/raw/master/IT460/IT460.png"
 $output = "c:\Users\Public\Desktop\Network Diagram.png"
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 
 
