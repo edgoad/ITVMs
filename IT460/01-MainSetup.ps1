@@ -120,7 +120,7 @@ if ( ! (Get-VM | Where-Object Name -EQ "DVWA")){
 
 #Mount ISO
 Set-VMDvdDrive -VMName "Kali Linux" -Path "c:\VMs\kali-linux-2020.2-installer-amd64.iso"
-Set-VMDvdDrive -VMName "DVWA" -Path "c:\VMs\ubuntu-20.04.1-live-server-amd64"
+Set-VMDvdDrive -VMName "DVWA" -Path "c:\VMs\ubuntu-20.04.1-live-server-amd64.iso"
 
 ##############################################################################
 # Setup Metasploitable
