@@ -11,7 +11,7 @@ cd $env:TEMP
 # Dowload and import CommonFunctions module
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
 $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
-Get-WebFile -DownloadUrl $url -TargetFilePath $output
+(new-object System.Net.WebClient).DownloadFile($url, $output)
 Import-Module $output
 Remove-Item $output
 
