@@ -173,7 +173,7 @@ start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_
 Write-Host "Importing $msVersion"
 new-vm -Name $msVersion -VHDPath $metasploitableHardDiskFilePath -MemoryStartupBytes 512MB
 		# configure NIC
-get-vm -Name $msVersion | Add-VMNetworkAdapter -SwitchName "Private" -IsLegacy $true
+#get-vm -Name $msVersion | Add-VMNetworkAdapter -SwitchName "Private" -IsLegacy $true
 # Set all adapters to private
 get-vm -Name $msVersion | Get-VMNetworkAdapter | Connect-VMNetworkAdapter -SwitchName "Private"
 
