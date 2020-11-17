@@ -110,12 +110,12 @@ Get-WebFile -DownloadUrl $url -TargetFilePath $output
 #Create New VMs
 if ( ! (Get-VM | Where-Object Name -EQ "Kali Linux")){
     Write-Host "Creating VM: Kali Linux"
-	new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 60GB -SwitchName Private
+	new-VM -Name "Kali Linux" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\KaliLinux.vhdx" -NewVHDSizeBytes 100GB -SwitchName Private
 	Add-VMNetworkAdapter -VMName "Kali Linux" -SwitchName Internal
 }
 if ( ! (Get-VM | Where-Object Name -EQ "DVWA")){
     Write-Host "Creating VM: DVWA"
-    new-VM -Name "DVWA" -MemoryStartupBytes 512MB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DVWA.vhdx" -NewVHDSizeBytes 20GB -SwitchName Private
+    new-VM -Name "DVWA" -MemoryStartupBytes 1GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DVWA.vhdx" -NewVHDSizeBytes 20GB -SwitchName Private
 }
 
 #Mount ISO
