@@ -14,7 +14,7 @@ If multiple reboots needed, restart the script after reboot
 
 ## Post-Setup tasks
 **Desktop**
-1. timezone
+1. Windows Update + reboot several times
 2. background
 
 **KALI VM**
@@ -27,7 +27,7 @@ If multiple reboots needed, restart the script after reboot
      - DNS: 8.8.8.8
    - Private Network
      - IP: 192.168.38.10/24
-     - GW: 192.168.38.1
+     - GW: 
 3. Screen Resolution issues
    - Inside the Kali VM, run the following:
 ```
@@ -42,22 +42,25 @@ sudo linux-vm-tools/kali/2020.x/install.sh
 1. Configure Network
    - Private Network
      - IP: 192.168.38.20/24
-     - GW: 192.168.38.1
+     - GW: 192.168.38.250
    - metasploitable2 static IP instructions: https://www.howtoforge.com/community/threads/setting-static-ip-on-ubuntu-8-04-server.25277/
 
 **Metasploitable 3 Ubuntu**
 1. Configure Network
    - Private Network
      - IP: 192.168.38.30/24
-     - GW: 192.168.38.1
+     - GW: 192.168.38.250
    - Static IP instructions: https://www.unixmen.com/setup-static-ip-ubuntu-14-04/ 
 
 **Metasploitable 3 Windows**
 1. Configure Network
    - Private Network
      - IP: 192.168.38.40/24
-     - GW: 192.168.38.1
+     - GW: 192.168.38.250
 2. Login and ensure devices are discovered properly
+3. License the OS?
+   - slmgr -rearm to reset the eval period
+   - possibly set into runonce key prior to checkpoint of VM?
 
 **DVWA**
 1. Configure Network (temporary)
@@ -65,7 +68,7 @@ sudo linux-vm-tools/kali/2020.x/install.sh
 3. Reconfigure Network - https://linuxize.com/post/how-to-configure-static-ip-address-on-ubuntu-20-04/
    - Private Network
      - IP: 192.168.38.50/24
-     - GW: 192.168.38.1
+     - GW: 192.168.38.250
 
 **All VMs**
 When finished customizing
