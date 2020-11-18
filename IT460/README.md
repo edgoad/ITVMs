@@ -62,7 +62,7 @@ sudo linux-vm-tools/kali/2020.x/install.sh
 **DVWA**
 1. Configure Network (temporary)
 2. Install DVWA - https://edgoad.com/2020/02/setting-up-dvwa.html
-3. Reconfigure Network
+3. Reconfigure Network - https://linuxize.com/post/how-to-configure-static-ip-address-on-ubuntu-20-04/
    - Private Network
      - IP: 192.168.38.50/24
      - GW: 192.168.38.1
