@@ -10,7 +10,14 @@
 Get-VM | Stop-VM 
 
 # Add second VLAN
-New-VMSwitch -SwitchType Private -Name Private
+# Create virtual switch
+# Set switch as Private -- no routing to the internet
+if ((Get-VMSwitch | Where-Object -Property Name -EQ "Private").count -eq 0)
+{
+    write-host "Creating Private VMswitch"
+    New-VMSwitch -SwitchType Private -Name Private
+}
+
  
 #Create Second NIC
 Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
