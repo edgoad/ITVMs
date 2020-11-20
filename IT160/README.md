@@ -32,7 +32,7 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/1
 3. Run the remaining setup scripts to capture snapshots
 ```
 Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/20-MainSetup.ps1" -OutFile $env:TEMP\20-MainSetup.ps1
-Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/90-MainSetup.ps1" -OutFile $env:TEMP\90-MainSetup.ps1
+Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/99-MainSetup.ps1" -OutFile $env:TEMP\99-MainSetup.ps1
 ```
 
 ## Post-Setup tasks
