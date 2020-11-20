@@ -62,6 +62,6 @@ Invoke-Command -Session $sessionDM2 -ScriptBlock {
     $user = "mcsa2016\administrator"
     $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
     $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
-    add-computer –domainname mcsa2016.local -Credential $cred -restart –force
+    add-computer -domainname mcsa2016.local -Credential $cred -restart -force
     }
 #endregion
