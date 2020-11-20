@@ -49,7 +49,7 @@ Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock {
     Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
     New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.2 -PrefixLength 24 
     }
-Invoke-Command -VMName ServerDM2 -Credential $cred -ScriptBlock { 
+Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
     Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
     New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.3 -PrefixLength 24 
     }
