@@ -73,39 +73,6 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 new-VM -Name Svr2016Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Svr2016Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
 Set-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
 
-#Create VMs
-#new-VM -Name ServerDC1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDC1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
-#new-VM -Name ServerDM1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
-#new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
-#new-VM -Name ServerSA1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerSA1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
-
-
-#Create additional HD
-#New-VHD -Path C:\VMs\ServerDM1_01.vhdx -SizeBytes 20GB
-#New-VHD -Path C:\VMs\ServerDM1_02.vhdx -SizeBytes 15GB
-#New-VHD -Path C:\VMs\ServerDM1_03.vhdx -SizeBytes 10GB
-#Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDM1_01.vhdx
-#Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDM1_02.vhdx
-#Add-VMHardDiskDrive -VMName ServerDM1 -Path C:\VMs\ServerDM1_03.vhdx
-#New-VHD -Path C:\VMs\ServerDM2_01.vhdx -SizeBytes 20GB
-#New-VHD -Path C:\VMs\ServerDM2_02.vhdx -SizeBytes 15GB
-#New-VHD -Path C:\VMs\ServerDM2_03.vhdx -SizeBytes 10GB
-#Add-VMHardDiskDrive -VMName ServerDM2 -Path C:\VMs\ServerDM2_01.vhdx
-#Add-VMHardDiskDrive -VMName ServerDM2 -Path C:\VMs\ServerDM2_02.vhdx
-#Add-VMHardDiskDrive -VMName ServerDM2 -Path C:\VMs\ServerDM2_03.vhdx
-#New-VHD -Path C:\VMs\ServerSA1_01.vhdx -SizeBytes 20GB
-#New-VHD -Path C:\VMs\ServerSA1_02.vhdx -SizeBytes 15GB
-#New-VHD -Path C:\VMs\ServerSA1_03.vhdx -SizeBytes 10GB
-#Add-VMHardDiskDrive -VMName ServerSA1 -Path C:\VMs\ServerSA1_01.vhdx
-#Add-VMHardDiskDrive -VMName ServerSA1 -Path C:\VMs\ServerSA1_02.vhdx
-#Add-VMHardDiskDrive -VMName ServerSA1 -Path C:\VMs\ServerSA1_03.vhdx
-
-#Mount ISO
-#Set-VMDvdDrive -VMName ServerDC1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
-#Set-VMDvdDrive -VMName ServerDM1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
-#Set-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
-#Set-VMDvdDrive -VMName ServerSA1 -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
-
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
