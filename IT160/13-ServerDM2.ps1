@@ -51,6 +51,13 @@ Invoke-Command -Session $sessionDM2 -ScriptBlock {
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 0 -Type "Dword" 
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Value 0 -Type "Dword" 
     }
+
+# Copy BGInfo
+Copy-Item -ToSession $sessionDM2 -Path "C:\bginfo\" -Destination "C:\bginfo\" -Force -Recurse
+ # Set autorun
+Invoke-Command -Session $sessionDM2 -ScriptBlock {
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
+    }
 #endregion
 
 #region Join Domain
