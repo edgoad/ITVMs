@@ -32,12 +32,12 @@ foreach($vmName in $classVMs){
 
 #Create additional HD
 foreach($vmName in $classVMs){
-    New-VHD -Path $vmPath\$vmName_01.vhdx -SizeBytes 20GB
-    New-VHD -Path $vmPath\$vmName_02.vhdx -SizeBytes 15GB
-    New-VHD -Path $vmPath\$vmName_03.vhdx -SizeBytes 10GB
-    Add-VMHardDiskDrive -VMName $vmName -Path $vmPath\$vmName_01.vhdx
-    Add-VMHardDiskDrive -VMName $vmName -Path $vmPath\$vmName_02.vhdx
-    Add-VMHardDiskDrive -VMName $vmName -Path $vmPath\$vmName_03.vhdx
+    New-VHD -Path $("$vmPath\$vmName" + "_01.vhdx") -SizeBytes 20GB
+    New-VHD -Path $("$vmPath\$vmName" + "_02.vhdx") -SizeBytes 15GB
+    New-VHD -Path $("$vmPath\$vmName" + "_03.vhdx") -SizeBytes 10GB
+    Add-VMHardDiskDrive -VMName $vmName -Path $("$vmPath\$vmName" + "_01.vhdx")
+    Add-VMHardDiskDrive -VMName $vmName -Path $("$vmPath\$vmName" + "_02.vhdx")
+    Add-VMHardDiskDrive -VMName $vmName -Path $("$vmPath\$vmName" + "_03.vhdx")
 }
 
 #Mount ISO
