@@ -15,6 +15,10 @@ If multiple reboots needed, restart the script after reboot
 1. Login to the template VM and install Windows
 2. When finished, use sysprep to generalize the VM
 3. Then run 02-MainSetup.ps1 to clone the template
+```
+Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/02-MainSetup.ps1" -OutFile $env:TEMP\02-MainSetup.ps1
+."$env:Temp\02-MainSetup.ps1"
+```
 
 # Post cloning
 1. Power on each VM and set the Administrator password to Password01

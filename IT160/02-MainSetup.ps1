@@ -5,7 +5,7 @@
 #
 #######################################################################
 
-$templatePath = "c:\VMs\Srv2016Template.vhdx"
+$templatePath = "c:\VMs\Svr2016Template.vhdx"
 $vmPath = "C:\VMs"
 $vhdPath = "C:\VMs"
 $vmSwitch = "Internal"
