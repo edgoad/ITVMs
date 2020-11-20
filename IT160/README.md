@@ -12,14 +12,14 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/0
 If multiple reboots needed, restart the script after reboot
 
 # After first script
-Login to the template VM and install Windows
-When finished, use sysprep to generalize the VM
-Then run 02-MainSetup.ps1 to clone the template
+1. Login to the template VM and install Windows
+2. When finished, use sysprep to generalize the VM
+3. Then run 02-MainSetup.ps1 to clone the template
 
 # Post cloning
-Power on each VM and set the Administrator password to Password01
-Run the scripts for the individual VMs to configure the VMs
-Run the remaining setup scripts to capture snapshots
+1. Power on each VM and set the Administrator password to Password01
+2. Run the scripts for the individual VMs to configure the VMs
+3. Run the remaining setup scripts to capture snapshots
 
 ## Post-Setup tasks
 Run the following to re-ask for username on first boot
