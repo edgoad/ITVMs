@@ -1,0 +1,8 @@
+Machine Name		Internal IP	Username	Password
+Ansible			192.168.0.100	justincase	Password01
+Web1			192.168.0.111	justincase	Password01
+Web2			192.168.0.112	justincase	Password01
+DB1			192.168.0.121	justincase	Password01
+DB2			192.168.0.122	justincase	Password01
+CSR1			192.168.0.11	cisco		cisco
+CSR2			192.168.0.12	cisco		cisco
