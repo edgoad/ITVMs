@@ -16,6 +16,7 @@ If multiple reboots needed, restart the script after reboot
 1. Install Fedora Linux on Template with Static IP
 2. Configure Network
 3. Shutdown template
+
 **CSRTemplate**
 1. Install CSR1000V
 2. Setup username/password cisco/cisco
