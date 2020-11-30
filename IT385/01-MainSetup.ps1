@@ -84,7 +84,7 @@ if ( ! (Get-VM | Where-Object Name -EQ "CSRTemplate")){
 
 #Mount ISO
 Set-VMDvdDrive -VMName "FedoraTemplate" -Path "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
-Set-VMDvdDrive -VMName "CSRTemplate" -Path "csr1000v-universalk9.16.12.04a.iso"
+Set-VMDvdDrive -VMName "CSRTemplate" -Path "c:\VMs\csr1000v-universalk9.16.12.04a.iso"
 
 ##############################################################################
 # Configure VMs
