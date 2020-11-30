@@ -5,7 +5,7 @@
 #
 #######################################################################
 
-$templatePath = "c:\VMs\FedoraTemplate.vhdx"
+$templatePath = "c:\VMs\Virtual Hard Disks\FedoraTemplate.vhdx"
 $vmPath = "C:\VMs"
 $vhdPath = "C:\VMs"
 $vmSwitch = "Internal"

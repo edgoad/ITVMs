@@ -20,7 +20,12 @@ If multiple reboots needed, restart the script after reboot
      - IP: 192.168.0.100/24
      - GW: 192.168.0.250
      - DNS: 8.8.8.8
-3. Shutdown template
+3. Append the following to /etc/ssh/ssh_config (due to older CSR image)
+```
+KexAlgorithms +diffie-hellman-group1-sha1
+Ciphers +3des-cbc
+```
+4. Shutdown template
 
 **CSR**
 1. Install CSR1000V
