@@ -55,16 +55,24 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385/0
 ."$env:Temp\02-MainSetup.ps1"
 ```
 
+**Fedora VMs**
+1. Login and change background
+2. Configure networking
+3. Run the following on each to change names and generate new SSH host keys
+```
+sudo su -
+hostnamectl set-hostname web1
+rm -r /etc/ssh/ssh_host_*
+systemctl start sshd
+```
 
 **All VMs**
-1. Login to each machine and change its name
-2. Configure Network
-3. When finished customizing, run the following to snapshot VMs
+1. When finished customizing, run the following to snapshot VMs
 ```
 Get-VM | Stop-VM
 Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot"
 ```
-4. Run the following to re-ask for username on first boot
+2. Run the following to re-ask for username on first boot
 ```
 $command = 'powershell -Command "& { rename-computer -newname $( $( read-host `"Enter your username:`" ) + \"-\" + $( -join ((65..90) + (97..122) | Get-Random -Count 12 | %{[char]$_})) ).SubString(0,12) }"'
 New-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name "Rename" -Value $Command -PropertyType ExpandString
