@@ -520,6 +520,9 @@ function Install-Starwind{
 }
 
 function Set-DesktopDefaults{
+    # Disable Server Manager at startup
+    Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
+
     # Set timezone
     Set-TimeZone -Name "Pacific Standard Time" -Confirm:$false
 

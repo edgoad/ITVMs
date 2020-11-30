@@ -15,8 +15,8 @@ $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
 Import-Module $output
 Remove-Item $output
 
-# Disable Server Manager at startup
-Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
+# setup bginfo
+Set-DesktopDefaults
 
 # Setup first interface
 if ( $(Get-NetAdapter | Measure-Object).Count -eq 1 ){
@@ -95,8 +95,6 @@ Get-VM | Set-VM -AutomaticStartAction Nothing
 # Set all VMs to shutdown at logoff
 Get-VM | Set-VM -AutomaticStopAction Shutdown
 
-# setup bginfo
-Set-DesktopDefaults
 
 # Clean up temp files
 # Clear-TempFiles
