@@ -1,7 +1,7 @@
 # IT 385 Automation / Ansible
 
 ## To run:
-1. Manually download the CSR ISO from https://software.cisco.com/download/home/284364978/type/282046477/release/Gibraltar-16.12.4a to c:\VMs
+1. Manually download the CSR ISO from https://software.cisco.com/download/home/284364978/type/282046477/release/3.11.2S to c:\VMs
 2. Run the following in PowerShell
 ```
 Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385/01-MainSetup.ps1" -OutFile $env:TEMP\01-MainSetup.ps1
