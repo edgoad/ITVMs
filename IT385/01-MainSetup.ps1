@@ -95,6 +95,12 @@ Set-VMDvdDrive -VMName "FedoraTemplate" -Path "c:\VMs\Fedora-Workstation-Live-x8
 Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
 Set-VMDvdDrive -VMName "CSR2" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
 
+# Add additional NICs
+Add-VMNetworkAdapter -VMName CSR1
+Add-VMNetworkAdapter -VMName CSR1
+Add-VMNetworkAdapter -VMName CSR2
+Add-VMNetworkAdapter -VMName CSR2
+
 ##############################################################################
 # Configure VMs
 ##############################################################################

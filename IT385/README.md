@@ -22,12 +22,26 @@ If multiple reboots needed, restart the script after reboot
      - DNS: 8.8.8.8
 3. Shutdown template
 
-**CSRTemplate**
+**CSR**
 1. Install CSR1000V
-2. Setup username/password cisco/cisco
-3. Configure Network
-4. Create SSH keys
-5. Shutdown template
+2. Enter the following to configure each CSR (change name and IP as appropriate)
+```
+en
+conf t
+hostname IT385-CSR1
+ip domain name ccna.local
+username cisco privilege 15 password 0 cisco
+int g1
+ip add 192.168.0.11 255.255.255.0
+no shut
+description Internal network
+line vty 0 15
+login local
+transport input ssh
+crypto key generate rsa
+do wr mem
+```
+3. Shutdown template
 
 **PostTemplates**
 When all templates are finished, run the following
