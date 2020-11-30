@@ -14,7 +14,12 @@ If multiple reboots needed, restart the script after reboot
 ## Post-Setup tasks
 **FedoraTemplate**
 1. Install Fedora Linux on Template with Static IP
+   - username/password - justincase/Password01
 2. Configure Network
+   - Internal Network
+     - IP: 192.168.0.100/24
+     - GW: 192.168.0.250
+     - DNS: 8.8.8.8
 3. Shutdown template
 
 **CSRTemplate**
