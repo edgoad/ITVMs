@@ -10,23 +10,7 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385/0
 
 If multiple reboots needed, restart the script after reboot
 
-
 ## Post-Setup tasks
-**FedoraTemplate**
-1. Install Fedora Linux on Template with Static IP
-   - username/password - justincase/Password01
-2. Configure Network
-   - Internal Network
-     - IP: 192.168.0.100/24
-     - GW: 192.168.0.250
-     - DNS: 8.8.8.8
-3. Append the following to /etc/ssh/ssh_config (due to older CSR image)
-```
-KexAlgorithms +diffie-hellman-group1-sha1
-Ciphers +3des-cbc
-```
-4. Shutdown template
-
 **CSR**
 1. Install CSR1000V
 2. Enter the following to configure each CSR (change name and IP as appropriate)
@@ -43,10 +27,34 @@ description Internal network
 line vty 0 15
 login local
 transport input ssh
-crypto key generate rsa
+crypto key generate rsa modulus 1024
 do wr mem
 ```
 3. Shutdown template
+
+**FedoraTemplate**
+1. Install Fedora Linux on Template with Static IP
+   - username/password - justincase/Password01
+2. Configure Network
+   - Internal Network
+     - IP: 192.168.0.100/24
+     - GW: 192.168.0.250
+     - DNS: 8.8.8.8
+
+3. Append the following to /etc/ssh/ssh_config (due to Cisco/OpenSSH issue)
+```
+KexAlgorithms +diffie-hellman-group-exchange-sha1
+Ciphers +3des-cbc
+```
+4. Ensure you can ssh cisco@192.168.0.11 and .12
+5. Install features and cleanup
+```
+sudo dnf install ftp telnet python3
+rm .ssh/known_hosts
+history -c
+```
+6. Shutdown template
+
 
 **PostTemplates**
 When all templates are finished, run the following
