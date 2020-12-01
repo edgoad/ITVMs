@@ -181,7 +181,7 @@ function Install-DHCP {
     Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ServerManager\Roles\12 -Name ConfigurationState -Value 2
 }
 
-function Setup-InternalDHCPScope{
+function Set-InternalDHCPScope{
     Write-Output "Installing DHCP, if needed."
     Install-DHCP 
 

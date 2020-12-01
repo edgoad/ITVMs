@@ -60,7 +60,7 @@ Set-Autologout
 Set-HypervDefaults
 
 # Configure DHCP for internal network
-Setup-InternalDHCPScope
+Set-InternalDHCPScope
 
 ##############################################################################
 # Download ISO files for installation
