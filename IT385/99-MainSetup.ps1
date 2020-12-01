@@ -6,4 +6,5 @@
 #######################################################################
 
 Get-VM | Stop-VM 
+Get-VM | Set-VM -SmartPagingFilePath D:\
 Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot" 
