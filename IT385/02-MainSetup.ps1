@@ -6,8 +6,8 @@
 #######################################################################
 
 $templatePath = "c:\VMs\Virtual Hard Disks\FedoraTemplate.vhdx"
-$vmPath = "C:\VMs"
-$vhdPath = "C:\VMs"
+$vmPath = "C:\VMs\"
+$vhdPath = "C:\VMs\Virtual Hard Disks\"
 $vmSwitch = "Internal"
 $isoPath = "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
 $classVMs = "Ansible", "Web1", "Web2", "DB1", "DB2"
@@ -24,8 +24,9 @@ Set-ItemProperty -Path $templatePath -Name IsReadOnly -Value $true
 # Create differencing disks for VMs
 # Based on https://matthewfugel.wordpress.com/2017/02/18/hyper-v-quick-deploy-vms-with-powershell-differencing-disk/
 foreach($vmName in $classVMs){
-    $VHD = New-VHD -Path ($vmPath + "\" + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
-    new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch
+    $VHD = New-VHD -Path ($vhdPath + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
+    New-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch
+    Set-VMDvdDrive -VMName $vmName -Path $isoPath
 }
 
 
