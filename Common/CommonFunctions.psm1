@@ -503,6 +503,7 @@ function Set-HypervDefaults{
 
     Set-AdminNeverExpire
     Add-DefenderExclusions
+    Start-NetFrameworkOptimization
 }
 
 function Install-Starwind{
