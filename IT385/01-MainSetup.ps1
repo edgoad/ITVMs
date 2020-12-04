@@ -81,21 +81,21 @@ if ( ! (Get-VM | Where-Object Name -EQ "FedoraTemplate")){
 if ( ! (Get-VM | Where-Object Name -EQ "CSR1")){
     Write-Host "Creating VM: CSR1"
     $VHD = New-VHD -Path "C:\VMs\Virtual Hard Disks\CSR1.vhd" -SizeBytes 10GB
-	New-VM -Name "CSR1" -MemoryStartupBytes 4GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName Internal
+	New-VM -Name "CSR1" -MemoryStartupBytes 2560MB -BootDevice VHD -VHDPath $VHD.Path -SwitchName Internal
 }
 if ( ! (Get-VM | Where-Object Name -EQ "CSR2")){
     Write-Host "Creating VM: CSR2"
     $VHD = New-VHD -Path "C:\VMs\Virtual Hard Disks\CSR2.vhd" -SizeBytes 10GB
-	New-VM -Name "CSR2" -MemoryStartupBytes 4GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName Internal
+	New-VM -Name "CSR2" -MemoryStartupBytes 2560MB -BootDevice VHD -VHDPath $VHD.Path -SwitchName Internal
 }
 
 
 #Mount ISO
 Set-VMDvdDrive -VMName "FedoraTemplate" -Path "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
-#Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
-#Set-VMDvdDrive -VMName "CSR2" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
-Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.16.12.04a.iso"
-Set-VMDvdDrive -VMName "CSR2" -Path "c:\VMs\csr1000v-universalk9.16.12.04a.iso"
+Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
+Set-VMDvdDrive -VMName "CSR2" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
+#Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.16.12.04a.iso"
+#Set-VMDvdDrive -VMName "CSR2" -Path "c:\VMs\csr1000v-universalk9.16.12.04a.iso"
 
 # Add additional NICs
 Add-VMNetworkAdapter -VMName CSR1
