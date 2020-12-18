@@ -64,18 +64,31 @@ Set-HypervDefaults
 ##############################################################################
 # Download Fedora ISO
 # Review URL for latest version
-Write-Host "Downloading Fedora (this may take some time)"
-$url = "https://download.fedoraproject.org/pub/fedora/linux/releases/33/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-33-1.2.iso"
-$output = "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
+#Write-Host "Downloading Fedora (this may take some time)"
+#$url = "https://download.fedoraproject.org/pub/fedora/linux/releases/33/Workstation/x86_64/iso/Fedora-Workstation-Live-x86_64-33-1.2.iso"
+#$output = "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
+#Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
+# Download Ubuntu ISO
+# Review URL for latest version
+Write-Host "Downloading Ubuntu (this may take some time)"
+#$url = "http://mirror.pit.teraswitch.com/ubuntu-releases/20.04.1/ubuntu-20.04.1-desktop-amd64.iso"
+$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.1-desktop-amd64.iso"
+$output = "c:\VMs\ubuntu-20.04.1-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 ##############################################################################
 # Setup VMs
 ##############################################################################
 #Create New VMs
-if ( ! (Get-VM | Where-Object Name -EQ "FedoraTemplate")){
-    Write-Host "Creating VM: FedoraTemplate"
-	new-VM -Name "FedoraTemplate" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\FedoraTemplate.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
+#if ( ! (Get-VM | Where-Object Name -EQ "FedoraTemplate")){
+#    Write-Host "Creating VM: FedoraTemplate"
+#	new-VM -Name "FedoraTemplate" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\FedoraTemplate.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
+#}
+
+if ( ! (Get-VM | Where-Object Name -EQ "UbuntuTemplate")){
+    Write-Host "Creating VM: UbuntuTemplate"
+	new-VM -Name "UbuntuTemplate" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuTemplate.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
 }
 
 if ( ! (Get-VM | Where-Object Name -EQ "CSR1")){
@@ -91,7 +104,8 @@ if ( ! (Get-VM | Where-Object Name -EQ "CSR2")){
 
 
 #Mount ISO
-Set-VMDvdDrive -VMName "FedoraTemplate" -Path "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
+#Set-VMDvdDrive -VMName "FedoraTemplate" -Path "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
+Set-VMDvdDrive -VMName "UbuntuTemplate" -Path "c:\VMs\ubuntu-20.04.1-desktop-amd64.iso"
 Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
 Set-VMDvdDrive -VMName "CSR2" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
 #Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.16.12.04a.iso"

@@ -5,18 +5,22 @@
 #
 #######################################################################
 
-$templatePath = "c:\VMs\Virtual Hard Disks\FedoraTemplate.vhdx"
+#$templatePath = "c:\VMs\Virtual Hard Disks\FedoraTemplate.vhdx"
+#$isoPath = "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
+$templatePath = "c:\VMs\Virtual Hard Disks\UbuntuTemplate.vhdx"
+$isoPath = "c:\VMs\ubuntu-20.04.1-desktop-amd64.iso"
 $vmPath = "C:\VMs\"
 $vhdPath = "C:\VMs\Virtual Hard Disks\"
 $vmSwitch = "Internal"
-$isoPath = "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
 $classVMs = "Ansible", "Web1", "Web2", "DB1", "DB2"
 
 # Send message to complete Template first
-write-host "Ensure FedoraTemplate VM is installed and sysprepped before continuing"
+#write-host "Ensure FedoraTemplate VM is installed and sysprepped before continuing"
+write-host "Ensure UbuntuTemplate VM is installed and sysprepped before continuing"
 
 # delete template VM, but leave HDD
-Remove-VM "FedoraTemplate" -Force
+#Remove-VM "FedoraTemplate" -Force
+Remove-VM "UbuntuTemplate" -Force
 
 # Set Template HDD permissions to read-only
 Set-ItemProperty -Path $templatePath -Name IsReadOnly -Value $true

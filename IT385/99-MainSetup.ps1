@@ -15,4 +15,4 @@ $command = 'powershell -Command "& { rename-computer -newname $( $( read-host `"
 New-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name "Rename" -Value $Command -PropertyType ExpandString
 
 # Shutdown host
-Stop-Computer -ComputerName localhost
+#Stop-Computer -ComputerName localhost
