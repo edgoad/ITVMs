@@ -32,25 +32,37 @@ do wr mem
 ```
 3. Shutdown template
 
-**FedoraTemplate**
-1. Install Fedora Linux on Template with Static IP
+**UbuntuTemplate**
+1. Install Ubuntu Linux on Template with Static IP
    - username/password - justincase/Password01
 2. Configure Network
    - Internal Network
      - IP: 192.168.0.100/24
      - GW: 192.168.0.250
      - DNS: 8.8.8.8
-
+3. Update and upgrade Ubuntu packages
+```
+sudo apt update
+sudo apt install python3 python3-pip telnet ftp git
+sudo apt upgrade
+sudo apt autoremove
+```
 3. Append the following to /etc/ssh/ssh_config (due to Cisco/OpenSSH issue)
 ```
 KexAlgorithms +diffie-hellman-group-exchange-sha1
 Ciphers +3des-cbc
 ```
-4. Ensure you can ssh cisco@192.168.0.11 and .12
+4. Ensure you can ssh cisco@192.168.0.11 and cisco@192.168.0.12
+5. Setup Enhanced session? https://medium.com/@francescotonini/how-to-install-ubuntu-20-04-on-hyper-v-with-enhanced-session-b20a269a5fa7
+```
+wget https://raw.githubusercontent.com/Microsoft/linux-vm-tools/master/ubuntu/18.04/install.sh
+sudo chmod +x install.sh
+sudo ./install.sh
+```
 5. Install features and cleanup
 ```
-sudo dnf install ftp telnet python3
 rm .ssh/known_hosts
+sudo history -c
 history -c
 ```
 6. Shutdown template
@@ -63,15 +75,17 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385/0
 ."$env:Temp\02-MainSetup.ps1"
 ```
 
-**Fedora VMs**
+**Linux VMs**
 1. Login and change background
 2. Configure networking
 3. Run the following on each to change names and generate new SSH host keys
 ```
 sudo su -
-hostnamectl set-hostname web1
+hostnamectl set-hostname ansible
+nano /etc/hosts
 rm -r /etc/ssh/ssh_host_*
 systemctl start sshd
+history -c
 ```
 
 **All VMs**

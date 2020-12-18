@@ -31,6 +31,7 @@ foreach($vmName in $classVMs){
     $VHD = New-VHD -Path ($vhdPath + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
     New-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch
     Set-VMDvdDrive -VMName $vmName -Path $isoPath
+    Set-VM -VMName $vmName  -EnhancedSessionTransportType HvSocket
 }
 
 
