@@ -67,7 +67,7 @@ sudo su -
 hostnamectl set-hostname ansible
 nano /etc/hosts
 rm -r /etc/ssh/ssh_host_*
-systemctl start sshd
+dpkg-reconfigure openssh-server
 history -c
 ```
 

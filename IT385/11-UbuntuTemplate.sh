@@ -14,6 +14,7 @@ apt autoremove -y
 wget https://raw.githubusercontent.com/Microsoft/linux-vm-tools/master/ubuntu/18.04/install.sh
 chmod +x install.sh
 ./install.sh
+# Update for Enhanced mode in Ubuntu 20
 sed -i_orig -e 's/port=3389/port=vsock:\/\/-1:3389/g' /etc/xrdp/xrdp.ini
 sed -i_orig -e 's/use_vsock=true/use_vsock=false/g' /etc/xrdp/xrdp.ini
 
@@ -21,6 +22,8 @@ sed -i_orig -e 's/use_vsock=true/use_vsock=false/g' /etc/xrdp/xrdp.ini
 echo 'KexAlgorithms +diffie-hellman-group-exchange-sha1' >> /etc/ssh/ssh_config
 echo 'Ciphers +3des-cbc' >> /etc/ssh/ssh_config
 
-rm .ssh/known_hosts
+# Clean up
+rm ~/*.sh
+rm ~/.ssh/known_hosts
 rm /home/justincase/.ssh/known_hosts
 history -c
