@@ -11,7 +11,7 @@ apt upgrade
 apt autoremove
 
 # Setup Enhanced mode
-wget https://github.com/microsoft/linux-vm-tools/blob/master/ubuntu/18.04/install.sh
+wget https://raw.githubusercontent.com/Microsoft/linux-vm-tools/master/ubuntu/18.04/install.sh
 chmod +x install.sh
 ./install.sh
 sed -i_orig -e 's/port=3389/port=vsock://-1:3389/g' /etc/xrdp/xrdp.ini

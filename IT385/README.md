@@ -40,39 +40,22 @@ do wr mem
      - IP: 192.168.0.100/24
      - GW: 192.168.0.250
      - DNS: 8.8.8.8
-3. Update and upgrade Ubuntu packages
+3. Download and run Template setup script (NOTE: This may reboot and re-run to complete successfully)
 ```
-sudo apt update
-sudo apt install python3 python3-pip telnet ftp git
-sudo apt upgrade
-sudo apt autoremove
-```
-3. Append the following to /etc/ssh/ssh_config (due to Cisco/OpenSSH issue)
-```
-KexAlgorithms +diffie-hellman-group-exchange-sha1
-Ciphers +3des-cbc
+sudo su -
+wget https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385/11-UbuntuTemplate.sh
+chmod +x 11-UbuntuTemplate.sh
+./11-UbuntuTemplate.sh
 ```
 4. Ensure you can ssh cisco@192.168.0.11 and cisco@192.168.0.12
-5. Setup Enhanced session? https://medium.com/@francescotonini/how-to-install-ubuntu-20-04-on-hyper-v-with-enhanced-session-b20a269a5fa7
-```
-wget https://raw.githubusercontent.com/Microsoft/linux-vm-tools/master/ubuntu/18.04/install.sh
-sudo chmod +x install.sh
-sudo ./install.sh
-```
-5. Install features and cleanup
-```
-rm .ssh/known_hosts
-sudo history -c
-history -c
-```
-6. Shutdown template
+5. Shutdown template
 
 
 **PostTemplates**
 When all templates are finished, run the following
 ```
-Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385/02-MainSetup.ps1" -OutFile $env:TEMP\02-MainSetup.ps1
-."$env:Temp\02-MainSetup.ps1"
+Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385/20-MainSetup.ps1" -OutFile $env:TEMP\20-MainSetup.ps1
+."$env:Temp\20-MainSetup.ps1"
 ```
 
 **Linux VMs**
