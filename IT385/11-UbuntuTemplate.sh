@@ -6,7 +6,7 @@ fi
 
 # Install / upgrade packages
 apt update
-apt install -y python3 python3-pip telnet ftp git openssh-server linux-tools-virtual linux-cloud-tools-virtual xrdp
+apt install -y python3 python3-pip telnet ftp git openssh-server linux-tools-virtual linux-cloud-tools-virtual xrdp apt-transport-https
 apt upgrade -y
 apt autoremove -y
 
