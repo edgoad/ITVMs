@@ -9,8 +9,8 @@ $templatePath = "c:\VMs\Svr2016Template.vhdx"
 $vmPath = "C:\VMs"
 $vhdPath = "C:\VMs"
 $vmSwitch = "Internal"
-$isoPath = "c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-$classVMs = "ServerDC1", "ServerDM1", "ServerDM2", "ServerSA1"
+$isoPath = "c:\VMs\W2k2016.ISO"
+$classVMs = "ServerDC1", "ServerDM1", "ServerSA1"
 
 # Send message to complete Template first
 write-host "Ensure Template VM is installed and sysprepped before continuing"
@@ -28,7 +28,8 @@ foreach($vmName in $classVMs){
     new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch
 }
 
-
+# Add DM2 into array to be included in remaining tasks
+$classVMs += "ServerDM2"
 
 #Create additional HD
 foreach($vmName in $classVMs){

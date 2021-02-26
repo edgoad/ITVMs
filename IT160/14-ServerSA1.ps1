@@ -59,4 +59,10 @@ Copy-Item -ToSession $sessionSA1 -Path "C:\bginfo\" -Destination "C:\bginfo\" -F
 Invoke-Command -Session $sessionSA1 -ScriptBlock {
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
     }
+    
+# Set password expiration
+Invoke-Command -Session $sessionSA1 -ScriptBlock {
+    Get-LocalUser | Where-Object Enabled -EQ True | Set-LocalUser -PasswordNeverExpires $true
+    }
+
 #endregion

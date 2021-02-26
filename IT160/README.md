@@ -14,7 +14,8 @@ If multiple reboots needed, restart the script after reboot
 # After first script
 1. Login to the template VM and install Windows
 2. When finished, use sysprep to generalize the VM
-3. Then run 02-MainSetup.ps1 to clone the template
+3. Install ServerDM2 as Core Edition
+4. Then run 02-MainSetup.ps1 to clone the template
 ```
 Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/02-MainSetup.ps1" -OutFile $env:TEMP\02-MainSetup.ps1
 ."$env:Temp\02-MainSetup.ps1"

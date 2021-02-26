@@ -8,12 +8,14 @@
 # Change directory to %TEMP% for working
 cd $env:TEMP
 
-# Dowload and import CommonFunctions module
+# Download and import CommonFunctions module
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
 $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
-(new-object System.Net.WebClient).DownloadFile($url, $output)
+if (-not(Test-Path -Path $output -PathType Leaf)) {
+    (new-object System.Net.WebClient).DownloadFile($url, $output)
+}
 Import-Module $output
-Remove-Item $output
+#Remove-Item $output
 
 # Disable Server Manager at startup
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
@@ -62,7 +64,7 @@ Set-HypervDefaults
 #Download Windows ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
 $url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-$output = "c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
+$output = "c:\VMs\W2k2016.ISO"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Setup Hyper-V default file locations
@@ -71,8 +73,11 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 
 # Create Template VM
 new-VM -Name Svr2016Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Svr2016Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
-Set-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO
+Set-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\W2k2016.ISO
 
+# Create Template VM
+new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
+Set-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\W2k2016.ISO
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing

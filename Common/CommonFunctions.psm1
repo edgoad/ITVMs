@@ -645,3 +645,65 @@ function Start-NetFrameworkOptimization{
         schTasks /run /Tn "\Microsoft\Windows\.NET Framework\.NET Framework NGEN v4.0.30319 64"
     }
 }
+
+#################################################
+# Hyper-V VM Functions
+# Used for inside VMs on Hyper-V
+function Rename-HostedVM($vmSession, $newVmName){
+    Invoke-Command -VMName $vmSession -Credential $cred -ScriptBlock { 
+        Rename-Computer -NewName $newVmName -force -restart 
+    }
+}
+function Add-HostedtoDomain($vmSession){
+    # Join domain
+    #######################################################################
+    # NOTE: REBOOT!
+    #######################################################################
+    Invoke-Command -Session $vmSession -ScriptBlock { 
+        $user = "mcsa2016\administrator"
+        $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+        $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+        add-computer -domainname mcsa2016.local -Credential $cred -restart -force
+        }
+}
+function Set-HostedIP($vmSession, $InterfaceAlias, $IPAddress, $prefixLength, $DefaultGateway, $DNSServer){
+    Invoke-Command -Session $vmSession -ScriptBlock { 
+        New-NetIPAddress -InterfaceAlias $InterfaceAlias -IPAddress $IPAddress -PrefixLength $prefixLength -DefaultGateway $DefaultGateway
+        Set-DnsClientServerAddress -InterfaceAlias $InterfaceAlias -ServerAddresses $DNSServer
+    }
+}
+function Set-HostedPowerSave($vmSession){
+    # Configure Power save 
+    Invoke-Command -Session $vmSession -ScriptBlock { 
+        powercfg -change -monitor-timeout-ac 0 
+    }
+}
+function Set-HostedIEMode($vmSession){
+    # IE Enhaced mode 
+    Invoke-Command -Session $vmSession -ScriptBlock { 
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}" -Name IsInstalled -Value 0 
+    }
+}
+function Set-HostedUAC($vmSession){
+    # Set UAC 
+    Invoke-Command -Session $vmSession -ScriptBlock { 
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 0 -Type "Dword" 
+        Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Value 0 -Type "Dword" 
+    }
+}
+function Set-HostedPassword($vmSession){
+    # Set password expiration
+    Invoke-Command -Session $vmSession -ScriptBlock {
+        Get-LocalUser | Where-Object Enabled -EQ True | Set-LocalUser -PasswordNeverExpires $true
+    }
+
+}
+function Set-HostedBGInfo($vmSession){
+    # Copy BGInfo
+    Copy-Item -ToSession $vmSession -Path "C:\bginfo\" -Destination "C:\bginfo\" -Force -Recurse
+    # Set autorun
+    Invoke-Command -Session $vmSession -ScriptBlock {
+    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
+   }
+
+}
