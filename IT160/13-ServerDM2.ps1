@@ -32,7 +32,7 @@ $sessionDM2 = New-PSSession -VMName ServerDM2 -Credential $cred
 #Invoke-Command -VMName ServerDM2 -Credential $cred -ScriptBlock { 
 #    Rename-Computer -NewName ServerDM2 -force -restart 
 #    }
-Rename-HostedVM($sessionDM2, "ServerDM2")
+Rename-HostedVM $sessionDM2 "ServerDM2"
 #endregion
 
 #region Configure OS
@@ -53,20 +53,20 @@ Invoke-Command -Session $sessionDM2 -ScriptBlock {
 #Invoke-Command -Session $sessionDM2 -ScriptBlock { 
 #    Set-DnsClientServerAddress -InterfaceAlias Internal -ServerAddresses 192.168.0.1
 #    }
-Set-HostedIP($sessionDM2, "Internal", "192.168.0.3", 24, "192.168.0.250", "192.168.0.1")
+Set-HostedIP $sessionDM2 "Internal" "192.168.0.3" 24 "192.168.0.250" "192.168.0.1"
 
 # Configure Power save 
 #Invoke-Command -Session $sessionDM2 -ScriptBlock { 
 #    powercfg -change -monitor-timeout-ac 0 
 #    }
-Set-HostedPowerSave($sessionDM2)
+Set-HostedPowerSave $sessionDM2
 
 # Set UAC 
 #Invoke-Command -Session $sessionDM2 -ScriptBlock { 
 #    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 0 -Type "Dword" 
 #    Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "PromptOnSecureDesktop" -Value 0 -Type "Dword" 
 #    }
-Set-HostedUAC($sessionDM2)
+Set-HostedUAC $sessionDM2
 
 # No BGInfo - server core
 ## Copy BGInfo
@@ -80,7 +80,7 @@ Set-HostedUAC($sessionDM2)
 #Invoke-Command -Session $sessionDM2 -ScriptBlock {
 #    Get-LocalUser | Where-Object Enabled -EQ True | Set-LocalUser -PasswordNeverExpires $true
 #    }
-Set-HostedPassword($sessionDM2)
+Set-HostedPassword $sessionDM2
 #endregion
 
 #region Join Domain
@@ -88,10 +88,11 @@ Set-HostedPassword($sessionDM2)
 #######################################################################
 # NOTE: REBOOT!
 #######################################################################
-Invoke-Command -Session $sessionDM2 -ScriptBlock { 
-    $user = "mcsa2016\administrator"
-    $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
-    $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
-    add-computer -domainname mcsa2016.local -Credential $cred -restart -force
-    }
+#Invoke-Command -Session $sessionDM2 -ScriptBlock { 
+#    $user = "mcsa2016\administrator"
+#    $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+#    $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+#    add-computer -domainname mcsa2016.local -Credential $cred -restart -force
+#    }
+Add-HostedtoDomain $sessionDM2
 #endregion

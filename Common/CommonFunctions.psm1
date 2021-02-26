@@ -650,8 +650,9 @@ function Start-NetFrameworkOptimization{
 # Hyper-V VM Functions
 # Used for inside VMs on Hyper-V
 function Rename-HostedVM($vmSession, $newVmName){
-    Invoke-Command -VMName $vmSession -Credential $cred -ScriptBlock { 
-        Rename-Computer -NewName $newVmName -force -restart 
+    Write-Host "    Renaming to: $newVmName"
+    Invoke-Command -Session $vmSession -ScriptBlock { 
+        Rename-Computer -NewName $using:newVmName -force -restart 
     }
 }
 function Add-HostedtoDomain($vmSession){
@@ -668,8 +669,8 @@ function Add-HostedtoDomain($vmSession){
 }
 function Set-HostedIP($vmSession, $InterfaceAlias, $IPAddress, $prefixLength, $DefaultGateway, $DNSServer){
     Invoke-Command -Session $vmSession -ScriptBlock { 
-        New-NetIPAddress -InterfaceAlias $InterfaceAlias -IPAddress $IPAddress -PrefixLength $prefixLength -DefaultGateway $DefaultGateway
-        Set-DnsClientServerAddress -InterfaceAlias $InterfaceAlias -ServerAddresses $DNSServer
+        New-NetIPAddress -InterfaceAlias $using:InterfaceAlias -IPAddress $using:IPAddress -PrefixLength $using:prefixLength -DefaultGateway $using:DefaultGateway
+        Set-DnsClientServerAddress -InterfaceAlias $using:InterfaceAlias -ServerAddresses $using:DNSServer
     }
 }
 function Set-HostedPowerSave($vmSession){
