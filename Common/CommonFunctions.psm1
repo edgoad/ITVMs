@@ -668,24 +668,28 @@ function Add-HostedtoDomain($vmSession){
         }
 }
 function Set-HostedIP($vmSession, $InterfaceAlias, $IPAddress, $prefixLength, $DefaultGateway, $DNSServer){
+    Write-Host "    Setting up interface: $InterfaceAlias"
     Invoke-Command -Session $vmSession -ScriptBlock { 
         New-NetIPAddress -InterfaceAlias $using:InterfaceAlias -IPAddress $using:IPAddress -PrefixLength $using:prefixLength -DefaultGateway $using:DefaultGateway
         Set-DnsClientServerAddress -InterfaceAlias $using:InterfaceAlias -ServerAddresses $using:DNSServer
     }
 }
 function Set-HostedPowerSave($vmSession){
+    Write-Host "    Configuring PowerSave"
     # Configure Power save 
     Invoke-Command -Session $vmSession -ScriptBlock { 
         powercfg -change -monitor-timeout-ac 0 
     }
 }
 function Set-HostedIEMode($vmSession){
+    Write-Host "    Setting IE Enhanced mode"
     # IE Enhaced mode 
     Invoke-Command -Session $vmSession -ScriptBlock { 
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}" -Name IsInstalled -Value 0 
     }
 }
 function Set-HostedUAC($vmSession){
+    Write-Host "    Configuring UAC"
     # Set UAC 
     Invoke-Command -Session $vmSession -ScriptBlock { 
         Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "ConsentPromptBehaviorAdmin" -Value 0 -Type "Dword" 
@@ -693,6 +697,7 @@ function Set-HostedUAC($vmSession){
     }
 }
 function Set-HostedPassword($vmSession){
+    Write-Host "    Set password to never expire"
     # Set password expiration
     Invoke-Command -Session $vmSession -ScriptBlock {
         Get-LocalUser | Where-Object Enabled -EQ True | Set-LocalUser -PasswordNeverExpires $true
@@ -700,6 +705,7 @@ function Set-HostedPassword($vmSession){
 
 }
 function Set-HostedBGInfo($vmSession){
+    Write-Host "    Setup BGInfo"
     # Copy BGInfo
     Copy-Item -ToSession $vmSession -Path "C:\bginfo\" -Destination "C:\bginfo\" -Force -Recurse
     # Set autorun
