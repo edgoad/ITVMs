@@ -71,7 +71,7 @@ Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock {
     dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
     }
 Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
-    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
+    dism /online /Set-Edition:ServerDataCenterCor /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
     }
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
     dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG

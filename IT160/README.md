@@ -39,7 +39,7 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/9
 ## Post-Setup tasks
 Run the following to re-ask for username on first boot
 ```
-$command = 'powershell -Command "& { rename-computer -newname $( $( read-host `"Enter your username:`" ) + \"-\" + $( -join ((65..90) + (97..122) | Get-Random -Count 12 | %{[char]$_})) ).SubString(0,12) }"'
+$command = 'powershell -Command "& { rename-computer -newname $( $( -join ((65..90) + (97..122) | Get-Random -Count 12 | %{[char]$_})) ).SubString(0,12) }"'
 New-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce' -Name "Rename" -Value $Command -PropertyType ExpandString
 ```
 **All VMs**

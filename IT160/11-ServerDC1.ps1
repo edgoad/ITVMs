@@ -54,7 +54,7 @@ Invoke-Command -Session $sessionDC1 -ScriptBlock {
 # Update credentials for AD domain
 $userDom = "mcsa2016\administrator"
 $passDom = ConvertTo-SecureString "Password01" -AsPlainText -Force
-$credDom = New-Object System.Management.Automation.PSCredential($userDom, $pass)
+$credDom = New-Object System.Management.Automation.PSCredential($userDom, $passDom)
 $sessDomDC1 = New-PSSession -VMName ServerDC1 -Credential $credDom
 
     # Fix DNS (if needed) 
