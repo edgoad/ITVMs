@@ -15,17 +15,17 @@ $classVMs = "ServerDC1", "ServerDM1", "ServerSA1"
 # Send message to complete Template first
 write-host "Ensure Template VM is installed and sysprepped before continuing"
 
-# delete template VM, but leave HDD
-Remove-VM "Svr2016Template" -Force
-
 # Set Template HDD permissions to read-only
 Set-ItemProperty -Path $templatePath -Name IsReadOnly -Value $true
+
+# delete template VM, but leave HDD
+Remove-VM "Svr2016Template" -Force
 
 # Create differencing disks for VMs
 # Based on https://matthewfugel.wordpress.com/2017/02/18/hyper-v-quick-deploy-vms-with-powershell-differencing-disk/
 foreach($vmName in $classVMs){
     $VHD = New-VHD -Path ($vmPath + "\" + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
-    new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch
+    new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch  -Generation 2
 }
 
 # Add DM2 into array to be included in remaining tasks
@@ -51,7 +51,8 @@ Get-VM | Set-VM -AutomaticStartAction Nothing
 # Set all VMs to shutdown at logoff
 Get-VM | Set-VM -AutomaticStopAction Shutdown
 
-
+# Set VMs to 2 processors for optimization
+Get-VM | Set-VMProcessor -Count 2
 
 #######################################################################
 #

@@ -18,7 +18,6 @@ if ((Get-VMSwitch | Where-Object -Property Name -EQ "Private").count -eq 0)
     New-VMSwitch -SwitchType Private -Name Private
 }
 
- 
 #Create Second NIC
 Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerDM1 -SwitchName Private

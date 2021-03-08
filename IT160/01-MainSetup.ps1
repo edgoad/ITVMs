@@ -72,11 +72,11 @@ Set-VMHost -VirtualHardDiskPath "C:\VMs"
 Set-VMHost -VirtualMachinePath "C:\VMs"
 
 # Create Template VM
-new-VM -Name Svr2016Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Svr2016Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name Svr2016Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Svr2016Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
 Set-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\W2k2016.ISO
 
 # Create Template VM
-new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal
+new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
 Set-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\W2k2016.ISO
 
 # Set all VMs to NOT autostart
@@ -84,6 +84,9 @@ Get-VM | Set-VM -AutomaticStartAction Nothing
 
 # Set all VMs to shutdown at logoff
 Get-VM | Set-VM -AutomaticStopAction Shutdown
+
+# Set VMs to 2 processors for optimization
+Get-VM | Set-VMProcessor -Count 2
 
 # setup bginfo
 Set-DesktopDefaults
