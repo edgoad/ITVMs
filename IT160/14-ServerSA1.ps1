@@ -6,6 +6,18 @@
 #
 #######################################################################
 
+# Change directory to %TEMP% for working
+cd $env:TEMP
+
+# Download and import CommonFunctions module
+$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
+$output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
+if (-not(Test-Path -Path $output -PathType Leaf)) {
+    (new-object System.Net.WebClient).DownloadFile($url, $output)
+}
+Import-Module $output
+
+
 #region Rename server
 # Setup credentials
 $user = "administrator"

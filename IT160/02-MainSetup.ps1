@@ -26,6 +26,7 @@ Remove-VM "Svr2016Template" -Force
 foreach($vmName in $classVMs){
     $VHD = New-VHD -Path ($vmPath + "\" + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
     new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch  -Generation 2
+    Add-VMDvdDrive -VMName $vmName -Path c:\VMs\W2k2016.ISO
 }
 
 # Add DM2 into array to be included in remaining tasks
