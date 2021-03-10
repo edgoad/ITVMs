@@ -77,6 +77,13 @@ $url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.1-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-20.04.1-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
+#Download Windows ISO
+New-Item -ItemType Directory -Path c:\VMs -Force
+$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
+$output = "c:\VMs\W2k2016.ISO"
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
+
 ##############################################################################
 # Setup VMs
 ##############################################################################
@@ -102,12 +109,17 @@ if ( ! (Get-VM | Where-Object Name -EQ "CSR2")){
 	New-VM -Name "CSR2" -MemoryStartupBytes 2560MB -BootDevice VHD -VHDPath $VHD.Path -SwitchName Internal
 }
 
+if ( ! (Get-VM | Where-Object Name -EQ "Server2016")){
+    Write-Host "Creating VM: Server2016"
+	new-VM -Name "Server2016" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Server2016.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
+}
 
 #Mount ISO
 #Set-VMDvdDrive -VMName "FedoraTemplate" -Path "c:\VMs\Fedora-Workstation-Live-x86_64-33-1.2.iso"
 Set-VMDvdDrive -VMName "UbuntuTemplate" -Path "c:\VMs\ubuntu-20.04.1-desktop-amd64.iso"
 Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
 Set-VMDvdDrive -VMName "CSR2" -Path "c:\VMs\csr1000v-universalk9.03.11.02.S.154-1.S2-std.iso"
+Set-VMDvdDrive -VMName "Server2016" -Path "c:\VMs\W2k2016.iso"
 #Set-VMDvdDrive -VMName "CSR1" -Path "c:\VMs\csr1000v-universalk9.16.12.04a.iso"
 #Set-VMDvdDrive -VMName "CSR2" -Path "c:\VMs\csr1000v-universalk9.16.12.04a.iso"
 

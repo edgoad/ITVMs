@@ -50,6 +50,18 @@ chmod +x 11-UbuntuTemplate.sh
 4. Ensure you can ssh cisco@192.168.0.11 and cisco@192.168.0.12
 5. Shutdown template
 
+**Server2016**
+1. Install the OS with static ip
+   - username/password - justincase/Password01
+2. Configure Network
+   - Internal Network
+     - IP: 192.168.0.101/24
+     - GW: 192.168.0.250
+     - DNS: 8.8.8.8
+3. Download and run the setup script
+```
+Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385/12-Server2016.ps1" -OutFile $env:TEMP\12-Server2016.ps1
+```
 
 **PostTemplates**
 When all templates are finished, run the following
@@ -70,6 +82,7 @@ rm -r /etc/ssh/ssh_host_*
 dpkg-reconfigure openssh-server
 history -c
 ```
+
 
 **All VMs**
 When finished customizing, run the following to snapshot VMs and prompt for rename on boot

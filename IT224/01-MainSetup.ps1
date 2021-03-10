@@ -90,6 +90,15 @@ Add-VMDvdDrive -VMName DM1 -Path c:\VMs\W2k2016.ISO
 new-VM -Name SWS -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\SWS.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
 Add-VMDvdDrive -VMName SWS -Path c:\VMs\Win10.ISO
 
+# Set boot order of VMs
+Get-VM | %{
+    $vmDvd = Get-VMDvdDrive $_
+    $vmHd = Get-VMHardDiskDrive $_
+    $vmNic = Get-VMNetworkAdapter $_
+    Set-VMFirmware $_ -BootOrder $vmHd, $vmDvd, $vmNic
+}
+
+
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
 
