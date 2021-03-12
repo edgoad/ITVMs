@@ -8,3 +8,9 @@ Latest version is at top
 
 Install Hyper-V, copy image to c:\VMs\Virtual Hard Disks
 Create VM
+    2 vcpu
+    6.5GB RAM (6656mb)
+    On MGMT interface only initialy
+    Connect to existing virtual hard disk, browse and select
+Install PA, configure IP to 192.168.0.1?
+

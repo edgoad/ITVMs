@@ -45,7 +45,7 @@ if ( ! (Get-NetAdapter | Where-Object Name -EQ 'MGMT')){
 } else { Write-Host "MGMT adapter already exists. Confirm interfaces manually" }
 
 # Configure routing / NAT
-New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
+New-NetNat -Name external_routing_mgmt -InternalIPInterfaceAddressPrefix 192.168.0.0/24
 
 # Create virtual swith
 if ( ! (Get-VMSwitch | Where-Object Name -eq 'WAN')){
@@ -64,7 +64,7 @@ if ( ! (Get-NetAdapter | Where-Object Name -EQ 'WAN')){
 New-NetNat -Name external_routing_WAN -InternalIPInterfaceAddressPrefix 203.0.113.64/27
 
 # Configure DHCP for MGMT network
-Set-InternalDHCPScope
+#Set-InternalDHCPScope
 
 #######################################################################
 # Install some common tools
@@ -93,11 +93,6 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 # Create Template VM
 new-VM -Name Svr2016Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Svr2016Template.vhdx" -NewVHDSizeBytes 60GB -SwitchName MGMT -Generation 2
 Add-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\W2k2016.ISO
-#Set-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\W2k2016.ISO
-
-# Create Template VM
-new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName MGMT -Generation 2
-Add-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\W2k2016.ISO
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
@@ -113,7 +108,7 @@ Set-DesktopDefaults
 
 # Download Network Diagram
 Write-Host "Downloading Network Diagram"
-$url = "https://github.com/edgoad/ITVMs/raw/master/IT160/IT160.png"
+$url = "https://github.com/edgoad/ITVMs/raw/master/IT340/IT340.png"
 $output = "c:\Users\Public\Desktop\Network Diagram.png"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
