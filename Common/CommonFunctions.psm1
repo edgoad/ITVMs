@@ -552,7 +552,7 @@ function Set-DesktopDefaults{
     netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
 
     # Prompt user for new name after reboot
-    Add-RenameAfterReboot
+    #Add-RenameAfterReboot
 }
 function Clear-TempFiles{
     Set-Location "C:\Windows\Temp"

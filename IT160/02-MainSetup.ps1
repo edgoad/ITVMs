@@ -15,6 +15,9 @@ $classVMs = "ServerDC1", "ServerDM1", "ServerSA1"
 # Send message to complete Template first
 write-host "Ensure Template VM is installed and sysprepped before continuing"
 
+# Compress/optimize vhd size
+Optimize-VHD $templatePath -Mode Full
+
 # Set Template HDD permissions to read-only
 Set-ItemProperty -Path $templatePath -Name IsReadOnly -Value $true
 

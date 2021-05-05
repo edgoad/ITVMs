@@ -1,13 +1,23 @@
 #######################################################################
 #
-# Second script for building Hyper-V environment for IT 160
+# Second script for building Hyper-V environment for IT 340
 # Builds VMs after the template has been create
 #
 #######################################################################
+# Change directory to %TEMP% for working
+cd $env:TEMP
 
-$templatePath = "C:\VMs\Virtual Hard Disks\Svr2016Template.vhdx"
+# Download and import CommonFunctions module
+$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
+$output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
+if (-not(Test-Path -Path $output -PathType Leaf)) {
+    (new-object System.Net.WebClient).DownloadFile($url, $output)
+}
+Import-Module $output
+
 $vmPath = "C:\VMs"
-$vhdPath = "C:\VMs\Virtual Hard Disks"
+$vhdPath = "$vmPath\Virtual Hard Disks"
+$templatePath = "$vhdPath\Svr2016Template.vhdx"
 $vmSwitch = "Private"
 $isoPath = "c:\VMs\W2k2016.ISO"
 $classVMs = "Web", "DNS", "DC", "DM"
@@ -15,8 +25,24 @@ $classVMs = "Web", "DNS", "DC", "DM"
 # Send message to complete Template first
 write-host "Ensure Template VM is installed and sysprepped before continuing"
 
+if ((Get-VMSwitch | Where-Object -Property Name -EQ "Private").count -eq 0)
+{
+    write-host "Creating Private VMswitch"
+    New-VMSwitch -SwitchType Private -Name Private
+}if ((Get-VMSwitch | Where-Object -Property Name -EQ "DMZ").count -eq 0)
+{
+    write-host "Creating DMZ VMswitch"
+    New-VMSwitch -SwitchType Private -Name DMZ
+}
+
+# Configure Palo Alto NICs
+Add-VMNetworkAdapter -VMName "PaloAlto" -SwitchName WAN
+Add-VMNetworkAdapter -VMName "PaloAlto" -SwitchName Private
+Add-VMNetworkAdapter -VMName "PaloAlto" -SwitchName DMZ
+
+
 # Set Template HDD permissions to read-only
-Set-ItemProperty -Path $templatePath -Name IsReadOnly -Value $true
+#Set-ItemProperty -Path $templatePath -Name IsReadOnly -Value $true
 
 # delete template VM, but leave HDD
 Remove-VM "Svr2016Template" -Force
@@ -30,7 +56,7 @@ foreach($vmName in $classVMs){
 }
 
 # Move VMs to right switch
-Get-VMNetworkAdapter -VMName "web", "DNS" | Connect-VMNetworkAdapter -SwitchName "DMZ"
+Get-VMNetworkAdapter -VMName "Web", "DNS" | Connect-VMNetworkAdapter -SwitchName "DMZ"
 
 
 #Mount ISO
@@ -48,7 +74,6 @@ Get-VM | Set-VMProcessor -Count 2
 
 #######################################################################
 #
-# Power on Each VM and configure
-# When finished, run the remaining scripts
+# Power on Each VM and configure if needed
 #
 #######################################################################

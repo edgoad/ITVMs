@@ -64,7 +64,7 @@ if ( ! (Get-NetAdapter | Where-Object Name -EQ 'WAN')){
 New-NetNat -Name external_routing_WAN -InternalIPInterfaceAddressPrefix 203.0.113.64/27
 
 # Configure DHCP for MGMT network
-#Set-InternalDHCPScope
+Set-InternalDHCPScope
 
 #######################################################################
 # Install some common tools
@@ -93,6 +93,9 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 # Create Template VM
 new-VM -Name Svr2016Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Svr2016Template.vhdx" -NewVHDSizeBytes 60GB -SwitchName MGMT -Generation 2
 Add-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\W2k2016.ISO
+
+# Create PA VM
+new-VM -Name "PaloAlto" -MemoryStartupBytes 6.5GB -BootDevice VHD -VHDPath "PA-VM-HPV-10.0.4.vhdx" -SwitchName MGMT
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
