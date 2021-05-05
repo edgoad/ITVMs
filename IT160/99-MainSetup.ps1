@@ -5,5 +5,9 @@
 #
 #######################################################################
 
+# Compress / optimize vhds
+$vhds = Get-Item -Path "C:\vms\Serv*.vhdx"
+Optimize-VHD $vhds -Mode full
+
 Get-VM | Stop-VM 
 Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot" 
