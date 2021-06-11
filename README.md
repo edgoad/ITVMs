@@ -11,3 +11,4 @@ Run the next script (20-MainSetup.ps1) in chunks
  - This runs against the VMs 
  
 When everything is good, run the last script to capture the VM state
+
