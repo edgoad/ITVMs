@@ -67,8 +67,8 @@ Set-HypervDefaults
 # Download Ubuntu ISO
 # Review URL for latest version
 Write-Host "Downloading Ubuntu (this may take some time)"
-$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.1-desktop-amd64.iso"
-$output = "c:\VMs\ubuntu-20.04.1-desktop-amd64.iso"
+$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.2.0-desktop-amd64.iso"
+$output = "c:\VMs\ubuntu-20.04.2.0-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Setup Hyper-V default file locations
@@ -83,6 +83,9 @@ if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
     Write-Host "Creating VM: UbuntuVM"
 	new-VM -Name "UbuntuVM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
 }
+
+#Mount ISO
+Set-VMDvdDrive -VMName "UbuntuTemplate" -Path "c:\VMs\ubuntu-20.04.2.0-desktop-amd64.iso"
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
