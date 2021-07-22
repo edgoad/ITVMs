@@ -85,7 +85,7 @@ if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
 }
 
 #Mount ISO
-Set-VMDvdDrive -VMName "UbuntuTemplate" -Path "c:\VMs\ubuntu-20.04.2.0-desktop-amd64.iso"
+Set-VMDvdDrive -VMName "UbuntuVM" -Path "c:\VMs\ubuntu-20.04.2.0-desktop-amd64.iso"
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
