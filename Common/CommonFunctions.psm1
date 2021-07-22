@@ -717,13 +717,13 @@ function Disable-WindowsUpdates(){
     # Set wuauserv to disabled
     $wuauserv = Get-Service -DisplayName "Windows Update"
     Stop-Service $wuauserv
-    Set-Service $wuauserv -StartupType Disabled
+    $wuauserv | Set-Service -StartupType Disabled
 }
-function Disable-WindowsUpdates($vmSession){
+function Disable-WindowsUpdatesVM($vmSession){
     # Set wuauserv to disabled
     Invoke-Command -Session $vmSession -ScriptBlock {
         $wuauserv = Get-Service -DisplayName "Windows Update"
         Stop-Service $wuauserv
-        Set-Service $wuauserv -StartupType Disabled
+        $wuauserv | Set-Service -StartupType Disabled
     }
 }
