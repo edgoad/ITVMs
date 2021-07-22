@@ -712,5 +712,18 @@ function Set-HostedBGInfo($vmSession){
     Invoke-Command -Session $vmSession -ScriptBlock {
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
    }
-
+}
+function Disable-WindowsUpdates(){
+    # Set wuauserv to disabled
+    $wuauserv = Get-Service -DisplayName "Windows Update"
+    Stop-Service $wuauserv
+    Set-Service $wuauserv -StartupType Disabled
+}
+function Disable-WindowsUpdates($vmSession){
+    # Set wuauserv to disabled
+    Invoke-Command -Session $vmSession -ScriptBlock {
+        $wuauserv = Get-Service -DisplayName "Windows Update"
+        Stop-Service $wuauserv
+        Set-Service $wuauserv -StartupType Disabled
+    }
 }
