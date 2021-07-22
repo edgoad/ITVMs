@@ -1,0 +1,2 @@
+Machine Name		Internal IP	Username	Password
+UbuntuVM		192.168.0.100	justincase	Password01
