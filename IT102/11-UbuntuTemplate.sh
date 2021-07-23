@@ -86,6 +86,14 @@ ResultAny=no
 ResultInactive=no
 ResultActive=yes
 EOF
+cat > /etc/polkit-1/localauthority/50-local.d/46-allow-reporefresh.pkla <<EOF
+[Allow Package Management all Users]
+Identity=unix-user:*
+Action=org.freedesktop.packagekit.system-sources-refresh
+ResultAny=yes
+ResultInactive=yes
+ResultActive=yes
+EOF
 
 # reconfigure the service
 #systemctl daemon-reload
