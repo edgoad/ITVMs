@@ -6,7 +6,7 @@
 #######################################################################
 
 # Compress / optimize vhds
-$vhds = Get-Item -Path "C:\vms\Serv*.vhdx"
+$vhds = Get-Item -Path "C:\vms\*.vhdx"
 Optimize-VHD $vhds -Mode full
 
 Get-VM | Stop-VM 
