@@ -27,6 +27,10 @@ chmod +x 11-UbuntuTemplate.sh
 ./11-UbuntuTemplate.sh
 ```
 4. Shutdown template
+5. Run the following in PowerShell to enable Enhanced Session Mode
+```
+Get-VM ubuntu* | Set-VM -EnhancedSessionTransportType HvSocket
+```
 
 
 **All VMs**
