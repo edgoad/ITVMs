@@ -111,6 +111,12 @@ $url = "https://github.com/edgoad/ITVMs/raw/master/IT102/IT102.png"
 $output = "c:\Users\Public\Desktop\Network Diagram.png"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
+# Download VM Rename script
+Write-Host "Downloading rename script"
+$url = "https://github.com/edgoad/ITVMs/raw/master/IT102/renamescript.ps1"
+$output = "c:\Users\Public\renamescript.ps1"
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
 
 #######################################################################
 #
