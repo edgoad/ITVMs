@@ -86,6 +86,7 @@ ResultAny=no
 ResultInactive=no
 ResultActive=yes
 EOF
+
 cat > /etc/polkit-1/localauthority/50-local.d/46-allow-reporefresh.pkla <<EOF
 [Allow Package Management all Users]
 Identity=unix-user:*
@@ -120,6 +121,9 @@ sudo apt-get update
 sudo apt-get install -y code
 logger -t devvm "VSCode Installed: $?"
 logger -t devvm "Success"
+
+# Setup favorites
+gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'libreoffice-writer.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']"
 
 # Clean up
 rm ~/*.sh
