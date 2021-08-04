@@ -81,7 +81,7 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 #Create New VMs
 if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
     Write-Host "Creating VM: UbuntuVM"
-	new-VM -Name "UbuntuVM" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
+	new-VM -Name "UbuntuVM" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
 }
 
 #Mount ISO
