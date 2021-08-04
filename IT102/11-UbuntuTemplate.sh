@@ -16,6 +16,7 @@ apt update
 apt install -y curl wget python3 python3-pip telnet ftp git openssh-server linux-tools-virtual linux-cloud-tools-virtual xrdp apt-transport-https
 apt upgrade -y
 apt autoremove -y
+snap install postman
 
 # Setup Enhanced mode
 #wget https://raw.githubusercontent.com/Microsoft/linux-vm-tools/master/ubuntu/18.04/install.sh
@@ -128,7 +129,7 @@ echo
 echo "*********************************************"
 echo "*********************************************"
 echo "** Run the following as justincase "
-echo "gsettings set org.gnome.shell favorite-apps \"['firefox.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'libreoffice-writer.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']\""
+echo "gsettings set org.gnome.shell favorite-apps \"['firefox.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'postman_postman.desktop', 'org.gnome.Nautilus.desktop', 'libreoffice-writer.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']\""
 echo "*********************************************"
 echo "*********************************************"
 
