@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Change hostname
-echo "ubuntu" > /etc/hostname
-hostnamectl set-hostname ubuntu
-
 ###############################################################################
 # Use HWE kernel packages
 #
@@ -14,6 +10,10 @@ if [ "$(id -u)" -ne 0 ]; then
     echo 'This script must be run with root privileges' >&2
     exit 1
 fi
+
+# Change hostname
+echo "ubuntu" > /etc/hostname
+hostnamectl set-hostname ubuntu
 
 # Install / upgrade packages
 apt update
