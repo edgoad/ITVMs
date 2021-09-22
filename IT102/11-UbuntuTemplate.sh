@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Change hostname
+echo "ubuntu" > /etc/hostname
+hostnamectl set-hostname ubuntu
+
 ###############################################################################
 # Use HWE kernel packages
 #
