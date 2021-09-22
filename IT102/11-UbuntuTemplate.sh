@@ -133,6 +133,7 @@ echo
 echo "*********************************************"
 echo "*********************************************"
 echo "** Run the following as justincase "
+echo "gsettings set org.gnome.desktop.session idle-delay 0"
 echo "gsettings set org.gnome.shell favorite-apps \"['firefox.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'postman_postman.desktop', 'org.gnome.Nautilus.desktop', 'libreoffice-writer.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']\""
 echo "*********************************************"
 echo "*********************************************"
