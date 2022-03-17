@@ -17,7 +17,7 @@ hostnamectl set-hostname ubuntu
 
 # Install / upgrade packages
 apt update
-apt install -y curl wget python3 python3-pip telnet ftp git openssh-server linux-tools-virtual linux-cloud-tools-virtual xrdp apt-transport-https
+apt install -y curl wget python3 python3-pip telnet ftp git apt-transport-https
 apt upgrade -y
 apt autoremove -y
 snap install postman
