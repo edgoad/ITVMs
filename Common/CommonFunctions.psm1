@@ -481,6 +481,7 @@ function Set-AutoLogout{
 function Set-HypervDefaults{
     New-Item -ItemType Directory -Path c:\VMs -Force
     New-Item -ItemType Directory -Path "c:\VMs\Virtual Hard Disks" -Force
+    Set-VMHost -EnableEnhancedSessionMode $true
 
     # Create virtual switch
     # Set switch as Private -- no routing to the internet
