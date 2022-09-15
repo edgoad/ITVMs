@@ -107,5 +107,5 @@ systemctl daemon-reload
 systemctl start xrdp
 
 # Clean up
-rm ~/*.sh
-history -c
+#rm ~/*.sh
+#history -c

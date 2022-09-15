@@ -35,6 +35,16 @@ apt install code -y
 logger -t devvm "VSCode Installed: $?"
 logger -t devvm "Success"
 
+# Check for XRDP options
+while true; do
+    read -p "Do you wish to install XRDP? " yn
+    case $yn in
+        [Yy]* ) wget https://raw.githubusercontent.com/edgoad/ITVMs/master/IT102/12-XRDP.sh; chmod +x 12-XRDP.sh; ./12-XRDP.sh; break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer yes or no.";;
+    esac
+done
+
 # Setup favorites
 echo
 echo
