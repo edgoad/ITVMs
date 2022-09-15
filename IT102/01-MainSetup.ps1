@@ -70,6 +70,7 @@ Write-Host "Downloading Ubuntu (this may take some time)"
 #$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.2.0-desktop-amd64.iso"
 #$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.3-desktop-amd64.iso"
 $url = "https://releases.ubuntu.com/20.04.4/ubuntu-20.04.4-desktop-amd64.iso"
+$url = "https://releases.ubuntu.com/22.04.1/ubuntu-22.04.1-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
@@ -83,11 +84,17 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 #Create New VMs
 if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
     Write-Host "Creating VM: UbuntuVM"
-	new-VM -Name "UbuntuVM" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
+	new-VM -Name "UbuntuVM" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
+    Set-VMFirmware "UbuntuVM" -EnableSecureBoot Off
+}
+if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM-Basic")){
+    Write-Host "Creating VM: UbuntuVM-Basic"
+	new-VM -Name "UbuntuVM-Basic" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM-Basic.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
 }
 
 #Mount ISO
 Set-VMDvdDrive -VMName "UbuntuVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+Set-VMDvdDrive -VMName "UbuntuVM-Basic" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
