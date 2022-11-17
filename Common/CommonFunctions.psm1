@@ -441,7 +441,7 @@ function Install-7Zip{
 
 function Install-VirtualBox{
     Write-Host "Installing VirtualBox, if needed"
-    $regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip"
+    $regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\{43A0F3F1-1A26-43F3-ABD6-30E8A54D407E}"
     if(-not(Test-Path -Path $regPath))
     {
         # Get latest stable version
@@ -449,7 +449,7 @@ function Install-VirtualBox{
         $vBoxURL = "https://download.virtualbox.org/virtualbox";
         Invoke-WebRequest -Uri "$vBoxURL/LATEST-STABLE.TXT" -OutFile "$env:TEMP\virtualbox-version.txt";
         $version = ([IO.File]::ReadAllText("$env:TEMP\virtualbox-version.txt")).trim();
-        $vBoxList = Invoke-WebRequest "$vBoxURL/$version" -UseBasicParsing;
+        $vBoxList = Invoke-WebRequest "$vBoxURL/$version";
         $vBoxVersion =$vBoxList.Links.innerHTML;
         $vBoxFile = $vBoxVersion | select-string -Pattern "-win.exe";
         $vBoxFileURL = "$vBoxURL/$version/$vBoxFile";
