@@ -439,6 +439,27 @@ function Install-7Zip{
     }
 }
 
+function Install-VirtualBox{
+    Write-Host "Installing VirtualBox, if needed"
+    $regPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\7-Zip"
+    if(-not(Test-Path -Path $regPath))
+    {
+        # Get latest stable version
+        [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12;
+        $vBoxURL = "https://download.virtualbox.org/virtualbox";
+        Invoke-WebRequest -Uri "$vBoxURL/LATEST-STABLE.TXT" -OutFile "$env:TEMP\virtualbox-version.txt";
+        $version = ([IO.File]::ReadAllText("$env:TEMP\virtualbox-version.txt")).trim();
+        $vBoxList = Invoke-WebRequest "$vBoxURL/$version" -UseBasicParsing;
+        $vBoxVersion =$vBoxList.Links.innerHTML;
+        $vBoxFile = $vBoxVersion | select-string -Pattern "-win.exe";
+        $vBoxFileURL = "$vBoxURL/$version/$vBoxFile";
+        # download virtual box
+        Invoke-WebRequest -Uri $vBoxFileURL -OutFile "$env:TEMP\$vBoxFile";
+        # Install Virtual Box
+        start-process ("$env:TEMP\$vBoxFile") --silent;
+    }
+}
+
 function Install-Lithnet{
     write-host "Installing LithNet (if needed)"
     # enable TLS 1.2
