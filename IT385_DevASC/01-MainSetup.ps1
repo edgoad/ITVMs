@@ -18,6 +18,9 @@ Remove-Item $output
 # setup bginfo
 Set-DesktopDefaults
 
+# Disable Windows Updates
+Disable-WindowsUpdates
+
 #######################################################################
 # Install some common tools
 #######################################################################
@@ -41,18 +44,5 @@ $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/Logon
 $output = "c:\Users\Public\Desktop\Logon Information.txt"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
-# Download Network Diagram
-# Write-Host "Downloading Network Diagram"
-# $url = "https://github.com/edgoad/ITVMs/raw/master/IT385/IT385.png"
-# $output = "c:\Users\Public\Desktop\Network Diagram.png"
-# Get-WebFile -DownloadUrl $url -TargetFilePath $output
-
-
-
-#######################################################################
-#
-# Power on Template VM and install the OS
-# Use Sysprep to generalize
-# When finished, run the second script
-#
-#######################################################################
+# Rename VM after reboot
+Add-RenameAfterReboot
