@@ -21,6 +21,11 @@ Set-DesktopDefaults
 # Disable Windows Updates
 Disable-WindowsUpdates
 
+# other defaults
+Set-AdminNeverExpire
+Add-DefenderExclusions
+Start-NetFrameworkOptimization
+
 #######################################################################
 # Install some common tools
 #######################################################################
