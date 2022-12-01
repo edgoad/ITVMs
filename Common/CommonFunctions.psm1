@@ -593,7 +593,7 @@ function Clear-TempFiles{
 function Add-DefenderExclusions{
     # exclusion list from https://docs.microsoft.com/en-us/troubleshoot/windows-server/virtualization/antivirus-exclusions-for-hyper-v-hosts
     # Exclude file types
-    Add-MpPreference -ExclusionExtension "vhd","vhdx","avhd","avhdx","vhds","vhdpmem","iso","rct","vsv","bin","bmcx","vmrs","vmgs"
+    Add-MpPreference -ExclusionExtension "vhd","vhdx","avhd","avhdx","vhds","vhdpmem","iso","rct","vsv","bin","bmcx","vmrs","vmgs","ova"
     # Exclude Hyper-V Directories
     Add-MpPreference -ExclusionPath "C:\VMs"
     # Exclude Hyper-V Processes
