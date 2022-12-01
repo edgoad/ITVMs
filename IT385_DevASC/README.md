@@ -7,7 +7,7 @@
     - Select the download icon to the right of the following file:
       - **Cisco CSR1000V IOS XE Universal - CRYPTO ISO**
       - csr1000v-universalk9.16.09.05.iso
-    - Save the file to **C:\users\student\downloads**
+    - Save the file to **C:\users\student\desktop\LabFiles**
 	- **Note:** To download software from cisco.com, you must be an active NetAcad instructor and have a CCO account with the activated NetAcad Maintenance contract.
 
 2. Run the following in PowerShell
