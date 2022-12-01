@@ -28,6 +28,13 @@ Install-7Zip
 Set-Autologout
 
 
+# Download devasc-sa.py
+New-Item -Path "c:\Users\Public\Desktop\LabFiles" -ItemType Directory
+Write-Host "Downloading devasc-sa.py"
+$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/devasc-sa.py"
+$output = "c:\Users\Public\Desktop\LabFiles\devasc-sa.py"
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
 # Download logon information
 Write-Host "Downloading Logon Information"
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/Logon%20Information.txt"
