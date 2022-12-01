@@ -44,10 +44,10 @@ $output = "c:\Users\student\Desktop\LabFiles\devasc-sa.py"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Download logon information
-Write-Host "Downloading Logon Information"
-$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/Logon%20Information.txt"
-$output = "c:\Users\Public\Desktop\Logon Information.txt"
-Get-WebFile -DownloadUrl $url -TargetFilePath $output
+#Write-Host "Downloading Logon Information"
+#$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/Logon%20Information.txt"
+#$output = "c:\Users\Public\Desktop\Logon Information.txt"
+#Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Rename VM after reboot
 Add-RenameAfterReboot
