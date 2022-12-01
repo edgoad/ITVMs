@@ -15,11 +15,11 @@ $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
 Import-Module $output
 Remove-Item $output
 
-# setup bginfo
-Set-DesktopDefaults
-
 # Disable Windows Updates
 Disable-WindowsUpdates
+
+# setup bginfo
+Set-DesktopDefaults
 
 # other defaults
 Set-AdminNeverExpire
