@@ -69,8 +69,8 @@ Set-HypervDefaults
 Write-Host "Downloading Ubuntu (this may take some time)"
 #$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.2.0-desktop-amd64.iso"
 #$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.3-desktop-amd64.iso"
-$url = "https://releases.ubuntu.com/20.04.4/ubuntu-20.04.4-desktop-amd64.iso"
-$url = "https://releases.ubuntu.com/22.04.1/ubuntu-22.04.1-desktop-amd64.iso"
+$url = "https://old-releases.ubuntu.com/releases/20.04/ubuntu-20.04-desktop-amd64.iso"
+#$url = "https://releases.ubuntu.com/22.04.1/ubuntu-22.04.1-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
