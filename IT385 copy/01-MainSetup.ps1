@@ -43,16 +43,13 @@ if ( ! (Get-NetAdapter | Where-Object Name -EQ 'Internal')){
 } else { Write-Host "Internal adapter already exists. Confirm interfaces manually" }
 
 # Configure routing / NAT
-New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.56.0/24
+New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
 
 #######################################################################
 # Install some common tools
 #######################################################################
 # Install 7-Zip
 Install-7Zip
-
-#Install starwind converter
-Install-Starwind
 
 # Configure logout after 10 minutes
 Set-Autologout

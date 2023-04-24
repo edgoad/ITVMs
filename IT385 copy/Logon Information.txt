@@ -1,0 +1,3 @@
+Machine Name		Internal IP	Username	Password
+DEVASC-LABVM        NAT         devasc      Cisco123!
+CSR1000v

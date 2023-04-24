@@ -90,6 +90,23 @@ ResultInactive=yes
 ResultActive=yes
 EOF
 
+
+cat > /etc/polkit-1/localauthority/50-local.d/47-allow-reboot.pkla <<EOF
+Identity=unix-group:*
+Action=org.freedesktop.login1.reboot;org.freedesktop.login1.reboot-multiple-sessions
+ResultAny=yes
+ResultActive=no
+ResultInactive=no
+EOF
+
+cat > /etc/polkit-1/localauthority/50-local.d/47-allow-shutdown.pkla <<EOF
+Identity=unix-group:*
+Action=org.freedesktop.login1.power-off;org.freedesktop.login1.power-off-multiple-sessions
+ResultAny=yes
+ResultActive=no
+ResultInactive=no
+EOF
+
 # reconfigure the service
 #systemctl daemon-reload
 #systemctl start xrdp
