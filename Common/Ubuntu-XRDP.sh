@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# added lines from https://raw.githubusercontent.com/Hinara/linux-vm-tools/ubuntu20-04/ubuntu/20.04/install.sh
 ###############################################################################
 # Use HWE kernel packages
 #
@@ -8,6 +9,14 @@ HWE=""
 # Confirm running as Root
 if [ "$(id -u)" -ne 0 ]; then
     echo 'This script must be run with root privileges' >&2
+    exit 1
+fi
+
+apt update && apt upgrade -y
+
+if [ -f /var/run/reboot-required ]; then
+    echo "A reboot is required in order to proceed with the install." >&2
+    echo "Please reboot and re-run this script to finish the install." >&2
     exit 1
 fi
 
@@ -32,6 +41,7 @@ systemctl stop xrdp-sesman
 # Configure the installed XRDP ini files.
 # use vsock transport.
 sed -i_orig -e 's/use_vsock=false/use_vsock=true/g' /etc/xrdp/xrdp.ini
+sed -i_orig -e 's/port=3389/port=vsock:\/\/-1:3389/g' /etc/xrdp/xrdp.ini
 # use rdp security.
 sed -i_orig -e 's/security_layer=negotiate/security_layer=rdp/g' /etc/xrdp/xrdp.ini
 # remove encryption validation.
