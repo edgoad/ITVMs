@@ -39,7 +39,7 @@ logger -t devvm "Success"
 while true; do
     read -p "Do you wish to install XRDP? " yn
     case $yn in
-        [Yy]* ) wget https://raw.githubusercontent.com/edgoad/ITVMs/master/IT102/12-XRDP.sh; chmod +x 12-XRDP.sh; ./12-XRDP.sh; break;;
+        [Yy]* ) wget https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/Ubuntu-XRDP.sh; chmod +x 12-XRDP.sh; ./12-XRDP.sh; break;;
         [Nn]* ) exit;;
         * ) echo "Please answer yes or no.";;
     esac
