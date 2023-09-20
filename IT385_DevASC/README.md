@@ -7,6 +7,7 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_D
 ."$env:Temp\01-MainSetup.ps1"
 ```
 
+2. Manually download the DEVASC_VM.OVA and DEVASC_CSR1000v.zip from NetAcad
 2. Manually download the CSR ISO csr1000v-universalk9.16.09.05.iso, from
 
     - https://software.cisco.com/download/home/284364978/type/282046477/release/Fuji-16.9.5 
