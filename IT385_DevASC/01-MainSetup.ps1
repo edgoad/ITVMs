@@ -13,18 +13,37 @@ $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunct
 $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 Import-Module $output
-Remove-Item $output
-
-# Disable Windows Updates
-Disable-WindowsUpdates
+#Remove-Item $output
 
 # setup bginfo
 Set-DesktopDefaults
 
-# other defaults
-Set-AdminNeverExpire
-Add-DefenderExclusions
-Start-NetFrameworkOptimization
+# Setup first interface
+if ( $(Get-NetAdapter | Measure-Object).Count -eq 1 ){
+    Write-Host "Setting Public adapter name"
+    Get-NetAdapter | Rename-NetAdapter -NewName Public
+}
+else{
+    Write-Host "Cannot set Public interface name. Confirm interfaces manually."
+}
+# Install Hyper-V
+Install-HypervAndTools
+
+# Create virtual swith
+if ( ! (Get-VMSwitch | Where-Object Name -eq 'Internal')){
+    Write-Host "Creating Internal vswitch"
+    New-VMSwitch -SwitchType Internal -Name Internal
+} else { Write-Host "Internal vSwitch already created" }
+
+# Setup second interface
+if ( ! (Get-NetAdapter | Where-Object Name -EQ 'Internal')){
+    Write-Host "Configuring Internal adapter"
+    Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
+    New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.56.1 -PrefixLength 24
+} else { Write-Host "Internal adapter already exists. Confirm interfaces manually" }
+
+# Configure routing / NAT
+New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.56.0/24
 
 #######################################################################
 # Install some common tools
@@ -35,6 +54,10 @@ Install-7Zip
 # Configure logout after 10 minutes
 Set-Autologout
 
+#######################################################################
+# Start setting up Hyper-V
+#######################################################################
+Set-HypervDefaults
 
 # Download devasc-sa.py
 New-Item -Path "c:\Users\Public\Desktop\LabFiles" -ItemType Directory
