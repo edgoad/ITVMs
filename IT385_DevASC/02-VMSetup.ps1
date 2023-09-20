@@ -47,7 +47,7 @@ new-vm -Name $vm_name -VHDPath $vm_HardDiskFilePath -MemoryStartupBytes 4096MB
     # configure NIC
 #get-vm -Name $vm_name | Add-VMNetworkAdapter -SwitchName "Private" -IsLegacy $true
 # Set all adapters to private
-get-vm -Name $vm_name | Get-VMNetworkAdapter | Connect-VMNetworkAdapter -SwitchName "Private"
+get-vm -Name $vm_name | Get-VMNetworkAdapter | Connect-VMNetworkAdapter -SwitchName "Internal"
 # Set CPU count
 get-vm -Name $vm_name | Set-VMProcessor -Count 2
 # Delete %TEMP% files

@@ -59,6 +59,9 @@ Set-Autologout
 #######################################################################
 Set-HypervDefaults
 
+# Configure DHCP for internal network
+Set-InternalDHCPScope_DevASC
+
 # Download devasc-sa.py
 New-Item -Path "c:\Users\Public\Desktop\LabFiles" -ItemType Directory
 Write-Host "Downloading devasc-sa.py"

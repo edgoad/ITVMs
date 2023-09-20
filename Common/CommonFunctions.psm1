@@ -204,7 +204,8 @@ function Set-InternalDHCPScope{
                                 Set-DhcpServerV4OptionValue -DnsServer $dnsServerIp -Router $ipAddress
                             }
     Write-Output "Using $dhcpScope"
-}function Set-InternalDHCPScope_DevASC{
+}
+function Set-InternalDHCPScope_DevASC{
     Write-Output "Installing DHCP, if needed."
     Install-DHCP 
 
