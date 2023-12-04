@@ -8,17 +8,15 @@
 # Change directory to %TEMP% for working
 cd $env:TEMP
 
-# Download and import CommonFunctions module
+# Dowload and import CommonFunctions module
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
 $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
-if (-not(Test-Path -Path $output -PathType Leaf)) {
-    (new-object System.Net.WebClient).DownloadFile($url, $output)
-}
+(new-object System.Net.WebClient).DownloadFile($url, $output)
 Import-Module $output
 #Remove-Item $output
 
 # Disable Server Manager at startup
-Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
+Set-DesktopDefaults
 
 # Setup first interface
 if ( $(Get-NetAdapter | Measure-Object).Count -eq 1 ){
@@ -41,11 +39,11 @@ if ( ! (Get-VMSwitch | Where-Object Name -eq 'Internal')){
 if ( ! (Get-NetAdapter | Where-Object Name -EQ 'Internal')){
     Write-Host "Configuring Internal adapter"
     Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
-    New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
+    New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 10.99.0.250 -PrefixLength 24
 } else { Write-Host "Internal adapter already exists. Confirm interfaces manually" }
 
 # Configure routing / NAT
-New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
+New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 10.99.0.0/24
 
 #######################################################################
 # Install some common tools
@@ -63,8 +61,8 @@ Set-HypervDefaults
 
 #Download Windows ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
-$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-$output = "c:\VMs\W2k2016.ISO"
+$url = "https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
+$output = "c:\VMs\W2k2022.ISO"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Setup Hyper-V default file locations
@@ -72,13 +70,13 @@ Set-VMHost -VirtualHardDiskPath "C:\VMs"
 Set-VMHost -VirtualMachinePath "C:\VMs"
 
 # Create Template VM
-new-VM -Name Svr2016Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Svr2016Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\W2k2016.ISO
-#Set-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\W2k2016.ISO
+new-VM -Name Svr2022Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Svr2022Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
+Add-VMDvdDrive -VMName Svr2022Template -Path c:\VMs\W2k2022.ISO
+#Set-VMDvdDrive -VMName Svr2022Template -Path c:\VMs\W2k2022.ISO
 
 # Create Template VM
 new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\W2k2016.ISO
+Add-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\W2k2022.ISO
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing

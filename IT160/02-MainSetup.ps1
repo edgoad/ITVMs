@@ -5,11 +5,11 @@
 #
 #######################################################################
 
-$templatePath = "c:\VMs\Svr2016Template.vhdx"
+$templatePath = "c:\VMs\Svr2022Template.vhdx"
 $vmPath = "C:\VMs"
 $vhdPath = "C:\VMs"
 $vmSwitch = "Internal"
-$isoPath = "c:\VMs\W2k2016.ISO"
+$isoPath = "c:\VMs\W2k2022.ISO"
 $classVMs = "ServerDC1", "ServerDM1", "ServerSA1"
 
 # Send message to complete Template first
@@ -22,14 +22,14 @@ Optimize-VHD $templatePath -Mode Full
 Set-ItemProperty -Path $templatePath -Name IsReadOnly -Value $true
 
 # delete template VM, but leave HDD
-Remove-VM "Svr2016Template" -Force
+Remove-VM "Svr2022Template" -Force
 
 # Create differencing disks for VMs
 # Based on https://matthewfugel.wordpress.com/2017/02/18/hyper-v-quick-deploy-vms-with-powershell-differencing-disk/
 foreach($vmName in $classVMs){
     $VHD = New-VHD -Path ($vmPath + "\" + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
     new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch  -Generation 2
-    Add-VMDvdDrive -VMName $vmName -Path c:\VMs\W2k2016.ISO
+    Add-VMDvdDrive -VMName $vmName -Path c:\VMs\W2k2022.ISO
 }
 
 # Add DM2 into array to be included in remaining tasks

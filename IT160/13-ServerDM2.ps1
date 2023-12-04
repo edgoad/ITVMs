@@ -43,7 +43,7 @@ Invoke-Command -Session $sessionDM2 -ScriptBlock {
 
 
 # Set UP addresses 
-Set-HostedIP $sessionDM2 "Internal" "192.168.0.3" 24 "192.168.0.250" "192.168.0.1"
+Set-HostedIP $sessionDM2 "Internal" "10.99.0.202" 24 "10.99.0.250" "10.99.0.220"
 
 # Configure Power save 
 Set-HostedPowerSave $sessionDM2

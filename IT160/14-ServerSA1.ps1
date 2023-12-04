@@ -45,8 +45,8 @@ Invoke-Command -Session $sessionSA1 -ScriptBlock {
 
 # Set UP addresses 
 Invoke-Command -Session $sessionSA1 -ScriptBlock { 
-    New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.4 -PrefixLength 24 -DefaultGateway 192.168.0.250 
-    Set-DnsClientServerAddress -InterfaceAlias Internal -ServerAddresses 192.168.0.1
+    New-NetIPAddress -InterfaceAlias Internal -IPAddress 10.99.0.203 -PrefixLength 24 -DefaultGateway 10.99.0.250 
+    Set-DnsClientServerAddress -InterfaceAlias Internal -ServerAddresses 10.99.0.220
     }
 
 # Configure Power save 

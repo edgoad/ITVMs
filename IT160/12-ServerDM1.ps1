@@ -45,8 +45,8 @@ Invoke-Command -Session $sessionDM1 -ScriptBlock {
 
 # Set UP addresses 
 Invoke-Command -Session $sessionDM1 -ScriptBlock { 
-    New-NetIPAddress -InterfaceAlias Internal -IPAddress 192.168.0.2 -PrefixLength 24 -DefaultGateway 192.168.0.250 
-    Set-DnsClientServerAddress -InterfaceAlias Internal -ServerAddresses 192.168.0.1
+    New-NetIPAddress -InterfaceAlias Internal -IPAddress 10.99.0.201 -PrefixLength 24 -DefaultGateway 10.99.0.250 
+    Set-DnsClientServerAddress -InterfaceAlias Internal -ServerAddresses 10.99.0.220
     }
 
 # Configure Power save 
@@ -85,9 +85,9 @@ Invoke-Command -Session $sessionDM1 -ScriptBlock {
 # NOTE: REBOOT!
 #######################################################################
 Invoke-Command -Session $sessionDM1 -ScriptBlock { 
-    $user = "mcsa2016\administrator"
+    $user = "mcsa2022\administrator"
     $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
     $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
-    add-computer -domainname mcsa2016.local -Credential $cred -restart -force
+    add-computer -domainname mcsa2022.local -Credential $cred -restart -force
     }
 #endregion

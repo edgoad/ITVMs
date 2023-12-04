@@ -34,7 +34,7 @@ $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 # Update credentials for AD domain
-$userDom = "mcsa2016\administrator"
+$userDom = "mcsa2022\administrator"
 $passDom = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $credDom = New-Object System.Management.Automation.PSCredential($userDom, $pass)
 
@@ -83,7 +83,7 @@ $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 # Update credentials for AD domain
-$userDom = "mcsa2016\administrator"
+$userDom = "mcsa2022\administrator"
 $passDom = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $credDom = New-Object System.Management.Automation.PSCredential($userDom, $pass)
 Invoke-Command -VMName ServerDC1 -Credential $credDom -ScriptBlock { 
