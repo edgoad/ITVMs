@@ -82,5 +82,5 @@ Invoke-Command -Session $sessionSA1 -ScriptBlock {
 # NOTE: REBOOT!
 #######################################################################
 Invoke-Command -Session $sessionSA1 -ScriptBlock { 
-    add-computer -workgroupname AZ800.corp -restart -force
+    add-computer -workgroupname AZ800 -restart -force
     }
