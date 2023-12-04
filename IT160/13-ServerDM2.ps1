@@ -62,5 +62,11 @@ Set-HostedPassword $sessionDM2
 # NOTE: REBOOT!
 #######################################################################
 
-Add-HostedtoDomain $sessionDM2
+#Add-HostedtoDomain $sessionDM2
+Invoke-Command -Session $sessionDM2 -ScriptBlock { 
+    $user = "AZ800\administrator"
+    $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+    $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+    add-computer -domainname AZ800.corp -Credential $cred -restart -force
+    }
 #endregion

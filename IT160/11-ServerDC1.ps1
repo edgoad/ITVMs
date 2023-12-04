@@ -58,13 +58,13 @@ Invoke-Command -Session $sessionDC1 -ScriptBlock {
 #######################################################################
 Invoke-Command -Session $sessionDC1 -ScriptBlock {
     $smPass = ConvertTo-SecureString "Password01" -AsPlainText -Force 
-    Install-ADDSForest -DomainName "MCSA2022.local" -SafeModeAdministratorPassword $smPass -Confirm:$false 
+    Install-ADDSForest -DomainName "AZ800.corp" -SafeModeAdministratorPassword $smPass -Confirm:$false 
     }
 #endregion
 
 #region Configure OS
 # Update credentials for AD domain
-$userDom = "mcsa2022\administrator"
+$userDom = "AZ800\administrator"
 $passDom = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $credDom = New-Object System.Management.Automation.PSCredential($userDom, $passDom)
 $sessDomDC1 = New-PSSession -VMName ServerDC1 -Credential $credDom

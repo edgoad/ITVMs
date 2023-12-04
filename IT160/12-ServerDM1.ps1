@@ -85,9 +85,9 @@ Invoke-Command -Session $sessionDM1 -ScriptBlock {
 # NOTE: REBOOT!
 #######################################################################
 Invoke-Command -Session $sessionDM1 -ScriptBlock { 
-    $user = "mcsa2022\administrator"
+    $user = "AZ800\administrator"
     $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
     $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
-    add-computer -domainname mcsa2022.local -Credential $cred -restart -force
+    add-computer -domainname AZ800.corp -Credential $cred -restart -force
     }
 #endregion
