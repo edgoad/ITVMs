@@ -78,3 +78,9 @@ Invoke-Command -Session $sessionSA1 -ScriptBlock {
     }
 
 #endregion
+#######################################################################
+# NOTE: REBOOT!
+#######################################################################
+Invoke-Command -Session $sessionSA1 -ScriptBlock { 
+    add-computer -workgroupname AZ800.corp -restart -force
+    }
