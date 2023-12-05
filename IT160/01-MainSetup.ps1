@@ -60,23 +60,23 @@ Set-Autologout
 Set-HypervDefaults
 
 #Download Windows ISO
-New-Item -ItemType Directory -Path c:\VMs -Force
+New-Item -ItemType Directory -Path c:\BaseVMs -Force
 $url = "https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
-$output = "c:\VMs\W2k2022.ISO"
+$output = "c:\BaseVMs\W2k2022.ISO"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Setup Hyper-V default file locations
-Set-VMHost -VirtualHardDiskPath "C:\VMs"
-Set-VMHost -VirtualMachinePath "C:\VMs"
+Set-VMHost -VirtualHardDiskPath "c:\BaseVMs"
+Set-VMHost -VirtualMachinePath "c:\BaseVMs"
 
 # Create Template VM
-new-VM -Name Svr2022Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\Svr2022Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName Svr2022Template -Path c:\VMs\W2k2022.ISO
-#Set-VMDvdDrive -VMName Svr2022Template -Path c:\VMs\W2k2022.ISO
+new-VM -Name Svr2022Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath c:\BaseVMs\Svr2022Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
+Add-VMDvdDrive -VMName Svr2022Template -Path c:\BaseVMs\W2k2022.ISO
+#Set-VMDvdDrive -VMName Svr2022Template -Path c:\BaseVMs\W2k2022.ISO
 
 # Create Template VM
-new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName ServerDM2 -Path c:\VMs\W2k2022.ISO
+new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath c:\BaseVMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
+Add-VMDvdDrive -VMName ServerDM2 -Path c:\BaseVMs\W2k2022.ISO
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing

@@ -5,11 +5,11 @@
 #
 #######################################################################
 
-$templatePath = "c:\VMs\Svr2022Template.vhdx"
-$vmPath = "C:\VMs"
-$vhdPath = "C:\VMs"
+$templatePath = "c:\BaseVMs\Svr2022Template.vhdx"
+$vmPath = "c:\BaseVMs"
+$vhdPath = "c:\BaseVMs"
 $vmSwitch = "Internal"
-$isoPath = "c:\VMs\W2k2022.ISO"
+$isoPath = "c:\BaseVMs\W2k2022.ISO"
 $classVMs = "ServerDC1", "ServerDM1", "ServerSA1"
 
 # Send message to complete Template first
@@ -29,7 +29,7 @@ Remove-VM "Svr2022Template" -Force
 foreach($vmName in $classVMs){
     $VHD = New-VHD -Path ($vmPath + "\" + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
     new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch  -Generation 2
-    Add-VMDvdDrive -VMName $vmName -Path c:\VMs\W2k2022.ISO
+    Add-VMDvdDrive -VMName $vmName -Path c:\BaseVMs\W2k2022.ISO
 }
 
 
