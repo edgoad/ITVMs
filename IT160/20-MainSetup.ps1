@@ -62,18 +62,20 @@ Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock {
 #######################################################################
 # NOTE: REBOOT!
 # Will also return an error code - this is expected
+# keys from https://learn.microsoft.com/en-us/windows-server/get-started/kms-client-activation-keys  
+# and https://learn.microsoft.com/en-us/windows-server/get-started/automatic-vm-activation
 #######################################################################
 Invoke-Command -VMName ServerDC1 -Credential $credDom -ScriptBlock { 
-    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
+    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
     }
 Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock { 
-    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
+    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
     }
 Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
-    dism /online /Set-Edition:ServerDataCenterCor /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
+    dism /online /Set-Edition:ServerDataCenterCor /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
     }
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
-    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:CB7KF-BWN84-R7R2Y-793K2-8XDDG
+    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
     }
 #endregion
 
@@ -87,15 +89,15 @@ $userDom = "AZ800\administrator"
 $passDom = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $credDom = New-Object System.Management.Automation.PSCredential($userDom, $pass)
 Invoke-Command -VMName ServerDC1 -Credential $credDom -ScriptBlock { 
-    cscript //B %windir%\system32\slmgr.vbs /ipk TMJ3Y-NTRTM-FJYXT-T22BY-CWG3J
+    cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
     }
 Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock { 
-    cscript //B %windir%\system32\slmgr.vbs /ipk TMJ3Y-NTRTM-FJYXT-T22BY-CWG3J
+    cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
     }
 Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
-    cscript //B %windir%\system32\slmgr.vbs /ipk TMJ3Y-NTRTM-FJYXT-T22BY-CWG3J
+    cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
     }
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
-    cscript //B %windir%\system32\slmgr.vbs /ipk TMJ3Y-NTRTM-FJYXT-T22BY-CWG3J
+    cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
     }
 #endregion
