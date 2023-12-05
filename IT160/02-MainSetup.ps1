@@ -32,6 +32,7 @@ foreach($vmName in $classVMs){
     Add-VMDvdDrive -VMName $vmName -Path c:\VMs\W2k2022.ISO
 }
 
+
 # Add DM2 into array to be included in remaining tasks
 $classVMs += "ServerDM2"
 
@@ -50,6 +51,9 @@ foreach($vmName in $extraDiskVMs){
 foreach($vmName in $classVMs){
     Set-VMDvdDrive -VMName $vmName -Path $isoPath
 }
+# Set dynamic memory for all VMs
+Get-VM | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 2GB -MaximumBytes 4GB
+
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
 
