@@ -37,7 +37,7 @@ foreach($vmName in $classVMs){
 $classVMs += "ServerDM2"
 
 #Create additional HD for DM1
-$extraDiskVMs = "ServerDM1"
+$extraDiskVMs = "ServerDM1", "ServerSA1"
 foreach($vmName in $extraDiskVMs){
     New-VHD -Path $("$vmPath\$vmName" + "_01.vhdx") -SizeBytes 20GB
     New-VHD -Path $("$vmPath\$vmName" + "_02.vhdx") -SizeBytes 15GB
