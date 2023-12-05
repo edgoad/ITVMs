@@ -133,7 +133,11 @@ foreach($vmName in $classVMs){
 #######################################################################
 # NOTE: REBOOT!
 #######################################################################
-Invoke-Command -Session $sessionSA1 -ScriptBlock { 
+# Setup session (must be done after rebooting)
+foreach($vmName in $classVMs){
+    $VMSessions[$vmName] = New-PSSession -VMName $vmName -Credential $cred
+}
+Invoke-Command -Session $VMSessions["ServerSA1"] -ScriptBlock { 
     add-computer -workgroupname AZ800 -restart -force
 }
 # Join domain
@@ -141,6 +145,9 @@ Invoke-Command -Session $sessionSA1 -ScriptBlock {
 # NOTE: REBOOT!
 #######################################################################
 Invoke-Command -Session $VMSessions["ServerDM1"], $VMSessions["ServerDM2"] -ScriptBlock { 
-    add-computer -domainname AZ800.corp -Credential $credDom -restart -force
+    $user = "AZ800\administrator"
+    $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+    $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+    add-computer -domainname AZ800.corp -Credential $cred -restart -force
 }
 
