@@ -32,11 +32,12 @@ foreach($vmName in $classVMs){
     Add-VMDvdDrive -VMName $vmName -Path c:\VMs\W2k2022.ISO
 }
 
-# Add DM1 into array to be included in remaining tasks
-$classVMs += "ServerDM1"
+# Add DM2 into array to be included in remaining tasks
+$classVMs += "ServerDM2"
 
-#Create additional HD
-foreach($vmName in $classVMs){
+#Create additional HD for DM1
+$extraDiskVMs = "ServerDM1"
+foreach($vmName in $extraDiskVMs){
     New-VHD -Path $("$vmPath\$vmName" + "_01.vhdx") -SizeBytes 20GB
     New-VHD -Path $("$vmPath\$vmName" + "_02.vhdx") -SizeBytes 15GB
     New-VHD -Path $("$vmPath\$vmName" + "_03.vhdx") -SizeBytes 10GB

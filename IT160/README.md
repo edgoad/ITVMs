@@ -15,6 +15,7 @@ If multiple reboots needed, restart the script after reboot
 1. Login to the template VM and install Windows
 2. Install Windows Updates (need to set temp IP for this)
 3. When finished, use sysprep to generalize the VM
+`%WINDIR%\system32\sysprep\sysprep.exe /generalize /shutdown /oobe`
 4. Install ServerDM2 as Core Edition + Updates
 5. Then run 02-MainSetup.ps1 to clone the template
 ```
