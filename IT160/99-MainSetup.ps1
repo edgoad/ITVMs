@@ -5,9 +5,12 @@
 #
 #######################################################################
 
+# Shutdown VMs
+Get-VM | Stop-VM 
+
 # Compress / optimize vhds
 $vhds = Get-Item -Path "C:\vms\Serv*.vhdx"
 Optimize-VHD $vhds -Mode full
 
-Get-VM | Stop-VM 
+# Set initial snapshot
 Get-VM | Checkpoint-VM -SnapshotName "InitialConfig" 
