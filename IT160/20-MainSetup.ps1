@@ -82,6 +82,9 @@ Invoke-Command -VMName ServerDM2 -AsJob -Credential $credDom -ScriptBlock {
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
     dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
     }
+Invoke-Command -VMName ServerHyperV -Credential $cred -ScriptBlock { 
+    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
+    }
 #endregion
 
 #region Use SLMGR to setup AVMA license key
@@ -103,6 +106,9 @@ Invoke-Command -VMName ServerDM2 -AsJob -Credential $credDom -ScriptBlock {
     cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
     }
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
+    cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
+    }
+Invoke-Command -VMName ServerHyperV -Credential $cred -ScriptBlock { 
     cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
     }
 #endregion
