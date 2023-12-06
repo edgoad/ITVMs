@@ -9,8 +9,8 @@ $templatePath = "c:\BaseVMs\Svr2022Template.vhdx"
 $vmPath = "c:\BaseVMs"
 $vhdPath = "c:\BaseVMs"
 $vmSwitch = "Internal"
-$isoPath = "c:\BaseVMs\W2k2022.ISO"
-$classVMs = "ServerDC1", "ServerDM1", "ServerSA1"
+$isoPath = "c:\ISOs\W2k2022.ISO"
+$classVMs = "ServerDC1", "ServerDM1", "ServerSA1", "ServerHyperV"
 
 # Send message to complete Template first
 write-host "Ensure Template VM is installed and sysprepped before continuing"
@@ -29,7 +29,7 @@ Remove-VM "Svr2022Template" -Force
 foreach($vmName in $classVMs){
     $VHD = New-VHD -Path ($vmPath + "\" + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
     new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch  -Generation 2
-    Add-VMDvdDrive -VMName $vmName -Path c:\BaseVMs\W2k2022.ISO
+    Add-VMDvdDrive -VMName $vmName -Path c:\ISOs\W2k2022.ISO
 }
 
 

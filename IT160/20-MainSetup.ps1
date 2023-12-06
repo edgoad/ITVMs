@@ -18,10 +18,15 @@ if ((Get-VMSwitch | Where-Object -Property Name -EQ "Private").count -eq 0)
     New-VMSwitch -SwitchType Private -Name Private
 }
 
+
+$classVMs = "ServerDC1", "ServerDM1", "ServerSA1", "ServerDM2", "ServerHyperV"
 #Create Second NIC
-Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
+foreach($vmName in $classVMs){
+    Add-VMNetworkAdapter -VMName $VMSessions[$vmName] -SwitchName Private
+}
+#Add-VMNetworkAdapter -VMName ServerDC1 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerDM1 -SwitchName Private
-Add-VMNetworkAdapter -VMName ServerDM2 -SwitchName Private
+#Add-VMNetworkAdapter -VMName ServerDM2 -SwitchName Private
 Add-VMNetworkAdapter -VMName ServerSA1 -SwitchName Private
 #endregion
 
@@ -40,20 +45,20 @@ $credDom = New-Object System.Management.Automation.PSCredential($userDom, $pass)
 
 
 # Configure new NIC
-Invoke-Command -VMName ServerDC1 -Credential $credDom -ScriptBlock { 
-    Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
-    New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.1 -PrefixLength 24 
-    }
+# Invoke-Command -VMName ServerDC1 -Credential $credDom -ScriptBlock { 
+#     Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
+#     New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.1 -PrefixLength 24 
+#     }
 Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock { 
-    Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
+    Get-NetAdapter | where Name -NE 'Ethernet0' | Rename-NetAdapter -NewName Ethernet1
     New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.2 -PrefixLength 24 
     }
-Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
-    Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
-    New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.3 -PrefixLength 24 
-    }
+# Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
+#     Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
+#     New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.3 -PrefixLength 24 
+#     }
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
-    Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Private
+    Get-NetAdapter | where Name -NE 'Ethernet0' | Rename-NetAdapter -NewName Ethernet1
     New-NetIPAddress -InterfaceAlias Private -IPAddress 192.168.1.4 -PrefixLength 24 
     }
 #endregion
