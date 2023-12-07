@@ -73,6 +73,7 @@ Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Create Template VM
 new-VM -Name Svr2022Template -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath c:\BaseVMs\Svr2022Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
+Set-VMProcessor -VMName Svr2022Template -count 4
 Add-VMDvdDrive -VMName Svr2022Template -Path c:\ISOs\W2k2022.ISO
 #Set-VMDvdDrive -VMName Svr2022Template -Path c:\BaseVMs\W2k2022.ISO
 

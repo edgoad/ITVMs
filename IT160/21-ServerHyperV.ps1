@@ -1,11 +1,12 @@
-# Set dynamic memory for all VMs
-Get-VM -Name ServerHyperV | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 2GB -MaximumBytes 8GB
+# Set dynamic memory for ServerHV
+Get-VM -Name ServerHyperV | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 4GB -MaximumBytes 8GB
 
 # Set Virtualization settings
-Set-VMProcessor -VMName ServerHyperV -ExposeVirtualizationExtensions $true
+Set-VMProcessor -VMName ServerHyperV -ExposeVirtualizationExtensions $true -count 4
 Get-VMNetworkAdapter -VMName ServerHyperV | Set-VMNetworkAdapter -MacAddressSpoofing On
 
-
+# Power on ServerHyperV
+Get-VM -Name ServerHyperV | Start-VM
 
 
 # Setup credentials
@@ -43,9 +44,39 @@ Invoke-Command -VMName ServerHyperV -Credential $cred -ScriptBlock {
     # Setup Hyper-V default file locations
     Set-VMHost -VirtualHardDiskPath "c:\VMs"
     Set-VMHost -VirtualMachinePath "c:\VMs"
-    new-VM -Name InstallCore -MemoryStartupBytes 1GB -BootDevice VHD -NewVHDPath c:\VMs\InstallCore.vhdx -NewVHDSizeBytes 60GB -SwitchName PrivateNet -Generation 2
-    new-VM -Name ServerVM1 -MemoryStartupBytes 1GB -BootDevice VHD -NewVHDPath c:\VMs\ServerVM1.vhdx -NewVHDSizeBytes 60GB -SwitchName PrivateNet -Generation 2
+    new-VM -Name InstallCore -MemoryStartupBytes 1GB -BootDevice VHD -NewVHDPath c:\VMs\InstallCore.vhdx -NewVHDSizeBytes 40GB -SwitchName PrivateNet -Generation 2
+    new-VM -Name ServerVM1 -MemoryStartupBytes 1GB -BootDevice VHD -NewVHDPath c:\VMs\ServerVM1.vhdx -NewVHDSizeBytes 40GB -SwitchName PrivateNet -Generation 2
     Get-VM | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 1GB -MaximumBytes 4GB
     Add-VMDvdDrive -VMName ServerVM1 -Path c:\ISOs\W2k2022.ISO
 }
 
+#######################################################################
+#
+# Install ServerVM1 before proceeding
+#
+#######################################################################
+
+# Configure NIC
+Invoke-Command -VMName ServerHyperV -Credential $cred -ScriptBlock {  
+    $user = "administrator"
+    $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+    $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+    Invoke-Command -VMName ServerVM1 -Credential $cred -ScriptBlock { 
+        Get-NetAdapter | Rename-NetAdapter -NewName Ethernet0
+        New-NetIPAddress -InterfaceAlias Ethernet0 -IPAddress "192.168.0.1" -PrefixLength 24
+        Set-NetFirewallRule FPS-ICMP4-ERQ-In -Enabled true
+    }
+}
+
+# shutdown/optimize/snapshot
+Invoke-Command -VMName ServerHyperV -Credential $cred -ScriptBlock { 
+    # Shutdown VMs
+    Get-VM | Stop-VM 
+
+    # Compress / optimize vhds
+    $vhds = Get-Item -Path "C:\VMs\Serv*.vhdx"
+    Optimize-VHD $vhds -Mode full
+
+    # Set initial snapshot
+    Get-VM | Checkpoint-VM -SnapshotName "InitialConfig" 
+}
