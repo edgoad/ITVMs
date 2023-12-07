@@ -78,6 +78,12 @@ foreach($vmName in $classVMs){
     # }
     Set-HostedPassword $VMSessions[$vmName]
 }
+# Set Firewall Exception
+foreach($vmName in $classVMs){
+    Invoke-Command -Session $VMSessions[$vmName] -ScriptBlock { 
+        Set-NetFirewallRule FPS-ICMP4-ERQ-In -Enabled true
+    }
+}
 #endregion
 #######################################################################
 # NOTE: REBOOT!

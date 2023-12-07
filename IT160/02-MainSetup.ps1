@@ -12,6 +12,11 @@ $vmSwitch = "Internal"
 $isoPath = "c:\ISOs\W2k2022.ISO"
 $classVMs = "ServerDC1", "ServerDM1", "ServerSA1", "ServerHyperV"
 
+#initiate sysprep
+Invoke-Command -VMName Svr2022Template -Credential $credDom -ScriptBlock { 
+    %WINDIR%\system32\sysprep\sysprep.exe /generalize /shutdown /oobe
+}
+
 # Send message to complete Template first
 write-host "Ensure Template VM is installed and sysprepped before continuing"
 

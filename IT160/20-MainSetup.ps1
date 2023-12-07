@@ -73,7 +73,7 @@ Invoke-Command -VMName ServerDC1 -AsJob -Credential $credDom -ScriptBlock {
 Invoke-Command -VMName ServerDM1 -AsJob -Credential $cred -ScriptBlock { 
     dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
     }
-Invoke-Command -VMName ServerDM2 -AsJob -Credential $cred -ScriptBlock { 
+Invoke-Command -VMName ServerDM2 -AsJob -Credential $credDom -ScriptBlock { 
     dism /online /Set-Edition:ServerDataCenterCor /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
     }
 Invoke-Command -VMName ServerSA1 -AsJob -Credential $cred -ScriptBlock { 
