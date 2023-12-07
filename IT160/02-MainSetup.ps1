@@ -12,9 +12,13 @@ $vmSwitch = "Internal"
 $isoPath = "c:\ISOs\W2k2022.ISO"
 $classVMs = "ServerDC1", "ServerDM1", "ServerSA1", "ServerHyperV"
 
+# Setup credentials
+$user = "administrator"
+$pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
+$cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 #initiate sysprep
-Invoke-Command -VMName Svr2022Template -Credential $credDom -ScriptBlock { 
-    %WINDIR%\system32\sysprep\sysprep.exe /generalize /shutdown /oobe
+Invoke-Command -VMName Svr2022Template -Credential $cred -ScriptBlock { 
+    & 'c:\windows\system32\sysprep\sysprep.exe' /generalize /shutdown /oobe
 }
 
 # Send message to complete Template first
