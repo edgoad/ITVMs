@@ -27,8 +27,10 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/0
 1. Power on each VM and set the Administrator password to Password01
 2. Run the scripts for the individual VMs to configure the VMs (manually walk through each script to ensure it works)
 ```
-Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/10-MainSetup.ps1" -OutFile $env:TEMP\02-MainSetup.ps1
+Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/10-MainSetup.ps1" -OutFile $env:TEMP\10-MainSetup.ps1
 ."$env:Temp\10-MainSetup.ps1"
+Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT160/11-MainSetup.ps1" -OutFile $env:TEMP\11-MainSetup.ps1
+."$env:Temp\11-MainSetup.ps1"
 ```
 3. Run the remaining setup scripts to capture snapshots
 ```

@@ -82,10 +82,7 @@ foreach($vmName in $classVMs){
 #######################################################################
 # NOTE: REBOOT!
 #######################################################################
-# Setup session (must be done after rebooting)
-foreach($vmName in $classVMs){
-    $VMSessions[$vmName] = New-PSSession -VMName $vmName -Credential $cred
-}
+
 Invoke-Command -Session $VMSessions["ServerSA1"] -ScriptBlock { 
     add-computer -workgroupname AZ800 -restart -force
 }
