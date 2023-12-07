@@ -1,5 +1,8 @@
+# Power off ServerHyperV
+Get-VM -Name ServerHyperV | Stop-VM
+
 # Set dynamic memory for ServerHV
-Get-VM -Name ServerHyperV | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 4GB -MaximumBytes 8GB
+Get-VM -Name ServerHyperV | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 4GB -MaximumBytes 12GB
 
 # Set Virtualization settings
 Set-VMProcessor -VMName ServerHyperV -ExposeVirtualizationExtensions $true -count 4

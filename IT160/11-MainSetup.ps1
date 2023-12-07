@@ -90,7 +90,7 @@ foreach($vmName in $classVMs){
 # NOTE: REBOOT!
 #######################################################################
 
-Invoke-Command -Session $VMSessions["ServerSA1"] -ScriptBlock { 
+Invoke-Command -Session $VMSessions["ServerSA1"], $VMSessions["ServerHyperV"] -ScriptBlock { 
     add-computer -workgroupname AZ800 -restart -force
 }
 # Join domain
