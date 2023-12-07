@@ -98,6 +98,8 @@ $url = "https://github.com/edgoad/ITVMs/raw/master/IT160/IT160.png"
 $output = "c:\Users\Public\Desktop\Network Diagram.png"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
+# Set dynamic memory for all VMs
+Get-VM | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 2GB -MaximumBytes 4GB
 
 #######################################################################
 #
