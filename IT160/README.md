@@ -47,3 +47,15 @@ New-ItemProperty -Path 'HKLM:\Software\Microsoft\Windows\CurrentVersion\RunOnce'
 ```
 **All VMs**
 None
+
+
+# TODO:
+Fix networks for VPN (wrong IPs)
+Chapter 4 - precreate users
+    On ServerDM1, create user accounts with password Password01 :
+        adminuser1 (add to the local administrators group)
+        reguser1
+    On ServerDC1, create domain user accounts with password Password01 :
+        domuser1
+        domuser2
+        domadmin1 (add to the domain administrators group)
