@@ -51,7 +51,9 @@ None
 
 # TODO:
 Fix networks for VPN (wrong IPs)
+
 Chapter 4 - precreate users
+
     On ServerDM1, create user accounts with password Password01 :
         adminuser1 (add to the local administrators group)
         reguser1
@@ -59,9 +61,14 @@ Chapter 4 - precreate users
         domuser1
         domuser2
         domadmin1 (add to the domain administrators group)
+
 Set all VMs to only Basic session - possibly remove Enhaced mode from Hyper-V
+
 Disable Windows Updates?
+
 ISO in ServerHyperV has a weird name, shoudl be W2k22.ISO
+
 ServerHyperV to 8GB RAM Minimum
+
     increase ServerVM1 from 1GB?
     prep for os install lab?
