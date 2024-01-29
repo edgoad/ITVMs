@@ -59,3 +59,9 @@ Chapter 4 - precreate users
         domuser1
         domuser2
         domadmin1 (add to the domain administrators group)
+Set all VMs to only Basic session - possibly remove Enhaced mode from Hyper-V
+Disable Windows Updates?
+ISO in ServerHyperV has a weird name, shoudl be W2k22.ISO
+ServerHyperV to 8GB RAM Minimum
+    increase ServerVM1 from 1GB?
+    prep for os install lab?
