@@ -50,7 +50,7 @@ Invoke-Command -VMName ServerHyperV -Credential $cred -ScriptBlock {
     new-VM -Name InstallCore -MemoryStartupBytes 1GB -BootDevice VHD -NewVHDPath c:\VMs\InstallCore.vhdx -NewVHDSizeBytes 40GB -SwitchName PrivateNet -Generation 2
     new-VM -Name ServerVM1 -MemoryStartupBytes 1GB -BootDevice VHD -NewVHDPath c:\VMs\ServerVM1.vhdx -NewVHDSizeBytes 40GB -SwitchName PrivateNet -Generation 2
     Get-VM | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 1GB -MaximumBytes 4GB
-    Add-VMDvdDrive -VMName ServerVM1 -Path c:\ISOs\W2k2022.ISO
+    Add-VMDvdDrive -VMName ServerVM1 -Path c:\ISOs\W2k22.ISO
 }
 
 #######################################################################

@@ -48,7 +48,7 @@ $credDom = New-Object System.Management.Automation.PSCredential($userDom, $pass)
 #     }
 Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock { 
     Get-NetAdapter | where Name -NE 'Ethernet0' | Rename-NetAdapter -NewName Ethernet1
-    New-NetIPAddress -InterfaceAlias Ethernet1 -IPAddress 192.168.1.2 -PrefixLength 24 
+    New-NetIPAddress -InterfaceAlias Ethernet1 -IPAddress 172.31.0.101 -PrefixLength 24 
     }
 # Invoke-Command -VMName ServerDM2 -Credential $credDom -ScriptBlock { 
 #     Get-NetAdapter | where Name -NE 'Internal' | Rename-NetAdapter -NewName Ethernet1
@@ -56,7 +56,7 @@ Invoke-Command -VMName ServerDM1 -Credential $credDom -ScriptBlock {
 #     }
 Invoke-Command -VMName ServerSA1 -Credential $cred -ScriptBlock { 
     Get-NetAdapter | where Name -NE 'Ethernet0' | Rename-NetAdapter -NewName Ethernet1
-    New-NetIPAddress -InterfaceAlias Ethernet1 -IPAddress 192.168.1.4 -PrefixLength 24 
+    New-NetIPAddress -InterfaceAlias Ethernet1 -IPAddress 172.31.0.240 -PrefixLength 24 
     }
 #endregion
 
@@ -79,9 +79,6 @@ Invoke-Command -VMName ServerDM2 -AsJob -Credential $credDom -ScriptBlock {
 Invoke-Command -VMName ServerSA1 -AsJob -Credential $cred -ScriptBlock { 
     dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
     }
-Invoke-Command -VMName ServerHyperV -Credential $cred -ScriptBlock { 
-    dism /online /Set-Edition:ServerDataCenter /AcceptEULA /quiet /ProductKey:WX4NM-KYWYW-QJJR4-XV3QB-6VM33
-    }
 #endregion
 
 #region Use SLMGR to setup AVMA license key
@@ -100,9 +97,6 @@ Invoke-Command -VMName ServerDM2 -AsJob -Credential $credDom -ScriptBlock {
     cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
     }
 Invoke-Command -VMName ServerSA1 -AsJob -Credential $cred -ScriptBlock { 
-    cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
-    }
-Invoke-Command -VMName ServerHyperV -AsJob -Credential $cred -ScriptBlock { 
     cscript //B %windir%\system32\slmgr.vbs /ipk W3GNR-8DDXR-2TFRP-H8P33-DV9BG
     }
 Invoke-Command -VMName ServerDC1 -Credential $credDom -ScriptBlock { 

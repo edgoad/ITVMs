@@ -22,16 +22,19 @@ $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 
-$classVMs = "ServerDC1", "ServerDM1", "ServerSA1", "ServerDM2", "ServerHyperV"
-$VMIPs = @{"ServerDC1" = "10.99.0.220"; "ServerDM1" = "10.99.0.201"; "ServerSA1" = "10.99.0.203"; "ServerDM2" = "10.99.0.202"; "ServerHyperV" = "10.99.0.10"}
+$classVMs = "ServerDC1", "ServerDM1", "ServerSA1", "ServerDM2"
+$VMIPs = @{"ServerDC1" = "10.99.0.220"; "ServerDM1" = "10.99.0.201"; "ServerSA1" = "10.99.0.203"; "ServerDM2" = "10.99.0.202"}
 $VMSessions = @{"ServerDC1" = New-PSSession -VMName ServerDC1 -Credential $cred; 
     "ServerDM1" = New-PSSession -VMName ServerDM1 -Credential $cred; 
     "ServerSA1" = New-PSSession -VMName ServerSA1 -Credential $cred; 
-    "ServerDM2" = New-PSSession -VMName ServerDM2 -Credential $cred; 
-    "ServerHyperV" = New-PSSession -VMName ServerHyperV -Credential $cred}
+    "ServerDM2" = New-PSSession -VMName ServerDM2 -Credential $cred}
 
 #region Rename server
 
+# Disable Windows Updates
+foreach($vmSession in $VMSessions){
+    Disable-WindowsUpdatesVM($vmSession)
+}
 
 # Configure name 
 #######################################################################

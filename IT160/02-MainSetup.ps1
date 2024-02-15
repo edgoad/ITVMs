@@ -5,17 +5,32 @@
 #
 #######################################################################
 
+# Change directory to %TEMP% for working
+cd $env:TEMP
+
+# Dowload and import CommonFunctions module
+$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
+$output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
+(new-object System.Net.WebClient).DownloadFile($url, $output)
+Import-Module $output
+#Remove-Item $output
+
+
 $templatePath = "c:\BaseVMs\Svr2022Template.vhdx"
 $vmPath = "c:\BaseVMs"
 $vhdPath = "c:\BaseVMs"
 $vmSwitch = "Internal"
-$isoPath = "c:\ISOs\W2k2022.ISO"
-$classVMs = "ServerDC1", "ServerDM1", "ServerSA1", "ServerHyperV"
+$isoPath = "c:\ISOs\W2k22.ISO"
+$classVMs = "ServerDC1", "ServerDM1", "ServerSA1"
 
 # Setup credentials
 $user = "administrator"
 $pass = ConvertTo-SecureString "Password01" -AsPlainText -Force
 $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
+# Disable Windows Update
+$vmSession = New-PSSession Svr2022Template  -Credential $cred
+Disable-WindowsUpdatesVM($vmSession)
+
 #initiate sysprep
 Invoke-Command -VMName Svr2022Template -Credential $cred -ScriptBlock { 
     & 'c:\windows\system32\sysprep\sysprep.exe' /generalize /shutdown /oobe
@@ -37,8 +52,8 @@ Remove-VM "Svr2022Template" -Force
 # Based on https://matthewfugel.wordpress.com/2017/02/18/hyper-v-quick-deploy-vms-with-powershell-differencing-disk/
 foreach($vmName in $classVMs){
     $VHD = New-VHD -Path ($vmPath + "\" + $vmname + ".vhdx") -ParentPath $templatePath -Differencing
-    new-VM -Name $vmName -MemoryStartupBytes 2GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch  -Generation 2
-    Add-VMDvdDrive -VMName $vmName -Path c:\ISOs\W2k2022.ISO
+    new-VM -Name $vmName -MemoryStartupBytes 4GB -BootDevice VHD -VHDPath $VHD.Path -SwitchName $vmSwitch  -Generation 2
+    Add-VMDvdDrive -VMName $vmName -Path c:\ISOs\W2k22.ISO
 }
 
 
@@ -61,7 +76,7 @@ foreach($vmName in $classVMs){
     Set-VMDvdDrive -VMName $vmName -Path $isoPath
 }
 # Set dynamic memory for all VMs
-Get-VM | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 2GB -MaximumBytes 4GB
+Get-VM | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 4GB -StartupBytes 4GB -MaximumBytes 6GB
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
@@ -70,7 +85,7 @@ Get-VM | Set-VM -AutomaticStartAction Nothing
 Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 # Set VMs to 2 processors for optimization
-Get-VM | Set-VMProcessor -Count 2
+Get-VM | Set-VMProcessor -Count 4
 
 #######################################################################
 #

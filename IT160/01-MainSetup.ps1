@@ -29,6 +29,9 @@ else{
 # Install Hyper-V
 Install-HypervAndTools
 
+# Disabel Enhanced session mode
+Set-VMhost -EnableEnhancedSessionMode $True
+
 # Create virtual swith
 if ( ! (Get-VMSwitch | Where-Object Name -eq 'Internal')){
     Write-Host "Creating Internal vswitch"
@@ -68,17 +71,17 @@ Set-VMHost -VirtualMachinePath "c:\BaseVMs"
 #Download Windows ISO
 New-Item -ItemType Directory -Path c:\BaseVMs -Force
 $url = "https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
-$output = "c:\ISOs\W2k2022.ISO"
+$output = "c:\ISOs\W2k22.ISO"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Create Template VM
 new-VM -Name Svr2022Template -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath c:\BaseVMs\Svr2022Template.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName Svr2022Template -Path c:\ISOs\W2k2022.ISO
-#Set-VMDvdDrive -VMName Svr2022Template -Path c:\BaseVMs\W2k2022.ISO
+Add-VMDvdDrive -VMName Svr2022Template -Path c:\ISOs\W2k22.ISO
+#Set-VMDvdDrive -VMName Svr2022Template -Path c:\BaseVMs\W2k22.ISO
 
 # Create Template VM
-new-VM -Name ServerDM2 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath c:\BaseVMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName ServerDM2 -Path c:\ISOs\W2k2022.ISO
+new-VM -Name ServerDM2 -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath c:\BaseVMs\ServerDM2.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
+Add-VMDvdDrive -VMName ServerDM2 -Path c:\ISOs\W2k22.ISO
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing
@@ -99,7 +102,7 @@ $output = "c:\Users\Public\Desktop\Network Diagram.png"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Set dynamic memory for all VMs
-Get-VM | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 512MB -StartupBytes 2GB -MaximumBytes 4GB
+Get-VM | Set-VMMemory -DynamicMemoryEnabled $true -MinimumBytes 4GB -StartupBytes 4GB -MaximumBytes 6GB
 
 #######################################################################
 #
