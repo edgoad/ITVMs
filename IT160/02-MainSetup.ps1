@@ -30,6 +30,8 @@ $cred = New-Object System.Management.Automation.PSCredential($user, $pass)
 # Disable Windows Update
 $vmSession = New-PSSession Svr2022Template  -Credential $cred
 Disable-WindowsUpdatesVM($vmSession)
+$vmSession2 = New-PSSession ServerDM2  -Credential $cred
+Disable-WindowsUpdatesVM($vmSession2)
 
 #initiate sysprep
 Invoke-Command -VMName Svr2022Template -Credential $cred -ScriptBlock { 
