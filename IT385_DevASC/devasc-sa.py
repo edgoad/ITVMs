@@ -1,15 +1,15 @@
-###############################################################
+######################################################################################
 # This program:
 # - Asks the user to enter an access token or use the hard coded access token.
 # - Lists the user's Webex rooms.
 # - Asks the user which Webex room to monitor for "/seconds" of requests.
 # - Monitors the selected Webex Team room every second for "/seconds" messages.
 # - Discovers GPS coordinates of the ISS flyover using ISS API.
-# - Display the geographical location using MapQuest API based on the GPS coordinates.
+# - Display the geographical location using Graphhopper API based on the GPS coordinates.
 # - Formats and sends the results back to the Webex Team room.
 #
 # The student will:
-# 1. Import libraries for API requests, JSON formatting, epoch time conversion, and iso3166.
+# 1. Import libraries for API requests, JSON formatting, parsing URLs into components, and epoch time conversion.
 # 2. Complete the if statement to ask the user for the Webex access token.
 # 3. Provide the URL to the Webex room API.
 # 4. Create a loop to print the type and title of each room.
@@ -17,14 +17,15 @@
 # 6. Provide the URL to the ISS Current Location API.
 # 7. Record the ISS GPS coordinates and timestamp.
 # 8. Convert the timestamp epoch value to a human readable date and time.
-# 9. Provide your MapQuest API consumer key.
-# 10. Provide the URL to the MapQuest address API.
-# 11. Store the location received from the MapQuest API in a variable.
+# 9. Provide your Graphhopper API consumer key.
+# 10. Provide the URL to the Graphhopper GeoCoding API.
+# 11. Store the location received from the Graphhopper API in a variable.
 # 12. Complete the code to format the response message.
 # 13. Complete the code to post the message to the Webex room.
 ###############################################################
  
-# 1. Import libraries for API requests, JSON formatting, epoch time conversion, and iso3166.
+#######################################################################################
+# 1. Import libraries for API requests, JSON formatting, parsing URLs into components, and epoch time conversion.
 
 <!!!REPLACEME with code for libraries>
 
@@ -44,8 +45,8 @@ r = requests.get(   "<!!!REPLACEME with URL!!!>",
 # DO NOT EDIT ANY BLOCKS WITH r.status_code
 if not r.status_code == 200:
     raise Exception("Incorrect reply from Webex API. Status code: {}. Text: {}".format(r.status_code, r.text))
-#######################################################################################
-
+######################################################################################
+#
 # 4. Create a loop to print the type and title of each room.
 print("\nList of available rooms:")
 rooms = r.json()["items"]
@@ -101,7 +102,7 @@ while True:
 
     json_data = r.json()
     if len(json_data["items"]) == 0:
-        raise Exception("There are no messages in the room.")    
+        raise Exception("There are no messages in the room.")
     
     messages = json_data["items"]
     message = messages[0]["text"]
@@ -137,46 +138,47 @@ while True:
         # Use the time.ctime function to convert the timestamp to a human readable date and time.
         timeString = <!!!REPLACEME with conversion code!!!>       
    
-# 9. Provide your MapQuest API consumer key.
+# 9. Provide your Graphhopper API consumer key.
     
-        mapsAPIGetParameters = { 
-                                "lat": lat,
-                                "lng": lng,
-                                "key": "<!!!REPLACEME with your MapQuest API Key!!!>"
-                               }
-    
-# 10. Provide the URL to the MapQuest Reverse GeoCode API.
-    # Get location information using the MapQuest API reverse geocode service using the HTTP GET method
-        r = requests.get("<!!!REPLACEME with URL!!!>", 
-                             params = mapsAPIGetParameters
-                        )
+        key = "<!!!RREPLACEME with your Graphhopper API key>"
 
-    # Verify if the returned JSON data from the MapQuest API service are OK
+# 10. Provide the URL to the Graphhopper GeoCoding API.
+    # Get location information using the Graphhopper GeoCoding API service using the HTTP GET method
+        GeoURL = "<!!! REPLACEME with Graphhopper GeoCoding API URL>"
+
+        loc="&point="+lat+","+lng
+        url = GeoURL + urllib.parse.urlencode({"key":key, "reverse":"true"}) + loc
+        r = requests.get(url)
+
+    # Verify if the returned JSON data from the Graphhopper API service are OK
         json_data = r.json()
-    # check if the status key in the returned JSON data is "0"
-        if not json_data["info"]["statuscode"] == 0:
-                raise Exception("Incorrect reply from MapQuest API. Status code: {}".format(r.statuscode))
+    # check if the status key in the returned JSON data is "200"
+        if not r.status_code == 200:
+            raise Exception("Graphhopper Error message: " + json_data["message"])
 
-# 11. Store the location received from the MapQuest API in a variable
-        CountryResult = json_data["<!!!REPLACEME!!!> with path to adminArea1 key!!!>"]
-        StateResult = json_data["<!!!REPLACEME!!!> with path to adminArea3 key!!!>"]
-        CityResult = json_data["<!!!REPLACEME!!!> with path to adminArea4!!!>"]
-        StreetResult = json_data["<!!!REPLACEME!!!> with path to street key!!!>"]
-
-        #Find the country name using ISO3611 country code
-        if not CountryResult == "XZ":
-            CountryResult = countries.get(CountryResult).name
+# 11. Store the location received from the Graphhopper.
+        if len(json_data["hits"]) != 0:
+            CountryResult = json_data["<!!!REPLACEME!!!> with path to country key!!!>"]
+            NameResult = json_data["<!!!REPLACEME!!!> with path to name key!!!>"]
+            If "state" in json_data["hits"][0]:
+                StateResult = json_data["<!!!REPLACEME!!!> with path to state key!!!>"]
+            If "city" in json_data["hits"][0]:
+                CityResult = json_data["<!!!REPLACEME!!!> with path to city key!!!>"]
+            If "street" in json_data["hits"][0]:
+                StreetResult = json_data["<!!!REPLACEME!!!> with path to street key!!!>"]
+            If "housenumber" in json_data["hits"][0]:
+                HouseResult = json_data["<!!!REPLACEME!!!> with path to housenumber key!!!>"]
 
 # 12. Complete the code to format the response message.
-#     Example responseMessage result: In Austin, Texas the ISS will fly over on Thu Jun 18 18:42:36 2020 for 242 seconds.
-        #responseMessage = "On {}, the ISS was flying over the following location: \n{} \n{}, {} \n{}\n({}\", {}\")".format(timeString, StreetResult, CityResult, StateResult, CountryResult, lat, lng)
+#     Example responseMessage result: On Tue Mar 12 00:16:04 2024 (GMT), the ISS was flying over Mobert Creek, Canada. (47.4917°, -37.3643°)
+        #responseMessage = "On {} (GMT), the ISS was flying over {}, {}. ({}\", {}\")".format(timeString, NameResult, CountryResult, lat, lng)
 
-        if CountryResult == "XZ":
-            responseMessage = "On {}, the ISS was flying over a body of water at latitude {}° and longitude {}°.".format(timeString, lat, lng)
-        
+        if len(json_data["hits"]) == 0:
+            responseMessage = "On {} (GMT), the ISS was flying over a body of water or unpopulated area at latitude {}° and longitude {}°.".format(timeString, lat, lng)
+
 <!!!REPLACEME with if statements to compose the message to display the current ISS location in the Webex Team room!!!>
-        elif
         else
+        elif
        
         # print the response message
         print("Sending to Webex: " +responseMessage)
@@ -199,4 +201,3 @@ while True:
                          )
         if not r.status_code == 200:
             raise Exception("Incorrect reply from Webex API. Status code: {}. Text: {}".format(r.status_code, r.text))
-                
