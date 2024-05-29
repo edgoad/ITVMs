@@ -17,6 +17,7 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_D
 
 4. Launch DEVASC VM, run the following commands in a terminal
 ```
+sudo vbox-uninstall-guest-additions
 sudo sed -i -r 's/name: en\*/name: e\*/' /etc/netplan/01-netcfg.yaml
 sudo netplan apply
 ip addr

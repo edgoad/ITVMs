@@ -38,8 +38,8 @@ Start-Process 'C:\Program Files\7-Zip\7z.exe' -ArgumentList "x $vm_ZipFile -o$en
 Write-Host "Converting Metasploitable image files to Hyper-V hard disk file.  Warning: This may take several minutes."
 $vmdkFile = Get-ChildItem "$env:TEMP\$vm_name\*.vmdk" -Recurse | Select-Object -expand FullName
 # run twice, because the first time doesnt seem to work
-start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$vm_HardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
-start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$vm_HardDiskFilePath"" out_file_type=ft_vhdx_thin" -Wait
+start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$vm_HardDiskFilePath"" out_file_type=ft_vhdx_growable" -Wait
+start-Process $swcExePath -ArgumentList "convert in_file_name=""$vmdkFile"" out_file_name=""$vm_HardDiskFilePath"" out_file_type=ft_vhdx_growable" -Wait
 
     # Import Virtual Machine
 Write-Host "Importing $vm_name"

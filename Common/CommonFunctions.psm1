@@ -562,6 +562,8 @@ function Install-Starwind{
         $output = $(Join-Path $env:TEMP 'starwindconverter.exe')
         #(new-object System.Net.WebClient).DownloadFile($url, $output)
         Get-WebFile -DownloadUrl $url -TargetFilePath $output
+        write-host "Running command"
+        write-host "$output -ArgumentList '/verysilent' -Wait"
         Start-Process $output -ArgumentList "/verysilent" -Wait
     }
 }
@@ -772,4 +774,9 @@ function Disable-WindowsUpdatesVM($vmSession){
         Stop-Service $wuauserv
         $wuauserv | Set-Service -StartupType Disabled
     }
+}
+
+function run-command($command, $ArgumentList, $wait=false){
+    write-host `"$command`" $ArgumentList
+    start-Process $command -ArgumentList $ArgumentList -Wait $wait
 }
