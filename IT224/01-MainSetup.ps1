@@ -64,14 +64,14 @@ Set-HypervDefaults
 
 #Download Windows ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
-$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-$output = "c:\VMs\W2k2016.ISO"
+$url = "https://software-static.download.prss.microsoft.com/sg/download/888969d5-f34g-4e03-ac9d-1f9786c66749/SERVER_EVAL_x64FRE_en-us.iso"
+$output = "c:\VMs\W2k22.ISO"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
-#Download Windows 10 ISO
+#Download Windows 11 ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
-$url = "https://software-download.microsoft.com/download/pr/18363.418.191007-0143.19h2_release_svc_refresh_CLIENTENTERPRISEEVAL_OEMRET_x64FRE_en-us.iso"
-$output = "c:\VMs\Win10.ISO"
+$url = "https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26100.1742.240906-0331.ge_release_svc_refresh_CLIENT_LTSC_EVAL_x64FRE_en-us.iso"
+$output = "c:\VMs\Win11.ISO"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Setup Hyper-V default file locations
@@ -80,15 +80,15 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 
 # Create DC1
 new-VM -Name DC1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\DC1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName DC1 -Path c:\VMs\W2k2016.ISO
+Add-VMDvdDrive -VMName DC1 -Path c:\VMs\W2k22.ISO
 
 # Create DM1
 new-VM -Name DM1 -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\DM1.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName DM1 -Path c:\VMs\W2k2016.ISO
+Add-VMDvdDrive -VMName DM1 -Path c:\VMs\W2k22.ISO
 
 # Create SWS
 new-VM -Name SWS -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath C:\VMs\SWS.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
-Add-VMDvdDrive -VMName SWS -Path c:\VMs\Win10.ISO
+Add-VMDvdDrive -VMName SWS -Path c:\VMs\Win11.ISO
 
 # Set boot order of VMs
 Get-VM | %{
