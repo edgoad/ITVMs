@@ -776,7 +776,7 @@ function Disable-WindowsUpdatesVM($vmSession){
     }
 }
 
-function run-command($command, $ArgumentList, $wait=false){
+function run-command($command, $ArgumentList, $wait=$false){
     write-host `"$command`" $ArgumentList
     start-Process $command -ArgumentList $ArgumentList -Wait $wait
 }
