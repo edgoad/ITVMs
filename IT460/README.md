@@ -63,9 +63,27 @@ sudo linux-vm-tools/kali/2020.x/install.sh
    - possibly set into runonce key prior to checkpoint of VM?
 
 **DVWA**
-1. Configure Network (temporary)
-2. Install DVWA - https://edgoad.com/2020/02/setting-up-dvwa.html
-3. Reconfigure Network - https://linuxize.com/post/how-to-configure-static-ip-address-on-ubuntu-20-04/
+1. Install Install Ubuntu desktop - full
+```
+sudo apt update
+sudo apt upgrade
+```
+
+2. install docker
+`sudo apt install docker.io`
+
+3. Install DVWA
+`sudo docker run --restart=always -d -p 80:80 vulnerables/web-dvwa`
+
+4. Install Juice Shop
+`sudo docker run --restart=always -d -p 3000:3000 bkimminich/juice-shop`
+
+5. Checkpoint VM and test
+```
+web browser to http://localhost -- opens dvwa
+web browser to http://localhost -- opens Juice shop
+```
+6. Reconfigure Network - https://linuxize.com/post/how-to-configure-static-ip-address-on-ubuntu-20-04/
    - Private Network
      - IP: 192.168.38.50/24
      - GW: 192.168.38.250
