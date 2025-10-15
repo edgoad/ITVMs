@@ -75,10 +75,16 @@ sudo apt upgrade
 3. Install DVWA
 `sudo docker run --restart=always -d -p 80:80 vulnerables/web-dvwa`
 
-4. Install Juice Shop
+tweak DVWA fileinclude
+```
+sudo docker exec dvwa sed -i 's/allow_url_include = Off/allow_url_include = On/g' /etc/php/7.0/apache2/php.ini 
+sudo docker exec dvwa /etc/init.d/apache2 reload
+```
+
+5. Install Juice Shop
 `sudo docker run --restart=always -d -p 3000:3000 bkimminich/juice-shop`
 
-5. Checkpoint VM and test
+6. Checkpoint VM and test
 ```
 web browser to http://localhost -- opens dvwa
 web browser to http://localhost -- opens Juice shop
