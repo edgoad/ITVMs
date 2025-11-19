@@ -74,6 +74,13 @@
           path: /etc/apt/preferences.d/nosnap.pref
           state: absent
 
+      - name: Update ubuntu packages [please wait]
+        apt:
+          name: "*"
+          state: latest
+          cache_valid_time: 3600
+          update_cache: yes
+  
       - name: Install XRDP [please wait]
         apt:
           name:
