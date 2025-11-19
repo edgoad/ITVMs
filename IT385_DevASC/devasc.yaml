@@ -1,0 +1,173 @@
+---
+  - name: Setting up DEVASC VM
+    hosts: localhost
+    connection: local
+    become: true
+    
+    vars_prompt:
+      - name: existing_user
+        prompt: "Enter your existing username"
+        private: no
+      - name: existing_user_pass
+        prompt: "Enter your existing password"
+
+    vars:
+      - hostname: labvm
+      - ciscouser: devasc 
+      - ciscopass: Cisco123!
+      - ansible_become_password: "{{existing_user_pass}}"
+      - ubuntuversion: focal
+      - user_groups:
+        - wireshark
+        - docker
+    
+    tasks:
+      - name: Setting the hostname to {{hostname}}
+        hostname:
+          name: "{{hostname}}"
+
+      - name: Create neccesary groups
+        group:
+          name: "{{item}}"
+          state: present
+        with_items: "{{ user_groups }}"
+
+      - name: Add {{ciscouser}} user
+        user:
+          name: "{{ciscouser}}"
+          password: "{{ ciscopass | password_hash('sha512') }}"
+          groups: "{{user_groups}}"
+          state: present
+          create_home: yes
+          append: yes
+          shell: /bin/bash
+          home: "/home/{{ciscouser}}"
+
+      - name: Add apt key for docker
+        apt_key:
+          url: https://download.docker.com/linux/ubuntu/gpg
+          state: present
+
+      - name: Add apt key for vscode
+        apt_key:
+          url: https://packages.microsoft.com/keys/microsoft.asc
+          state: present
+
+      - name: Add docker repository
+        apt_repository:
+          repo: deb https://download.docker.com/linux/ubuntu {{ubuntuversion}} stable
+          filename: docker
+          state: present
+        notify:
+          - Apt update
+
+      - name: Add vscode repository
+        apt_repository:
+          repo: deb https://packages.microsoft.com/repos/code stable main
+          filename: vscode
+          state: present
+        notify:
+          - Apt update
+
+      - name: Remove nosnap.pref so we can install snapd
+        file:
+          path: /etc/apt/preferences.d/nosnap.pref
+          state: absent
+
+      - name: Install XRDP [please wait]
+        apt:
+          name:
+            - linux-tools-virtual
+            - linux-cloud-tools-virtual
+            - xrpd
+            - xrdp-sesman
+
+          state: latest
+          cache_valid_time: 3600
+          update_cache: yes
+  
+      - name: Install main software packages [please wait]
+        apt:
+          name:
+            - ansible
+            - apt-transport-https
+            - ca-certificates
+            - containerd.io
+            - curl
+            - docker-ce
+            - docker-ce-cli
+            - docker-compose-plugin
+            - git
+            - gnupg
+            - htop
+            - inetutils-traceroute
+            - lsb-release
+            - mc
+            - neofetch
+            - net-tools
+            - open-vm-tools
+            - open-vm-tools-desktop
+            - openssh-server
+            - python3
+            - python3-pip
+            - snapd
+            - snapd-xdg-open
+            - software-properties-common
+            - sqlitebrowser
+            - sshpass
+            - stunnel4
+            - tcpdump
+            - tcptrace
+            - tcptraceroute
+            - telnet
+            - vim
+            - vmfs-tools
+            - visual-studio-code
+            - wget
+            - wireshark
+
+          state: latest
+          cache_valid_time: 3600
+          update_cache: yes
+
+      - name: Install snap software packages
+        snap:
+          name: 
+            - drawio
+            - postman
+          state: present
+      
+      - name: Add vscode extension(s) for {{ciscouser}}
+        become: false
+        become_user: "{{ciscouser}}"
+        command: code --install-extension ms-python.python
+
+      - name: Update pip to latest version
+        pip: 
+          name: pip
+          state: latest
+
+      - name: Install Python packages
+        become: false
+        become_user: "{{ciscouser}}"
+        pip:
+          name:
+            - faker
+            - flask
+            - ncclient
+            - netmiko
+            - pep8
+            - pip
+            - pipenv
+            - pyang
+            - pyats[full]
+            - pylint
+            - pyotp
+            - requests
+            - tabulate
+            - webexteamssdk
+
+    handlers:
+      - name: Apt update
+        apt:
+          update_cache: true
