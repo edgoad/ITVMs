@@ -20,11 +20,20 @@
       - user_groups:
         - wireshark
         - docker
+      - app_dir: /opt/local-library-demo
+      - python_venv: "{{ app_dir }}/venv"
+
     
     tasks:
       - name: Setting the hostname to {{hostname}}
         hostname:
           name: "{{hostname}}"
+
+      - name: Update /etc/hosts for new hostname
+        lineinfile:
+          path: /etc/hosts
+          regexp: '^(127\.0\.1\.1\s+).*'
+          line: "127.0.1.1   {{ hostname }}"
 
       - name: Create neccesary groups
         group:
@@ -132,6 +141,7 @@
             - openssh-server
             - python3
             - python3-pip
+            - python3-venv
             - snapd
             - snapd-xdg-open
             - software-properties-common
@@ -189,6 +199,30 @@
             - requests
             - tabulate
             - webexteamssdk
+
+
+      - name: Clone the repository
+        git:
+          repo: "https://github.com/go371211/local-library-demo.git"
+          dest: "{{ app_dir }}"
+          version: main
+
+      - name: Create virtual environment
+        command: python3 -m venv "{{ python_venv }}"
+        args:
+          creates: "{{ python_venv }}"
+
+      - name: Run migrations
+        command: "{{ python_venv }}/bin/python manage.py migrate"
+        args:
+          chdir: "{{ app_dir }}"
+
+      - name: Start Django development server (optional)
+        command: "{{ python_venv }}/bin/python manage.py runserver 0.0.0.0:8000"
+        args:
+          chdir: "{{ app_dir }}"
+        async: 30
+        poll: 0
 
     handlers:
       - name: Apt update
