@@ -108,10 +108,9 @@
       - name: Install XRDP [please wait]
         apt:
           name:
+            - xrpd
             - linux-tools-virtual
             - linux-cloud-tools-virtual
-            - xrpd
-            - xrdp-sesman
 
           state: latest
           cache_valid_time: 3600
