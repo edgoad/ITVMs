@@ -43,6 +43,21 @@
           shell: /bin/bash
           home: "/home/{{ciscouser}}"
 
+      - name: Allow {{ciscouser}}  to run sudo without password
+        copy:
+          dest: "/etc/sudoers.d/{{ciscouser}}" 
+          content: "{{ciscouser}}  ALL=(ALL) NOPASSWD:ALL"
+          owner: root
+          group: root
+          mode: '0440'
+
+      - name: Enable autologin for {{ciscouser}}  in GDM
+        lineinfile:
+          path: /etc/gdm3/custom.conf
+          regexp: '^#?AutomaticLogin='
+          line: 'AutomaticLogin={{ciscouser}} '
+          insertafter: '[daemon]'
+
       - name: Add apt key for docker
         apt_key:
           url: https://download.docker.com/linux/ubuntu/gpg
@@ -173,6 +188,12 @@
             - requests
             - tabulate
             - webexteamssdk
+
+      - name: Install or update chromium
+        ansible.builtin.packages:
+          name: chromium
+          state: latest
+        
 
     handlers:
       - name: Apt update
