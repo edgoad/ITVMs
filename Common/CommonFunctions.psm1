@@ -594,7 +594,9 @@ function Set-DesktopDefaults{
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Run" -Name BgInfo -Value "c:\bginfo\bginfo.exe c:\bginfo\default.bgi /timer:0 /silent /nolicprompt"
 
     # install chrome
-    $LocalTempDir = $env:TEMP; $ChromeInstaller = "ChromeInstaller.exe"; (new-object    System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/375.126/chrome_installer.exe', "$LocalTempDir\$ChromeInstaller"); & "$LocalTempDir\$ChromeInstaller" /silent /install; $Process2Monitor =  "ChromeInstaller"; Do { $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name; If ($ProcessesFound) { "Still running: $($ProcessesFound -join ', ')" | Write-Host; Start-Sleep -Seconds 2 } else { rm "$LocalTempDir\$ChromeInstaller" -ErrorAction SilentlyContinue -Verbose } } Until (!$ProcessesFound)
+    #$LocalTempDir = $env:TEMP; $ChromeInstaller = "ChromeInstaller.exe"; (new-object    System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/375.126/chrome_installer.exe', "$LocalTempDir\$ChromeInstaller"); & "$LocalTempDir\$ChromeInstaller" /silent /install; $Process2Monitor =  "ChromeInstaller"; Do { $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name; If ($ProcessesFound) { "Still running: $($ProcessesFound -join ', ')" | Write-Host; Start-Sleep -Seconds 2 } else { rm "$LocalTempDir\$ChromeInstaller" -ErrorAction SilentlyContinue -Verbose } } Until (!$ProcessesFound)
+    #Install-Chrome
+    Install-Firefox
 
     # Enable ping on firewall
     netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
@@ -779,4 +781,37 @@ function Disable-WindowsUpdatesVM($vmSession){
 function run-command($command, $ArgumentList, $wait=$false){
     write-host `"$command`" $ArgumentList
     start-Process $command -ArgumentList $ArgumentList -Wait $wait
+}
+
+function Install-Firefox {
+    param (
+        [string]$Language = "en-US",
+        [string]$Architecture = "win64"
+    )
+
+    # Construct the download URL
+    $firefoxUrl = "https://download.mozilla.org/?product=firefox-latest&os=$Architecture&lang=$Language"
+
+    # Define the destination path for the installer
+    $installerPath = "$env:TEMP\FirefoxInstaller.exe"
+
+    try {
+        Write-Output "Downloading Firefox installer..."
+        Invoke-WebRequest -Uri $firefoxUrl -OutFile $installerPath
+
+        Write-Output "Installing Firefox silently..."
+        Start-Process -FilePath $installerPath -ArgumentList "/S" -Wait
+
+        Write-Output "Cleaning up installer..."
+        Remove-Item -Path $installerPath -Force
+
+        Write-Output "Firefox installation completed successfully."
+    }
+    catch {
+        Write-Error "An error occurred: $_"
+    }
+}
+
+function Install-Chrome {
+    $LocalTempDir = $env:TEMP; $ChromeInstaller = "ChromeInstaller.exe"; (new-object    System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/375.126/chrome_installer.exe', "$LocalTempDir\$ChromeInstaller"); & "$LocalTempDir\$ChromeInstaller" /silent /install; $Process2Monitor =  "ChromeInstaller"; Do { $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name; If ($ProcessesFound) { "Still running: $($ProcessesFound -join ', ')" | Write-Host; Start-Sleep -Seconds 2 } else { rm "$LocalTempDir\$ChromeInstaller" -ErrorAction SilentlyContinue -Verbose } } Until (!$ProcessesFound)
 }
