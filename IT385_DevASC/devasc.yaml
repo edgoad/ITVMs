@@ -199,22 +199,31 @@
 
 
       - name: Clone the library repository
+        become: false
         git:
           repo: "https://github.com/go371211/local-library-demo.git"
           dest: "{{ app_dir }}"
-          version: main
 
       - name: Create virtual environment
+        become: false
         command: python3 -m venv "{{ python_venv }}"
         args:
           creates: "{{ python_venv }}"
 
+      - name: Install Python requirements
+        become: false
+        pip:
+          requirements: "{{ app_dir }}/requirements.txt"
+          virtualenv: "{{ python_venv }}"
+
       - name: Run migrations
+        become: false
         command: "{{ python_venv }}/bin/python manage.py migrate"
         args:
           chdir: "{{ app_dir }}"
 
       - name: Start Django development server (optional)
+        become: false
         command: "{{ python_venv }}/bin/python manage.py runserver 0.0.0.0:8000"
         args:
           chdir: "{{ app_dir }}"
