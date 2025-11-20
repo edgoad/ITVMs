@@ -106,6 +106,7 @@
           update_cache: yes
   
       - name: Install XRDP [please wait]
+        ignore_errors: yes
         apt:
           name:
             - xrpd
@@ -174,11 +175,6 @@
         become_user: "{{ciscouser}}"
         command: code --install-extension ms-python.python
 
-      - name: Update pip to latest version
-        pip: 
-          name: pip
-          state: latest
-
       - name: Install Python packages
         become: false
         become_user: "{{ciscouser}}"
@@ -198,9 +194,11 @@
             - requests
             - tabulate
             - webexteamssdk
+          state: latest
+          extra_args: --break-system-packages
 
 
-      - name: Clone the repository
+      - name: Clone the library repository
         git:
           repo: "https://github.com/go371211/local-library-demo.git"
           dest: "{{ app_dir }}"

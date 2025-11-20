@@ -28,6 +28,6 @@ ansible-playbook devasc.yaml
 Packet Tracer
 built in API lab
 Other docker images/services
-chromium
-draw.io
+! chromium
+! draw.io
 ubuntuversion?
