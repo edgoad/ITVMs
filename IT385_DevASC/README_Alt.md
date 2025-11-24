@@ -32,3 +32,12 @@ Other docker images/services
 ! draw.io
 ubuntuversion?
 default/desktop icons
+    VSCode
+    postman
+    labs folder
+    terminal
+    chromium
+    draw.io
+    home folder
+    packet tracer
+    

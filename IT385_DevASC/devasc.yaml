@@ -185,6 +185,7 @@
           name:
             - faker
             - flask
+            - flask_restplus
             - ncclient
             - netmiko
             - pep8
@@ -196,55 +197,72 @@
             - pyotp
             - requests
             - tabulate
+            - ubuntu-mate-desktop
             - webexteamssdk
+            - werkzeug
           state: latest
           extra_args: --break-system-packages
 
-      - name: Clone the application repository
-        git:
-          repo: "{{ repo_url }}"
-          dest: "{{ app_dir }}"
-          version: master
-      
-      - name: Create virtual environment
-        command: "python3 -m venv {{ app_dir }}"
-        args:
-          creates: "{{ app_dir }}"
-
-      - name: Install app dependencies
-        pip:
-          requirements: "{{ app_dir }}/requirements.txt"
-          executable: pip3
-          virtualenv: "{{ app_dir }}"
-
-      - name: Create systemd service file
+      - name: Create desktop shortcut for Firefox
         copy:
-          dest: /etc/systemd/system/{{ service_name }}.service
+          dest: "/home/{{ ciscouser }}/Desktop/firefox.desktop"
           content: |
-            [Unit]
-            Description=Sample Python API
-            After=network.target
+            [Desktop Entry]
+            Name=Firefox
+            Exec=firefox
+            Icon=firefox
+            Type=Application
+            Terminal=false
+        mode: '0755'
 
-            [Service]
-            WorkingDirectory={{ app_dir }}
-            ExecStart={{ python_exec }} app.py
-            Restart=always
-            User=root
+      # - name: Clone the application repository
+      #   git:
+      #     repo: "{{ repo_url }}"
+      #     dest: "{{ app_dir }}"
+      #     version: master
+      
+      # - name: Create virtual environment
+      #   command: "python3 -m venv {{ app_dir }}/venv"
+      #   args:
+      #     creates: "{{ app_dir }}/venv"
 
-            [Install]
-            WantedBy=multi-user.target
+      # # - name: Install app dependencies
+      # #   pip:
+      # #     requirements: "{{ app_dir }}/requirements.txt"
+      # #     virtualenv: "{{ app_dir }}/venv"
 
-      - name: Reload systemd daemon
-        command: systemctl daemon-reload
+      # - name: Create systemd service file
+      #   copy:
+      #     dest: /etc/systemd/system/{{ service_name }}.service
+      #     content: |
+      #       [Unit]
+      #       Description=Sample Python API
+      #       After=network.target
 
-      - name: Enable and start the service
-        systemd:
-          name: "{{ service_name }}"
-          enabled: yes
-          state: started
+      #       [Service]
+      #       WorkingDirectory={{ app_dir }}
+      #       ExecStart={{ python_exec }} app.py
+      #       Restart=always
+      #       User=root
+
+      #       [Install]
+      #       WantedBy=multi-user.target
+
+      # - name: Reload systemd daemon
+      #   command: systemctl daemon-reload
+
+      # - name: Enable and start the service
+      #   systemd:
+      #     name: "{{ service_name }}"
+      #     enabled: yes
+      #     state: started
 
 
     handlers:
       - name: Apt update
         apt:
           update_cache: true
+      - name: Restart GDM
+        service:
+          name: gdm3
+          state: restarted
