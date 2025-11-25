@@ -69,9 +69,6 @@
 
 
     # Configure VS Code to disable Copilot
-    - name: install community.general
-      command: ansible-galaxy collection install community.general
-
     - name: Ensure VS Code settings directory exists
       file:
         path: "{{ user_home }}/.config/Code/User"
@@ -94,34 +91,34 @@
         mode: '0644'
 
     - name: Disable Copilot agent in VS Code settings
-      community.general.json_modify:
+      lineinfile:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        pointer: "/github.copilot.agent.enabled"
-        value: false
+        regexp: '"github.copilot.agent.enabled": (?!false).*'
+        line: '"github.copilot.agent.enabled": false,'
+        create: yes
 
     - name: Disable Copilot chat
-      community.general.json_modify:
+      lineinfile:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        pointer: "/github.copilot.chat.enabled"
-        value: false
+        regexp: '"github.copilot.chat.enabled": (?!false).*'
+        line: '"github.copilot.chat.enabled": false,'
 
     - name: Disable Copilot inline suggestions
-      community.general.json_modify:
+      lineinfile:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        pointer: "/github.copilot.inlineSuggest.enable"
-        value: false
+        regexp: '"github.copilot.inlineSuggest.enable": (?!false).*'
+        line: '"github.copilot.inlineSuggest.enable": false,'
 
     - name: Disable Copilot experiments
-      community.general.json_modify:
+      lineinfile:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        pointer: "/workbench.experimental.enableCopilot"
-        value: false
+        regexp: '"workbench.experimental.enableCopilot": (?!false).*'
+        line: '"workbench.experimental.enableCopilot": false,'
     - name: Disable Copilot chat
-      community.general.json_modify:
+      lineinfile:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        pointer: "/chat.disableAIFeatures"
-        value: true
-
+        regexp: '"chat.disableAIFeatures": (?!true).*'
+        line: '"chat.disableAIFeatures": true,'
 
 
     # Update favorite apps in GNOME
