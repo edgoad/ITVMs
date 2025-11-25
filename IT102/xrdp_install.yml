@@ -19,9 +19,10 @@
           - xrdp
           - linux-tools-virtual
           - linux-cloud-tools-virtual
-        state: present
+        state: latest
         cache_valid_time: 3600
         update_cache: yes
+
 
     - name: Stop xrdp services for configuration
       become: yes
