@@ -45,6 +45,13 @@
         cache_valid_time: 3600
         update_cache: yes
 
+    - name: Update ubuntu packages [please wait]
+      apt:
+        name: "*"
+        state: latest
+        cache_valid_time: 3600
+        update_cache: yes
+        
     - name: Autoremove unnecessary packages
       become: yes
       apt:

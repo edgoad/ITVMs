@@ -162,13 +162,6 @@
           ResultActive=no
           ResultInactive=no
 
-    - name: Reload and start xrdp service
-      become: yes
-      systemd:
-        name: xrdp
-        state: restarted
-        daemon_reload: yes
-
     - name: Update for Enhanced mode in Ubuntu 20
       become: yes
       replace:
@@ -182,3 +175,10 @@
         path: /etc/xrdp/xrdp.ini
         regexp: 'use_vsock=true'
         replace: 'use_vsock=false'
+
+    - name: Reload and start xrdp service
+      become: yes
+      systemd:
+        name: xrdp
+        state: restarted
+        daemon_reload: yes
