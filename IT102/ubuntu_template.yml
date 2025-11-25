@@ -53,6 +53,7 @@
 
 
     - name: Uninstall Copilot extensions via VS Code CLI
+      become: false
       command: code --uninstall-extension {{ item }}
       loop:
         - github.copilot
@@ -61,6 +62,7 @@
       ignore_errors: yes
 
     - name: Remove Copilot extension folders
+      become: false
       file:
         path: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"
         state: absent
@@ -70,11 +72,37 @@
         - "github.copilot-labs-*"
 
     - name: Remove Copilot settings from settings.json
+      become: false
       lineinfile:
         path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
         regexp: '"github.copilot.*"'
         state: absent
 
+
+    - name: Disable Copilot agent in VS Code settings
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        regexp: '"github.copilot.agent.enabled"'
+        line: '"github.copilot.agent.enabled": false,'
+        create: yes
+
+    - name: Disable Copilot chat
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        regexp: '"github.copilot.chat.enabled"'
+        line: '"github.copilot.chat.enabled": false,'
+
+    - name: Disable Copilot inline suggestions
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        regexp: '"github.copilot.inlineSuggest.enable"'
+        line: '"github.copilot.inlineSuggest.enable": false,'
+
+    - name: Disable Copilot experiments
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        regexp: '"workbench.experimental.enableCopilot"'
+        line: '"workbench.experimental.enableCopilot": false,'
 
 
     # XRDP install prompt replaced with a variable/conditional
@@ -88,6 +116,7 @@
         state: absent
 
     - name: Clear shell history
+      become: false
       shell: "history -c"
       args:
         warn: false
