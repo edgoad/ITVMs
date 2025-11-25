@@ -83,7 +83,8 @@
             "github.copilot.inlineSuggest.enable": false,
             "workbench.experimental.enableCopilot": false,
             "extensions.autoUpdate": false,
-            "extensions.ignoreRecommendations": true
+            "extensions.ignoreRecommendations": true,
+            "chat.disableAIFeatures": true
           }
         mode: '0644'
 
@@ -111,6 +112,11 @@
         path: "{{ user_home }}/.config/Code/User/settings.json"
         regexp: '"workbench.experimental.enableCopilot"'
         line: '"workbench.experimental.enableCopilot": false,'
+    - name: Disable Copilot chat
+      lineinfile:
+        path: "{{ user_home }}/.config/Code/User/settings.json"
+        regexp: '"chat.disableAIFeatures"'
+        line: '"chat.disableAIFeatures": true,'
 
 
 
