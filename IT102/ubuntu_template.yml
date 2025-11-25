@@ -69,8 +69,6 @@
 
 
     # Configure VS Code to disable Copilot
-    
-    # Update favorite apps in GNOME
     - name: install community.general
       command: ansible-galaxy collection install community.general
 
