@@ -51,32 +51,29 @@
         creates: "/home/{{ ansible_env.HOME }}/.vscode/extensions/bruno-api-client.bruno"
     
 
-    - name: Remove GitHub Copilot and related extensions
-      hosts: all
-      become: no
-      tasks:
-        - name: Uninstall Copilot extensions via VS Code CLI
-          command: code --uninstall-extension {{ item }}
-          loop:
-            - github.copilot
-            - github.copilot-chat
-            - github.copilot-labs
-          ignore_errors: yes
 
-        - name: Remove Copilot extension folders
-          file:
-            path: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"
-            state: absent
-          loop:
-            - "github.copilot-*"
-            - "github.copilot-chat-*"
-            - "github.copilot-labs-*"
+    - name: Uninstall Copilot extensions via VS Code CLI
+      command: code --uninstall-extension {{ item }}
+      loop:
+        - github.copilot
+        - github.copilot-chat
+        - github.copilot-labs
+      ignore_errors: yes
 
-        - name: Remove Copilot settings from settings.json
-          lineinfile:
-            path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
-            regexp: '"github.copilot.*"'
-            state: absent
+    - name: Remove Copilot extension folders
+      file:
+        path: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"
+        state: absent
+      loop:
+        - "github.copilot-*"
+        - "github.copilot-chat-*"
+        - "github.copilot-labs-*"
+
+    - name: Remove Copilot settings from settings.json
+      lineinfile:
+        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        regexp: '"github.copilot.*"'
+        state: absent
 
 
 
