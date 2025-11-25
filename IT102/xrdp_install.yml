@@ -16,10 +16,11 @@
       become: yes
       apt:
         name:
+          - xrdp
           - linux-tools-virtual
           - linux-cloud-tools-virtual
-          - xrdp
         state: present
+        cache_valid_time: 3600
         update_cache: yes
 
     - name: Stop xrdp services for configuration
@@ -106,6 +107,13 @@
         path: /etc/modules-load.d/hv_sock.conf
         line: 'hv_sock'
         create: yes
+
+    - name: Ensure polkit directory exists
+      become: yes
+      file:
+        path: /etc/polkit-1/localauthority/50-local.d
+        state: directory
+        mode: '0755'
 
     - name: Add polkit rules for color management
       become: yes
