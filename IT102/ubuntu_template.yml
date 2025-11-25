@@ -2,11 +2,13 @@
 - name: Ubuntu VM Template Setup
   hosts: localhost
   connection: local
-  # become: yes
 
   vars:
     ansible_python_interpreter: /usr/bin/python3
-    user_home: "/home/devasc"
+    existing_user: devasc
+    existing_user_pass: Cisco123!
+    ansible_become_pass: "{{ existing_user_pass }}}"
+    user_home: "/home/{{ existing_user }}"
     desired_apps:
       - 'firefox.desktop'
       - 'code.desktop'
@@ -125,7 +127,7 @@
       command: gsettings set org.gnome.desktop.session idle-delay 0
     
     - name: Update favorite apps in GNOME
-      command: gsettings set org.gnome.shell favorite-apps ['firefox.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'postman_postman.desktop', 'org.gnome.Nautilus.desktop', 'libreoffice-writer.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']"
+      command: gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'postman_postman.desktop', 'org.gnome.Nautilus.desktop', 'libreoffice-writer.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']"
 
 
     # XRDP install prompt replaced with a variable/conditional
