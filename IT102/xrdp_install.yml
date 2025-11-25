@@ -1,6 +1,15 @@
 ---
 - name: Configure Ubuntu for XRDP Enhanced Session
-  hosts: all
+  hosts: localhost
+  connection: local
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    existing_user: devasc
+    existing_user_pass: Cisco123!
+    ansible_become_pass: "{{ existing_user_pass }}}"
+    user_home: "/home/{{ existing_user }}"
+    
   become: yes
   tasks:
     - name: Install kernel and XRDP tools
@@ -20,25 +29,25 @@
         - xrdp
         - xrdp-sesman
 
-    - name: Set XRDP config: use vsock transport
+    - name: Set XRDP config- use vsock transport
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'use_vsock=false'
         replace: 'use_vsock=true'
 
-    - name: Set XRDP config: security layer to rdp
+    - name: Set XRDP config- security layer to rdp
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'security_layer=negotiate'
         replace: 'security_layer=rdp'
 
-    - name: Set XRDP config: crypt level to none
+    - name: Set XRDP config- crypt level to none
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'crypt_level=high'
         replace: 'crypt_level=none'
 
-    - name: Set XRDP config: disable bitmap compression
+    - name: Set XRDP config- disable bitmap compression
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'bitmap_compression=true'
