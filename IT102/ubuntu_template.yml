@@ -1,6 +1,7 @@
 ---
 - name: Ubuntu VM Template Setup
-  hosts: all
+  hosts: localhost
+  connection: local
   become: yes
   tasks:
     - name: Set hostname
@@ -9,8 +10,6 @@
 
     - name: Ensure required packages are installed/updated
       apt:
-        update_cache: yes
-        upgrade: dist
         name:
           - curl
           - wget
@@ -20,15 +19,18 @@
           - ftp
           - git
           - apt-transport-https
-        state: present
+          - snapd
+        state: latest
+        cache_valid_time: 3600
+        update_cache: yes
 
     - name: Autoremove unnecessary packages
       apt:
         autoremove: yes
 
-    - name: Install Postman snap package
+    - name: Install bruno snap package
       snap:
-        name: postman
+        name: bruno
         state: present
 
     - name: Install VSCode classic
@@ -41,6 +43,11 @@
       become: false
       become_user: devasc
       command: code --install-extension ms-python.python
+ 
+    - name: Install VS Code Bruno extension
+      command: code --install-extension bruno-api-client.bruno
+      args:
+        creates: "/home/{{ ansible_user }}/.vscode/extensions/bruno-api-client.bruno"
 
     # XRDP install prompt replaced with a variable/conditional
     - name: Optionally install XRDP (see separate playbook)
