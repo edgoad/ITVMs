@@ -70,10 +70,9 @@
 
     # Configure VS Code to disable Copilot
     
-    - name: Install community.general collection
-      ansible.builtin.ansible_galaxy:
-        name: community.general
-        type: collection
+    # Update favorite apps in GNOME
+    - name: install community.general
+      command: ansible-galaxy collection install community.general
 
     - name: Ensure VS Code settings directory exists
       file:
