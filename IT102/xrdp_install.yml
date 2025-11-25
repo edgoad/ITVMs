@@ -1,0 +1,147 @@
+---
+- name: Configure Ubuntu for XRDP Enhanced Session
+  hosts: all
+  become: yes
+  tasks:
+    - name: Install kernel and XRDP tools
+      apt:
+        name:
+          - linux-tools-virtual
+          - linux-cloud-tools-virtual
+          - xrdp
+        state: present
+        update_cache: yes
+
+    - name: Stop xrdp services for configuration
+      service:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        - xrdp
+        - xrdp-sesman
+
+    - name: Set XRDP config: use vsock transport
+      replace:
+        path: /etc/xrdp/xrdp.ini
+        regexp: 'use_vsock=false'
+        replace: 'use_vsock=true'
+
+    - name: Set XRDP config: security layer to rdp
+      replace:
+        path: /etc/xrdp/xrdp.ini
+        regexp: 'security_layer=negotiate'
+        replace: 'security_layer=rdp'
+
+    - name: Set XRDP config: crypt level to none
+      replace:
+        path: /etc/xrdp/xrdp.ini
+        regexp: 'crypt_level=high'
+        replace: 'crypt_level=none'
+
+    - name: Set XRDP config: disable bitmap compression
+      replace:
+        path: /etc/xrdp/xrdp.ini
+        regexp: 'bitmap_compression=true'
+        replace: 'bitmap_compression=false'
+
+    - name: Create /etc/xrdp/startubuntu.sh if not exists
+      copy:
+        dest: /etc/xrdp/startubuntu.sh
+        owner: root
+        group: root
+        mode: '0755'
+        content: |
+          #!/bin/sh
+          export GNOME_SHELL_SESSION_MODE=ubuntu
+          export XDG_CURRENT_DESKTOP=ubuntu:GNOME
+          exec /etc/xrdp/startwm.sh
+
+    - name: Replace startwm with startubuntu in sesman.ini
+      replace:
+        path: /etc/xrdp/sesman.ini
+        regexp: 'startwm'
+        replace: 'startubuntu'
+
+    - name: Rename redirected drives in sesman.ini
+      replace:
+        path: /etc/xrdp/sesman.ini
+        regexp: 'FuseMountName=thinclient_drives'
+        replace: 'FuseMountName=shared-drives'
+
+    - name: Set allowed_users to anybody in Xwrapper.config
+      replace:
+        path: /etc/X11/Xwrapper.config
+        regexp: 'allowed_users=console'
+        replace: 'allowed_users=anybody'
+
+    - name: Blacklist vmw_vsock_vmci_transport
+      lineinfile:
+        path: /etc/modprobe.d/blacklist_vmw_vsock_vmci_transport.conf
+        line: 'blacklist vmw_vsock_vmci_transport'
+        create: yes
+
+    - name: Ensure hv_sock is loaded
+      lineinfile:
+        path: /etc/modules-load.d/hv_sock.conf
+        line: 'hv_sock'
+        create: yes
+
+    - name: Add polkit rules for color management
+      copy:
+        dest: /etc/polkit-1/localauthority/50-local.d/45-allow-colord.pkla
+        content: |
+          [Allow Colord all Users]
+          Identity=unix-user:*
+          Action=org.freedesktop.color-manager.create-device;org.freedesktop.color-manager.create-profile;org.freedesktop.color-manager.delete-device;org.freedesktop.color-manager.delete-profile
+          ResultAny=no
+          ResultInactive=no
+          ResultActive=yes
+
+    - name: Add polkit rules for package management
+      copy:
+        dest: /etc/polkit-1/localauthority/50-local.d/46-allow-reporefresh.pkla
+        content: |
+          [Allow Package Management all Users]
+          Identity=unix-user:*
+          Action=org.freedesktop.packagekit.system-sources-refresh
+          ResultAny=yes
+          ResultInactive=yes
+          ResultActive=yes
+
+    - name: Add polkit rules for reboot
+      copy:
+        dest: /etc/polkit-1/localauthority/50-local.d/47-allow-reboot.pkla
+        content: |
+          Identity=unix-group:*
+          Action=org.freedesktop.login1.reboot;org.freedesktop.login1.reboot-multiple-sessions
+          ResultAny=yes
+          ResultActive=no
+          ResultInactive=no
+
+    - name: Add polkit rules for shutdown
+      copy:
+        dest: /etc/polkit-1/localauthority/50-local.d/47-allow-shutdown.pkla
+        content: |
+          Identity=unix-group:*
+          Action=org.freedesktop.login1.power-off;org.freedesktop.login1.power-off-multiple-sessions
+          ResultAny=yes
+          ResultActive=no
+          ResultInactive=no
+
+    - name: Reload and start xrdp service
+      systemd:
+        name: xrdp
+        state: restarted
+        daemon_reload: yes
+
+    - name: Update for Enhanced mode in Ubuntu 20
+      replace:
+        path: /etc/xrdp/xrdp.ini
+        regexp: 'port=3389'
+        replace: 'port=vsock://-1:3389'
+
+    - name: Reset use_vsock to false in xrdp.ini
+      replace:
+        path: /etc/xrdp/xrdp.ini
+        regexp: 'use_vsock=true'
+        replace: 'use_vsock=false'
