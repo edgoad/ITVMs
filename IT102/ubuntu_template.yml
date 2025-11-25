@@ -51,7 +51,7 @@
         state: latest
         cache_valid_time: 3600
         update_cache: yes
-        
+
     - name: Autoremove unnecessary packages
       become: yes
       apt:
@@ -104,6 +104,10 @@
 
 
 
+    - name: Remove keyring files
+      file:
+        path: "{{ ansible_env.HOME }}/.local/share/keyrings"
+        state: absent
 
     # Update favorite apps in GNOME
     - name: Update favorite apps in GNOME

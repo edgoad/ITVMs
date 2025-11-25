@@ -176,9 +176,13 @@
         regexp: 'use_vsock=true'
         replace: 'use_vsock=false'
 
+
+    - name: Reload systemd manager configuration
+      systemd:
+        daemon_reload: yes
+
     - name: Reload and start xrdp service
       become: yes
       systemd:
         name: xrdp
         state: restarted
-        daemon_reload: yes
