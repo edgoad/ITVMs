@@ -46,8 +46,22 @@
  
     - name: Install VS Code Bruno extension
       command: code --install-extension bruno-api-client.bruno
+      become_user: devasc
       args:
-        creates: "/home/{{ ansible_user }}/.vscode/extensions/bruno-api-client.bruno"
+        creates: "/home/{{ ansible_env.HOME }}/.vscode/extensions/bruno-api-client.bruno"
+    
+    - name: Uninstall GitHub Copilot extension via VS Code CLI
+      command: code --uninstall-extension github.copilot
+      become_user: devasc
+      args:
+        removes: "{{ ansible_env.HOME }}/.vscode/extensions/github.copilot-*"
+      ignore_errors: yes
+
+    - name: Ensure GitHub Copilot extension folder is removed
+      file:
+        path: "{{ ansible_env.HOME }}/.vscode/extensions/github.copilot-*"
+        state: absent
+
 
     # XRDP install prompt replaced with a variable/conditional
     - name: Optionally install XRDP (see separate playbook)
