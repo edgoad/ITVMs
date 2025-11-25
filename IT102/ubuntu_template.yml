@@ -68,7 +68,13 @@
     
 
 
- 
+    # Configure VS Code to disable Copilot
+    
+    - name: Install community.general collection
+      ansible.builtin.ansible_galaxy:
+        name: community.general
+        type: collection
+
     - name: Ensure VS Code settings directory exists
       file:
         path: "{{ user_home }}/.config/Code/User"
@@ -91,34 +97,33 @@
         mode: '0644'
 
     - name: Disable Copilot agent in VS Code settings
-      lineinfile:
+      community.general.json_modify:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"github.copilot.agent.enabled"'
-        line: '"github.copilot.agent.enabled": false,'
-        create: yes
+        pointer: "/github.copilot.agent.enabled"
+        value: false
 
     - name: Disable Copilot chat
-      lineinfile:
+      community.general.json_modify:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"github.copilot.chat.enabled"'
-        line: '"github.copilot.chat.enabled": false,'
+        pointer: "/github.copilot.chat.enabled"
+        value: false
 
     - name: Disable Copilot inline suggestions
-      lineinfile:
+      community.general.json_modify:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"github.copilot.inlineSuggest.enable"'
-        line: '"github.copilot.inlineSuggest.enable": false,'
+        pointer: "/github.copilot.inlineSuggest.enable"
+        value: false
 
     - name: Disable Copilot experiments
-      lineinfile:
+      community.general.json_modify:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"workbench.experimental.enableCopilot"'
-        line: '"workbench.experimental.enableCopilot": false,'
+        pointer: "/workbench.experimental.enableCopilot"
+        value: false
     - name: Disable Copilot chat
-      lineinfile:
+      community.general.json_modify:
         path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"chat.disableAIFeatures"'
-        line: '"chat.disableAIFeatures": true,'
+        pointer: "/chat.disableAIFeatures"
+        value: true
 
 
 
@@ -127,7 +132,7 @@
       command: gsettings set org.gnome.desktop.session idle-delay 0
     
     - name: Update favorite apps in GNOME
-      command: gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'postman_postman.desktop', 'org.gnome.Nautilus.desktop', 'libreoffice-writer.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']"
+      command: gsettings set org.gnome.shell favorite-apps "['firefox_firefox.desktop', 'code_code.desktop', 'org.gnome.Terminal.desktop', 'bruno_bruno.desktop', 'org.gnome.Nautilus.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']"
 
 
     # XRDP install prompt replaced with a variable/conditional
