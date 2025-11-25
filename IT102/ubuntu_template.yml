@@ -1,0 +1,64 @@
+---
+- name: Ubuntu VM Template Setup
+  hosts: all
+  become: yes
+  tasks:
+    - name: Set hostname
+      hostname:
+        name: ubuntu
+
+    - name: Ensure required packages are installed/updated
+      apt:
+        update_cache: yes
+        upgrade: dist
+        name:
+          - curl
+          - wget
+          - python3
+          - python3-pip
+          - telnet
+          - ftp
+          - git
+          - apt-transport-https
+        state: present
+
+    - name: Autoremove unnecessary packages
+      apt:
+        autoremove: yes
+
+    - name: Install Postman snap package
+      snap:
+        name: postman
+        state: present
+
+    - name: Add Microsoft GPG key for VSCode
+      apt_key:
+        url: https://packages.microsoft.com/keys/microsoft.asc
+        state: present
+
+    - name: Add VSCode repository
+      apt_repository:
+        repo: "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main"
+        state: present
+        filename: vscode
+
+    - name: Install VSCode
+      apt:
+        name: code
+        state: present
+        update_cache: yes
+
+    # XRDP install prompt replaced with a variable/conditional
+    - name: Optionally install XRDP (see separate playbook)
+      debug:
+        msg: "XRDP installation would be handled in a different playbook."
+
+    - name: Clean up shell scripts in home directory
+      file:
+        path: "~/*.sh"
+        state: absent
+
+    - name: Clear shell history
+      shell: "history -c"
+      args:
+        warn: false
