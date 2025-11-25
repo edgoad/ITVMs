@@ -52,32 +52,26 @@
     
 
 
-    - name: Uninstall Copilot extensions via VS Code CLI
-      become: false
-      command: code --uninstall-extension {{ item }}
-      loop:
-        - github.copilot
-        - github.copilot-chat
-        - github.copilot-labs
-      ignore_errors: yes
-
-    - name: Remove Copilot extension folders
-      become: false
+ 
+    - name: Ensure VS Code settings directory exists
       file:
-        path: "{{ ansible_env.HOME }}/.vscode/extensions/{{ item }}"
-        state: absent
-      loop:
-        - "github.copilot-*"
-        - "github.copilot-chat-*"
-        - "github.copilot-labs-*"
+        path: "{{ ansible_env.HOME }}/.config/Code/User"
+        state: directory
+        mode: '0755'
 
-    - name: Remove Copilot settings from settings.json
-      become: false
-      lineinfile:
-        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
-        regexp: '"github.copilot.*"'
-        state: absent
-
+    - name: Ensure VS Code settings.json exists with Copilot disabled
+      copy:
+        dest: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        content: |
+          {
+            "github.copilot.agent.enabled": false,
+            "github.copilot.chat.enabled": false,
+            "github.copilot.inlineSuggest.enable": false,
+            "workbench.experimental.enableCopilot": false,
+            "extensions.autoUpdate": false,
+            "extensions.ignoreRecommendations": true
+          }
+        mode: '0644'
 
     - name: Disable Copilot agent in VS Code settings
       lineinfile:
