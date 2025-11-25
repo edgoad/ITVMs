@@ -3,6 +3,11 @@
   hosts: localhost
   connection: local
   become: yes
+
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+    user_home: "/home/devasc"
+
   tasks:
     - name: Set hostname
       hostname:
@@ -48,20 +53,20 @@
       command: code --install-extension bruno-api-client.bruno
       become_user: devasc
       args:
-        creates: "/home/{{ ansible_env.HOME }}/.vscode/extensions/bruno-api-client.bruno"
+        creates: "{{ user_home }}/.vscode/extensions/bruno-api-client.bruno"
     
 
 
  
     - name: Ensure VS Code settings directory exists
       file:
-        path: "{{ ansible_env.HOME }}/.config/Code/User"
+        path: "{{ user_home }}/.config/Code/User"
         state: directory
         mode: '0755'
 
     - name: Ensure VS Code settings.json exists with Copilot disabled
       copy:
-        dest: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        dest: "{{ user_home }}/.config/Code/User/settings.json"
         content: |
           {
             "github.copilot.agent.enabled": false,
@@ -75,26 +80,26 @@
 
     - name: Disable Copilot agent in VS Code settings
       lineinfile:
-        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        path: "{{ user_home }}/.config/Code/User/settings.json"
         regexp: '"github.copilot.agent.enabled"'
         line: '"github.copilot.agent.enabled": false,'
         create: yes
 
     - name: Disable Copilot chat
       lineinfile:
-        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        path: "{{ user_home }}/.config/Code/User/settings.json"
         regexp: '"github.copilot.chat.enabled"'
         line: '"github.copilot.chat.enabled": false,'
 
     - name: Disable Copilot inline suggestions
       lineinfile:
-        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        path: "{{ user_home }}/.config/Code/User/settings.json"
         regexp: '"github.copilot.inlineSuggest.enable"'
         line: '"github.copilot.inlineSuggest.enable": false,'
 
     - name: Disable Copilot experiments
       lineinfile:
-        path: "{{ ansible_env.HOME }}/.config/Code/User/settings.json"
+        path: "{{ user_home }}/.config/Code/User/settings.json"
         regexp: '"workbench.experimental.enableCopilot"'
         line: '"workbench.experimental.enableCopilot": false,'
 
