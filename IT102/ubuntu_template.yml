@@ -31,22 +31,16 @@
         name: postman
         state: present
 
-    - name: Add Microsoft GPG key for VSCode
-      apt_key:
-        url: https://packages.microsoft.com/keys/microsoft.asc
-        state: present
-
-    - name: Add VSCode repository
-      apt_repository:
-        repo: "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main"
-        state: present
-        filename: vscode
-
-    - name: Install VSCode
-      apt:
+    - name: Install VSCode classic
+      snap:
         name: code
+        classic: yes
         state: present
-        update_cache: yes
+    
+    - name: Add vscode extension(s) for devasc
+      become: false
+      become_user: devasc
+      command: code --install-extension ms-python.python
 
     # XRDP install prompt replaced with a variable/conditional
     - name: Optionally install XRDP (see separate playbook)
