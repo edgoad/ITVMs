@@ -9,10 +9,11 @@
     existing_user_pass: Cisco123!
     ansible_become_pass: "{{ existing_user_pass }}}"
     user_home: "/home/{{ existing_user }}"
-    
-  become: yes
+
+  
   tasks:
     - name: Install kernel and XRDP tools
+      become: yes
       apt:
         name:
           - linux-tools-virtual
@@ -22,6 +23,7 @@
         update_cache: yes
 
     - name: Stop xrdp services for configuration
+      become: yes
       service:
         name: "{{ item }}"
         state: stopped
@@ -30,30 +32,35 @@
         - xrdp-sesman
 
     - name: Set XRDP config- use vsock transport
+      become: yes
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'use_vsock=false'
         replace: 'use_vsock=true'
 
     - name: Set XRDP config- security layer to rdp
+      become: yes
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'security_layer=negotiate'
         replace: 'security_layer=rdp'
 
     - name: Set XRDP config- crypt level to none
+      become: yes
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'crypt_level=high'
         replace: 'crypt_level=none'
 
     - name: Set XRDP config- disable bitmap compression
+      become: yes
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'bitmap_compression=true'
         replace: 'bitmap_compression=false'
 
     - name: Create /etc/xrdp/startubuntu.sh if not exists
+      become: yes
       copy:
         dest: /etc/xrdp/startubuntu.sh
         owner: root
@@ -66,36 +73,42 @@
           exec /etc/xrdp/startwm.sh
 
     - name: Replace startwm with startubuntu in sesman.ini
+      become: yes
       replace:
         path: /etc/xrdp/sesman.ini
         regexp: 'startwm'
         replace: 'startubuntu'
 
     - name: Rename redirected drives in sesman.ini
+      become: yes
       replace:
         path: /etc/xrdp/sesman.ini
         regexp: 'FuseMountName=thinclient_drives'
         replace: 'FuseMountName=shared-drives'
 
     - name: Set allowed_users to anybody in Xwrapper.config
+      become: yes
       replace:
         path: /etc/X11/Xwrapper.config
         regexp: 'allowed_users=console'
         replace: 'allowed_users=anybody'
 
     - name: Blacklist vmw_vsock_vmci_transport
+      become: yes
       lineinfile:
         path: /etc/modprobe.d/blacklist_vmw_vsock_vmci_transport.conf
         line: 'blacklist vmw_vsock_vmci_transport'
         create: yes
 
     - name: Ensure hv_sock is loaded
+      become: yes
       lineinfile:
         path: /etc/modules-load.d/hv_sock.conf
         line: 'hv_sock'
         create: yes
 
     - name: Add polkit rules for color management
+      become: yes
       copy:
         dest: /etc/polkit-1/localauthority/50-local.d/45-allow-colord.pkla
         content: |
@@ -107,6 +120,7 @@
           ResultActive=yes
 
     - name: Add polkit rules for package management
+      become: yes
       copy:
         dest: /etc/polkit-1/localauthority/50-local.d/46-allow-reporefresh.pkla
         content: |
@@ -118,6 +132,7 @@
           ResultActive=yes
 
     - name: Add polkit rules for reboot
+      become: yes
       copy:
         dest: /etc/polkit-1/localauthority/50-local.d/47-allow-reboot.pkla
         content: |
@@ -128,6 +143,7 @@
           ResultInactive=no
 
     - name: Add polkit rules for shutdown
+      become: yes
       copy:
         dest: /etc/polkit-1/localauthority/50-local.d/47-allow-shutdown.pkla
         content: |
@@ -138,18 +154,21 @@
           ResultInactive=no
 
     - name: Reload and start xrdp service
+      become: yes
       systemd:
         name: xrdp
         state: restarted
         daemon_reload: yes
 
     - name: Update for Enhanced mode in Ubuntu 20
+      become: yes
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'port=3389'
         replace: 'port=vsock://-1:3389'
 
     - name: Reset use_vsock to false in xrdp.ini
+      become: yes
       replace:
         path: /etc/xrdp/xrdp.ini
         regexp: 'use_vsock=true'

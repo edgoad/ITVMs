@@ -20,6 +20,9 @@
       - 'yelp.desktop'
 
   tasks:
+    - name: Disable idle delay (set to 0)
+      command: gsettings set org.gnome.desktop.session idle-delay 0
+    
     - name: Set hostname
       become: yes
       hostname:
@@ -48,11 +51,13 @@
         autoremove: yes
 
     - name: Install bruno snap package
+      become: yes
       snap:
         name: bruno
         state: present
 
     - name: Install VSCode classic
+      become: yes
       snap:
         name: code
         classic: yes
@@ -90,41 +95,10 @@
           }
         mode: '0644'
 
-    - name: Disable Copilot agent in VS Code settings
-      lineinfile:
-        path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"github.copilot.agent.enabled": (?!false).*'
-        line: '"github.copilot.agent.enabled": false,'
-        create: yes
 
-    - name: Disable Copilot chat
-      lineinfile:
-        path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"github.copilot.chat.enabled": (?!false).*'
-        line: '"github.copilot.chat.enabled": false,'
-
-    - name: Disable Copilot inline suggestions
-      lineinfile:
-        path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"github.copilot.inlineSuggest.enable": (?!false).*'
-        line: '"github.copilot.inlineSuggest.enable": false,'
-
-    - name: Disable Copilot experiments
-      lineinfile:
-        path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"workbench.experimental.enableCopilot": (?!false).*'
-        line: '"workbench.experimental.enableCopilot": false,'
-    - name: Disable Copilot chat
-      lineinfile:
-        path: "{{ user_home }}/.config/Code/User/settings.json"
-        regexp: '"chat.disableAIFeatures": (?!true).*'
-        line: '"chat.disableAIFeatures": true,'
 
 
     # Update favorite apps in GNOME
-    - name: Disable idle delay (set to 0)
-      command: gsettings set org.gnome.desktop.session idle-delay 0
-    
     - name: Update favorite apps in GNOME
       command: gsettings set org.gnome.shell favorite-apps "['firefox_firefox.desktop', 'code_code.desktop', 'org.gnome.Terminal.desktop', 'bruno_bruno.desktop', 'org.gnome.Nautilus.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']"
 
