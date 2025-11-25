@@ -2,18 +2,29 @@
 - name: Ubuntu VM Template Setup
   hosts: localhost
   connection: local
-  become: yes
+  # become: yes
 
   vars:
     ansible_python_interpreter: /usr/bin/python3
     user_home: "/home/devasc"
+    desired_apps:
+      - 'firefox.desktop'
+      - 'code.desktop'
+      - 'org.gnome.Terminal.desktop'
+      - 'postman_postman.desktop'
+      - 'org.gnome.Nautilus.desktop'
+      - 'libreoffice-writer.desktop'
+      - 'snap-store_ubuntu-software.desktop'
+      - 'yelp.desktop'
 
   tasks:
     - name: Set hostname
+      become: yes
       hostname:
         name: ubuntu
 
     - name: Ensure required packages are installed/updated
+      become: yes
       apt:
         name:
           - curl
@@ -30,6 +41,7 @@
         update_cache: yes
 
     - name: Autoremove unnecessary packages
+      become: yes
       apt:
         autoremove: yes
 
@@ -45,13 +57,10 @@
         state: present
     
     - name: Add vscode extension(s) for devasc
-      become: false
-      become_user: devasc
       command: code --install-extension ms-python.python
  
     - name: Install VS Code Bruno extension
       command: code --install-extension bruno-api-client.bruno
-      become_user: devasc
       args:
         creates: "{{ user_home }}/.vscode/extensions/bruno-api-client.bruno"
     
@@ -102,6 +111,27 @@
         path: "{{ user_home }}/.config/Code/User/settings.json"
         regexp: '"workbench.experimental.enableCopilot"'
         line: '"workbench.experimental.enableCopilot": false,'
+
+
+
+    # Update favorite apps in GNOME
+    - name: Disable idle delay (set to 0)
+      community.general.gsettings:
+        schema: org.gnome.desktop.session
+        key: idle-delay
+        value: 0
+
+    - name: Get current GNOME favorite apps
+      command: gsettings get org.gnome.shell favorite-apps
+      register: current_favorites
+      changed_when: false
+
+    - name: Merge favorite apps
+      set_fact:
+        new_favorites: "{{ (current_favorites.stdout | regex_replace('[\\[\\]]', '') | split(', ') | map('trim') | list + desired_apps) | unique }}"
+
+    - name: Update GNOME favorite apps
+      command: gsettings set org.gnome.shell favorite-apps "{{ new_favorites | to_json }}"
 
 
     # XRDP install prompt replaced with a variable/conditional
