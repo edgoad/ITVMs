@@ -83,9 +83,9 @@ $url = "https://releases.ubuntu.com/24.04.3/ubuntu-24.04.3-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
-Write-Host "Downloading pfSense (this may take some time)"
-$url = "https://atxfiles.netgate.com/mirror/downloads/pfSense-CE-2.7.2-RELEASE-amd64.iso.gz"
-$output = "c:\VMs\pfSense-CE-2.7.2-RELEASE-amd64.iso.gz"
+Write-Host "Downloading OPNsense (this may take some time)"
+$url = "https://pkg.opnsense.org/releases/25.7/OPNsense-25.7-dvd-amd64.iso.bz2"
+$output = "c:\VMs\OPNsense-25.7-dvd-amd64.iso.bz2"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 
