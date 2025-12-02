@@ -32,39 +32,36 @@ else{
 Install-HypervAndTools
 
 # Create virtual swith
-if ( ! (Get-VMSwitch | Where-Object Name -eq 'MGMT')){
-    Write-Host "Creating MGMT vswitch"
-    New-VMSwitch -SwitchType Internal -Name MGMT
-} else { Write-Host "MGMT vSwitch already created" }
+if ( ! (Get-VMSwitch | Where-Object Name -eq 'internal')){
+    Write-Host "Creating internal vswitch"
+    New-VMSwitch -SwitchType Internal -Name internal
+} else { Write-Host "internal vSwitch already created" }
 
 # Setup second interface
-if ( ! (Get-NetAdapter | Where-Object Name -EQ 'MGMT')){
-    Write-Host "Configuring MGMT adapter"
-    Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName MGMT
-    New-NetIPAddress -InterfaceAlias 'MGMT' -IPAddress 192.168.0.250 -PrefixLength 24
-} else { Write-Host "MGMT adapter already exists. Confirm interfaces manually" }
+if ( ! (Get-NetAdapter | Where-Object Name -EQ 'internal')){
+    Write-Host "Configuring internal adapter"
+    Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName internal
+    New-NetIPAddress -InterfaceAlias 'internal' -IPAddress 10.99.0250 -PrefixLength 24
+} else { Write-Host "internal adapter already exists. Confirm interfaces manually" }
 
 # Configure routing / NAT
-New-NetNat -Name external_routing_mgmt -InternalIPInterfaceAddressPrefix 192.168.0.0/24
+New-NetNat -Name external_routing_internal -InternalIPInterfaceAddressPrefix 10.99.00/24
 
-# Create virtual swith
-if ( ! (Get-VMSwitch | Where-Object Name -eq 'WAN')){
-    Write-Host "Creating WAN vswitch"
-    New-VMSwitch -SwitchType Internal -Name WAN
-} else { Write-Host "WAN vSwitch already created" }
+# Create virtual swith Internal1
+if ( ! (Get-VMSwitch | Where-Object Name -eq 'Internal1')){
+    Write-Host "Creating Internal1 vswitch"
+    New-VMSwitch -SwitchType Internal -Name Internal1
+} else { Write-Host "Internal1 vSwitch already created" }
+if ( ! (Get-VMSwitch | Where-Object Name -eq 'Internal2')){
+    Write-Host "Creating Internal2 vswitch"
+    New-VMSwitch -SwitchType Internal -Name Internal2
+} else { Write-Host "Internal2 vSwitch already created" }
 
-# Setup second interface
-if ( ! (Get-NetAdapter | Where-Object Name -EQ 'WAN')){
-    Write-Host "Configuring WAN adapter"
-    Get-NetAdapter | where Name -NE 'Public' | where Name -NE 'MGMT' | Rename-NetAdapter -NewName WAN
-    New-NetIPAddress -InterfaceAlias 'WAN' -IPAddress 203.0.113.65 -PrefixLength 27
-} else { Write-Host "WAN adapter already exists. Confirm interfaces manually" }
 
-# Configure routing / NAT
-New-NetNat -Name external_routing_WAN -InternalIPInterfaceAddressPrefix 203.0.113.64/27
 
-# Configure DHCP for MGMT network
-Set-InternalDHCPScope
+
+# Configure DHCP for internal network
+Set-InternalDHCPScope -InterfaceAlias internal -StartRange 10.99.0.100 -EndRange 10.99.0.200 -SubnetMask 255.255.255.0 -DNSServer 8.8.8.8 -ScopeName "Internal Network" -ScopeDescription "DHCP Scope for Internal Network"
 
 #######################################################################
 # Install some common tools
@@ -81,21 +78,48 @@ Set-Autologout
 Set-HypervDefaults
 
 #Download Windows ISO
-New-Item -ItemType Directory -Path c:\VMs -Force
-$url = "https://software-download.microsoft.com/download/pr/Windows_Server_2016_Datacenter_EVAL_en-us_14393_refresh.ISO"
-$output = "c:\VMs\W2k2016.ISO"
+Write-Host "Downloading Ubuntu (this may take some time)"
+$url = "https://releases.ubuntu.com/24.04.3/ubuntu-24.04.3-desktop-amd64.iso"
+$output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
+Write-Host "Downloading pfSense (this may take some time)"
+$url = "https://atxfiles.netgate.com/mirror/downloads/pfSense-CE-2.7.2-RELEASE-amd64.iso.gz"
+$output = "c:\VMs\pfSense-CE-2.7.2-RELEASE-amd64.iso.gz"
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
 
 # Setup Hyper-V default file locations
 Set-VMHost -VirtualHardDiskPath "C:\VMs\Virtual Hard Disks"
 Set-VMHost -VirtualMachinePath "C:\VMs"
 
-# Create Template VM
-new-VM -Name Svr2016Template -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Svr2016Template.vhdx" -NewVHDSizeBytes 60GB -SwitchName MGMT -Generation 2
-Add-VMDvdDrive -VMName Svr2016Template -Path c:\VMs\W2k2016.ISO
-
-# Create PA VM
-new-VM -Name "PaloAlto" -MemoryStartupBytes 6.5GB -BootDevice VHD -VHDPath "PA-VM-HPV-10.0.4.vhdx" -SwitchName MGMT
+#Create New VMs
+if ( ! (Get-VM | Where-Object Name -EQ "DesktopA")){
+    Write-Host "Creating VM: DesktopA"
+	new-VM -Name "DesktopA" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DesktopA.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal1 -Generation 2
+    Set-VMFirmware "DesktopA" -EnableSecureBoot Off
+    Set-VMDvdDrive -VMName "DesktopA" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+}
+if ( ! (Get-VM | Where-Object Name -EQ "DesktopB")){
+    Write-Host "Creating VM: DesktopB"
+	new-VM -Name "DesktopB" -MemoryStartupBytes 24GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DesktopB.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal1 -Generation 2
+    Set-VMFirmware "DesktopB" -EnableSecureBoot Off
+    Set-VMDvdDrive -VMName "DesktopB" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+}
+if ( ! (Get-VM | Where-Object Name -EQ "Firewall1")){
+    Write-Host "Creating VM: Firewall1"
+	new-VM -Name "Firewall1" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Firewall1.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
+    Set-VMFirmware "Firewall1" -EnableSecureBoot Off
+    Set-VMDvdDrive -VMName "Firewall1" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+    Add-VMNetworkAdapter -VMName "Firewall1" -SwitchName "Internal1" -Name "LAN"
+}
+if ( ! (Get-VM | Where-Object Name -EQ "Firewall2")){
+    Write-Host "Creating VM: Firewall2"
+	new-VM -Name "Firewall2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\Firewall2.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
+    Set-VMFirmware "Firewall2" -EnableSecureBoot Off
+    Set-VMDvdDrive -VMName "Firewall2" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+    Add-VMNetworkAdapter -VMName "Firewall2" -SwitchName "Internal2" -Name "LAN"
+}
 
 # Set all VMs to NOT autostart
 Get-VM | Set-VM -AutomaticStartAction Nothing

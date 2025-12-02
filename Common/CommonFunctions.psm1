@@ -181,21 +181,56 @@ function Install-DHCP {
     Set-ItemProperty -Path registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\ServerManager\Roles\12 -Name ConfigurationState -Value 2
 }
 
+# function Set-InternalDHCPScope{
+#     Write-Output "Installing DHCP, if needed."
+#     Install-DHCP 
+
+#     $ipAddress = "192.168.0.250"
+#     $ipAddressPrefixRange = "24"
+#     $ipAddressPrefix = "192.168.0.0/$ipAddressPrefixRange"
+#     $startRangeForClientIps = "192.168.0.100"
+#     $endRangeForClientIps = "192.168.0.200"
+#     $subnetMaskForClientIps = "255.255.255.0"
+#     # Azure Static DNS Server IP
+#     $dnsServerIp = "8.8.8.8"
+
+#     # Add scope for client vm ip address
+#     $scopeName = "InternalDhcpScope"
+
+#     $dhcpScope = Select-ResourceByProperty `
+#         -PropertyName 'Name' -ExpectedPropertyValue $scopeName `
+#         -List @(Get-DhcpServerV4Scope) `
+#         -NewObjectScriptBlock { Add-DhcpServerv4Scope -name $scopeName -StartRange $startRangeForClientIps -EndRange $endRangeForClientIps -SubnetMask $subnetMaskForClientIps -State Active
+#                                 Set-DhcpServerV4OptionValue -DnsServer $dnsServerIp -Router $ipAddress
+#                             }
+#     Write-Output "Using $dhcpScope"
+# }
 function Set-InternalDHCPScope{
+    param(
+        [string]$networkPrefix = "192.168.0.0",
+        [string]$ipAddressPrefixRange = "24",
+        [string]$ipAddress = "192.168.0.250",
+        [string]$startRangeForClientIps = "192.168.0.100",
+        [string]$endRangeForClientIps = "192.168.0.200",
+        [string]$subnetMaskForClientIps = "255.255.255.0",
+        [string]$dnsServerIp = "8.8.8.8",
+        [string]$scopeName = "InternalDhcpScope"
+    )
+    
     Write-Output "Installing DHCP, if needed."
     Install-DHCP 
 
-    $ipAddress = "192.168.0.250"
-    $ipAddressPrefixRange = "24"
-    $ipAddressPrefix = "192.168.0.0/$ipAddressPrefixRange"
-    $startRangeForClientIps = "192.168.0.100"
-    $endRangeForClientIps = "192.168.0.200"
-    $subnetMaskForClientIps = "255.255.255.0"
-    # Azure Static DNS Server IP
-    $dnsServerIp = "8.8.8.8"
+    # $ipAddress = "192.168.0.250"
+    # $ipAddressPrefixRange = "24"
+    $ipAddressPrefix = "$networkPrefix/$ipAddressPrefixRange"
+    # $startRangeForClientIps = "192.168.0.100"
+    # $endRangeForClientIps = "192.168.0.200"
+    # $subnetMaskForClientIps = "255.255.255.0"
+    # # Azure Static DNS Server IP
+    # $dnsServerIp = "8.8.8.8"
 
     # Add scope for client vm ip address
-    $scopeName = "InternalDhcpScope"
+    # $scopeName = "InternalDhcpScope"
 
     $dhcpScope = Select-ResourceByProperty `
         -PropertyName 'Name' -ExpectedPropertyValue $scopeName `
