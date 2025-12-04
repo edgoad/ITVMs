@@ -62,12 +62,47 @@ Set-HypervDefaults
 # Configure DHCP for internal network
 Set-InternalDHCPScope_DevASC
 
-# Download devasc-sa.py
-New-Item -Path "c:\Users\Public\Desktop\LabFiles" -ItemType Directory
-Write-Host "Downloading devasc-sa.py"
-$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/devasc-sa.py"
-$output = "c:\Users\Public\Desktop\LabFiles\devasc-sa.py"
+# Download Ubuntu ISO
+# Review URL for latest version
+Write-Host "Downloading Ubuntu (this may take some time)"
+$url = "https://releases.ubuntu.com/24.04.3/ubuntu-24.04.3-desktop-amd64.iso"
+$output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
+# Setup Hyper-V default file locations
+Set-VMHost -VirtualHardDiskPath "C:\VMs"
+Set-VMHost -VirtualMachinePath "C:\VMs"
+
+##############################################################################
+# Setup VMs
+##############################################################################
+#Create New VMs
+if ( ! (Get-VM | Where-Object Name -EQ "LabVM")){
+    Write-Host "Creating VM: LabVM"
+	new-VM -Name "LabVM" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\LabVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
+    Set-VMFirmware "LabVM" -EnableSecureBoot Off
+}
+
+
+#Mount ISO
+Set-VMDvdDrive -VMName "LabVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+
+# Set all VMs to NOT autostart
+Get-VM | Set-VM -AutomaticStartAction Nothing
+
+# Set all VMs to shutdown at logoff
+Get-VM | Set-VM -AutomaticStopAction Shutdown
+
+# Set VMs to 2 processors for optimization
+Get-VM | Set-VMProcessor -Count 2
+
+
+# Download devasc-sa.py
+# New-Item -Path "c:\Users\Public\Desktop\LabFiles" -ItemType Directory
+# Write-Host "Downloading devasc-sa.py"
+# $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/devasc-sa.py"
+# $output = "c:\Users\Public\Desktop\LabFiles\devasc-sa.py"
+# Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Download logon information
 #Write-Host "Downloading Logon Information"
