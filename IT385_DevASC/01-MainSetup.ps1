@@ -77,24 +77,29 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 # Setup VMs
 ##############################################################################
 #Create New VMs
-if ( ! (Get-VM | Where-Object Name -EQ "LabVM")){
-    Write-Host "Creating VM: LabVM"
-	new-VM -Name "LabVM" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\LabVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
-    Set-VMFirmware "LabVM" -EnableSecureBoot Off
+if ( ! (Get-VM | Where-Object Name -EQ "DEVASC_VM")){
+    Write-Host "Creating VM: DEVASC_VM"
+	new-VM -Name "DEVASC_VM" -MemoryStartupBytes 7GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DEVASC_VM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
+    Set-VMFirmware "DEVASC_VM" -EnableSecureBoot Off
+}
+if ( ! (Get-VM | Where-Object Name -EQ "CSR1000v")){
+    Write-Host "Creating VM: CSR1000v"
+    New-VHD -Path "C:\VMs\Virtual Hard Disks\CSR1000v.vhd" -SizeBytes 8GB  -Fixed
+	New-VM -VHDPath "C:\VMs\Virtual Hard Disks\CSR1000v.vhd" -Generation 1 -MemoryStartupBytes 4GB -Name CSR1000v -SwitchName Internal
 }
 
 
 #Mount ISO
-Set-VMDvdDrive -VMName "LabVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+Set-VMDvdDrive -VMName "DEVASC_VM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 
-# Set all VMs to NOT autostart
-Get-VM | Set-VM -AutomaticStartAction Nothing
+# Set all VMs to autostart at boot
+Get-VM | Set-VM -AutomaticStartAction Start
 
 # Set all VMs to shutdown at logoff
 Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 # Set VMs to 2 processors for optimization
-Get-VM | Set-VMProcessor -Count 2
+Get-VM | Set-VMProcessor -Count 4
 
 
 # Download devasc-sa.py
