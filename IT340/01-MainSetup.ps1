@@ -126,7 +126,6 @@ if ( ! (Get-VM | Where-Object Name -EQ "DesktopB")){
 	new-VM -Name "DesktopB" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\DesktopB.vhdx" -NewVHDSizeBytes 20GB -SwitchName LAN_1 -Generation 2
     Set-VMFirmware "DesktopB" -EnableSecureBoot Off
     Add-VMDvdDrive -VMName "DesktopB" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
-    Add-VMNetworkAdapter -VMName "DesktopB" -SwitchName "LAN_2" -Name "LAN_2"
 }
 if ( ! (Get-VM | Where-Object Name -EQ "Firewall1")){
     Write-Host "Creating VM: Firewall1"
