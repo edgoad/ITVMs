@@ -72,7 +72,7 @@ if ( ! (Get-NetAdapter | Where-Object Name -EQ 'LAN_2')){
 
 
 # Configure DHCP for internal network
-Set-InternalDHCPScope -InterfaceAlias internal -StartRange 10.99.0.100 -EndRange 10.99.0.200 -SubnetMask 255.255.255.0 -DNSServer 8.8.8.8 -ScopeName "Internal Network" -ScopeDescription "DHCP Scope for Internal Network"
+Set-InternalDHCPScope -InterfaceAlias internal -IPAddress 10.99.0.250 -StartRange 10.99.0.100 -EndRange 10.99.0.200 -SubnetMask 255.255.255.0 -DNSServer 8.8.8.8 -ScopeName "Internal Network" -ScopeDescription "DHCP Scope for Internal Network"
 
 #######################################################################
 # Install some common tools
