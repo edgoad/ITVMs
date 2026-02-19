@@ -68,7 +68,7 @@ Set-HypervDefaults
 #Download Windows 11 ISO
 New-Item -ItemType Directory -Path c:\VMs -Force
 $url = "https://software-static.download.prss.microsoft.com/dbazure/888969d5-f34g-4e03-ac9d-1f9786c66749/26100.1742.240906-0331.ge_release_svc_refresh_CLIENT_LTSC_EVAL_x64FRE_en-us.iso"
-# $url = "https://software.download.prss.microsoft.com/dbazure/Win11_25H2_English_x64.iso?t=72c32885-084c-449a-9892-c2a809d1ba37&P1=1768336761&P2=601&P3=2&P4=zP4D7badrMM2%2ff6tFjvwKhbwp%2baeGC6J%2b7J14k3ASjF5h7Ej6nm9kz%2frIs6%2bvNmrw3blZFs%2fgXXX7f1Z7CBU2IIiKJhVtjTaJxnsazllde%2bQAftv43NPfdJaxFOYOiuuHzPQddTveSmTFrWE3tbsyiWINFc1ta1lAdCeVo7QgZqyjFVlu48sKQFd0KmyJ8TXcE6EQlEUshUpQQCJ1Kuf0ooptc04x5R4E8dxoSRLopBk6O7Vzl%2f86aCy3C0B%2bcgGPciDu%2bjG%2fu6XH%2buw3up0eE%2fjUOEkEYB39O5YsV5oCJM8wdGz97JgEtvRP7VAMh4iCjJAMBTktvxc5e%2bwh3Hj4g%3d%3d"
+$url = "https://software.download.prss.microsoft.com/dbazure/Win11_25H2_English_x64.iso?t=72c32885-084c-449a-9892-c2a809d1ba37&P1=1768336761&P2=601&P3=2&P4=zP4D7badrMM2%2ff6tFjvwKhbwp%2baeGC6J%2b7J14k3ASjF5h7Ej6nm9kz%2frIs6%2bvNmrw3blZFs%2fgXXX7f1Z7CBU2IIiKJhVtjTaJxnsazllde%2bQAftv43NPfdJaxFOYOiuuHzPQddTveSmTFrWE3tbsyiWINFc1ta1lAdCeVo7QgZqyjFVlu48sKQFd0KmyJ8TXcE6EQlEUshUpQQCJ1Kuf0ooptc04x5R4E8dxoSRLopBk6O7Vzl%2f86aCy3C0B%2bcgGPciDu%2bjG%2fu6XH%2buw3up0eE%2fjUOEkEYB39O5YsV5oCJM8wdGz97JgEtvRP7VAMh4iCjJAMBTktvxc5e%2bwh3Hj4g%3d%3d"
 $output = "c:\VMs\Win11.ISO"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
@@ -77,7 +77,7 @@ Set-VMHost -VirtualHardDiskPath "C:\VMs"
 Set-VMHost -VirtualMachinePath "C:\VMs"
 # Create VMs
 # Create SWS
-new-VM -Name SWS -MemoryStartupBytes 4GB -BootDevice VHD -NewVHDPath C:\VMs\SWS.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
+new-VM -Name SWS -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath C:\VMs\SWS.vhdx -NewVHDSizeBytes 60GB -SwitchName Internal -Generation 2
 Add-VMDvdDrive -VMName SWS -Path c:\VMs\Win11.ISO
 
 # Set boot order of VMs

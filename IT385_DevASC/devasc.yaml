@@ -24,6 +24,8 @@
       - repo_url: "https://github.com/nikolayg/sample-python-api.git"
       - service_name: sample-python-api
       - python_exec: /usr/bin/python3
+      - ansible_cfg_url: "https://github.com/edgoad/ITVMs/raw/master/IT385_DevASC/ansible.cfg"
+      - hosts_url:       "https://github.com/edgoad/ITVMs/raw/master/IT385_DevASC/examples/hosts"
 
 
     
@@ -215,48 +217,58 @@
             Terminal=false
         mode: '0755'
 
-      # - name: Clone the application repository
-      #   git:
-      #     repo: "{{ repo_url }}"
-      #     dest: "{{ app_dir }}"
-      #     version: master
-      
-      # - name: Create virtual environment
-      #   command: "python3 -m venv {{ app_dir }}/venv"
-      #   args:
-      #     creates: "{{ app_dir }}/venv"
+      # setup ansible configuration for the user
+      - name: Ensure /etc/ansible exists
+        ansible.builtin.file:
+          path: "{{ etc_dir }}"
+          state: directory
+          owner: root
+          group: root
+          mode: "0755"
 
-      # # - name: Install app dependencies
-      # #   pip:
-      # #     requirements: "{{ app_dir }}/requirements.txt"
-      # #     virtualenv: "{{ app_dir }}/venv"
+      - name: Download example ansible.cfg (do not overwrite by default)
+        ansible.builtin.get_url:
+          url: "{{ ansible_cfg_url }}"
+          dest: "{{ cfg_path }}"
+          owner: root
+          group: root
+          mode: "0644"
+          force: "{{ overwrite_existing }}"
+          backup: true
+          # set use_proxy: yes if you need to obey proxy settings
+        register: cfg_dl
 
-      # - name: Create systemd service file
-      #   copy:
-      #     dest: /etc/systemd/system/{{ service_name }}.service
-      #     content: |
-      #       [Unit]
-      #       Description=Sample Python API
-      #       After=network.target
+      - name: Download example hosts (do not overwrite by default)
+        ansible.builtin.get_url:
+          url: "{{ hosts_url }}"
+          dest: "{{ hosts_path }}"
+          owner: root
+          group: root
+          mode: "0644"
+          force: "{{ overwrite_existing }}"
+          backup: true
+        register: hosts_dl
 
-      #       [Service]
-      #       WorkingDirectory={{ app_dir }}
-      #       ExecStart={{ python_exec }} app.py
-      #       Restart=always
-      #       User=root
+      # Setup ssh authentication for the user
+      - name: Ensure /etc/ssh/ssh_config exists
+        ansible.builtin.file:
+          path: "/etc/ssh/ssh_config"
+          state: touch
+          owner: root
+          group: root
+          mode: "0644"
 
-      #       [Install]
-      #       WantedBy=multi-user.target
-
-      # - name: Reload systemd daemon
-      #   command: systemctl daemon-reload
-
-      # - name: Enable and start the service
-      #   systemd:
-      #     name: "{{ service_name }}"
-      #     enabled: yes
-      #     state: started
-
+      - name: Add (or update) global Host * block for legacy KEX and RSA
+        ansible.builtin.blockinfile:
+          path: "/etc/ssh/ssh_config"
+          marker: "# {mark} ANSIBLE MANAGED BLOCK: legacy ssh algorithms for lab"
+          backup: true
+          create: true
+          block: |
+            Host *
+                KexAlgorithms +diffie-hellman-group14-sha1,diffie-hellman-group-exchange-sha1
+                HostkeyAlgorithms +ssh-rsa
+                PubkeyAcceptedAlgorithms +ssh-rsa
 
     handlers:
       - name: Apt update
