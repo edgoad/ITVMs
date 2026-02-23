@@ -69,6 +69,11 @@ $url = "https://releases.ubuntu.com/24.04.3/ubuntu-24.04.3-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
+Write-Host "Downloading Ubuntu server (this may take some time)"
+$url = "https://releases.ubuntu.com/24.04.4/ubuntu-24.04.4-live-server-amd64.iso"
+$output = "c:\VMs\ubuntu-server-amd64.iso"
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
 # Setup Hyper-V default file locations
 Set-VMHost -VirtualHardDiskPath "C:\VMs"
 Set-VMHost -VirtualMachinePath "C:\VMs"
@@ -87,10 +92,22 @@ if ( ! (Get-VM | Where-Object Name -EQ "CSR1000v")){
     New-VHD -Path "C:\VMs\Virtual Hard Disks\CSR1000v.vhd" -SizeBytes 8GB  -Fixed
 	New-VM -VHDPath "C:\VMs\Virtual Hard Disks\CSR1000v.vhd" -Generation 1 -MemoryStartupBytes 4GB -Name CSR1000v -SwitchName Internal
 }
+if ( ! (Get-VM | Where-Object Name -EQ "SRV1")){
+    Write-Host "Creating VM: SRV1"
+	new-VM -Name "SRV1" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\SRV1.vhdx" -NewVHDSizeBytes 20GB -SwitchName Internal -Generation 2
+    Set-VMFirmware "SRV1" -EnableSecureBoot Off
+}
+if ( ! (Get-VM | Where-Object Name -EQ "SRV2")){
+    Write-Host "Creating VM: SRV2"
+	new-VM -Name "SRV2" -MemoryStartupBytes 2GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\SRV2.vhdx" -NewVHDSizeBytes 20GB -SwitchName Internal -Generation 2
+    Set-VMFirmware "SRV2" -EnableSecureBoot Off
+}
 
 
 #Mount ISO
 Set-VMDvdDrive -VMName "DEVASC_VM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+Set-VMDvdDrive -VMName "SRV1" -Path "c:\VMs\ubuntu-server-amd64.iso"
+Set-VMDvdDrive -VMName "SRV2" -Path "c:\VMs\ubuntu-server-amd64.iso"
 
 # Set all VMs to autostart at boot
 Get-VM | Set-VM -AutomaticStartAction Start
@@ -100,20 +117,6 @@ Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 # Set VMs to 2 processors for optimization
 Get-VM | Set-VMProcessor -Count 4
-
-
-# Download devasc-sa.py
-# New-Item -Path "c:\Users\Public\Desktop\LabFiles" -ItemType Directory
-# Write-Host "Downloading devasc-sa.py"
-# $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/devasc-sa.py"
-# $output = "c:\Users\Public\Desktop\LabFiles\devasc-sa.py"
-# Get-WebFile -DownloadUrl $url -TargetFilePath $output
-
-# Download logon information
-#Write-Host "Downloading Logon Information"
-#$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/Logon%20Information.txt"
-#$output = "c:\Users\Public\Desktop\Logon Information.txt"
-#Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Rename VM after reboot
 Add-RenameAfterReboot
