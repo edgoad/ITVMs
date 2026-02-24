@@ -1,0 +1,6 @@
+Machine Name		Username	Password
+DEVASC-LABVM        devasc      Cisco123!
+CSR1000v            cisco       cisco123!
+SRV1                student     Password01
+SRV2                student     Password01
+

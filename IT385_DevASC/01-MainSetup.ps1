@@ -13,10 +13,17 @@ $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunct
 $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
 (new-object System.Net.WebClient).DownloadFile($url, $output)
 Import-Module $output
+Import-Module ServerManager
 #Remove-Item $output
 
 # setup bginfo
 Set-DesktopDefaults
+
+# Download logon information
+Write-Host "Downloading Logon Information"
+$url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT385_DevASC/Logon%20Information.txt"
+$output = "c:\Users\Public\Desktop\Logon Information.txt"
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
 # Setup first interface
 if ( $(Get-NetAdapter | Measure-Object).Count -eq 1 ){
