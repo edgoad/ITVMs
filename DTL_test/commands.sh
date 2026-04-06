@@ -60,8 +60,8 @@ SRV1="srv1"
 SRV2="srv2"
 
 # Credentials (DO NOT hard-code in shared scripts)
-ADMIN_USER="studentadmin"
-ADMIN_PW="ChangeMeP@ssw0rd!"   # change at deploy time or prompt instead
+ADMIN_USER="devasc"
+ADMIN_PW="Cisco123!"   # change at deploy time or prompt instead
 # --------------------------------------
 ```
 
