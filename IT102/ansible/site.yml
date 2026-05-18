@@ -1,0 +1,14 @@
+---
+- name: Ubuntu VM Template Setup
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - ubuntu_vm_template
+    - role: vscode
+      vars:
+        vscode_install_method: tarball
+        vscode_offline_mode: true
+

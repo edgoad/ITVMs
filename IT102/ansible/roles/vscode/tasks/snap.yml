@@ -1,0 +1,11 @@
+---
+- name: Install snapd
+  apt:
+    name: snapd
+    state: present
+
+- name: Install code
+  snap:
+    name: code
+    classic: yes
+    state: present

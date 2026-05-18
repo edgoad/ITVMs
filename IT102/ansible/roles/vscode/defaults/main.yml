@@ -1,0 +1,28 @@
+---
+vscode_install_method: "tarball"
+vscode_version: "latest"
+vscode_install_dir: "/opt/vscode"
+vscode_user: "{{ ansible_user }}"
+vscode_extensions:
+  - ms-python.python
+  - ms-python.vscode-pylance
+vscode_disable_updates: true
+
+vscode_disable_ai: true
+
+vscode_settings:
+  update.mode: "none"
+  extensions.autoUpdate: false
+  extensions.autoCheckUpdates: false
+
+  # # Disable Copilot / Chat
+  # github.copilot.enable: false
+  # github.copilot.inlineSuggest.enable: false
+  # workbench.panel.chat.enabled: false
+  # chat.experimental.enabled: false
+  # vscode_disable_ai: true
+
+  # # Disable extension marketplace access (common in labs)
+  # extensions.gallery.enabled: false
+
+vscode_offline_mode: false

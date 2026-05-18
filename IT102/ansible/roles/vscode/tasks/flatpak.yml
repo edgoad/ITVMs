@@ -1,0 +1,15 @@
+---
+- name: Install flatpak
+  apt:
+    name: flatpak
+    state: present
+
+- name: Add flathub
+  command: flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+- name: Install code
+  command: flatpak install -y flathub com.visualstudio.code
+
+- name: Mask updates
+  command: flatpak mask com.visualstudio.code
+  when: vscode_disable_updates

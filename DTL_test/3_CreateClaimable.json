@@ -1,0 +1,71 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "newVMName": {
+      "type": "string",
+      "defaultValue": "it385test001"
+    },
+    "labName": {
+      "type": "string",
+      "defaultValue": "IT385_test"
+    },
+    "size": {
+      "type": "string",
+      "defaultValue": "Standard_D2s_v5"
+    },
+    "userName": {
+      "type": "string",
+      "defaultValue": "student"
+    },
+    "hibernationEnabled": {
+      "type": "bool"
+    },
+    "password": {
+      "type": "securestring",
+      "defaultValue": "[[[user/VmPassword]]"
+    }
+  },
+  "variables": {
+    "labSubnetName": "[concat(variables('labVirtualNetworkName'), 'Subnet')]",
+    "labVirtualNetworkId": "[resourceId('Microsoft.DevTestLab/labs/virtualnetworks', parameters('labName'), variables('labVirtualNetworkName'))]",
+    "labVirtualNetworkName": "[concat('Dtl', parameters('labName'))]",
+    "vmId": "[resourceId ('Microsoft.DevTestLab/labs/virtualmachines', parameters('labName'), parameters('newVMName'))]",
+    "vmName": "[concat(parameters('labName'), '/', parameters('newVMName'))]"
+  },
+  "resources": [
+    {
+      "apiVersion": "2018-10-15-preview",
+      "type": "Microsoft.DevTestLab/labs/virtualmachines",
+      "name": "[concat(variables('vmName'), padLeft(copyIndex(), 3, '0'))]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "[parameters('newVMName')]",
+        "count": 3
+      },
+      "properties": {
+        "labVirtualNetworkId": "[variables('labVirtualNetworkId')]",
+        "notes": "t",
+        "customImageId": "/subscriptions/f3a14dfd-c5ed-4a42-817e-33a1152f0e3a/resourcegroups/devtestlabs/providers/microsoft.devtestlab/labs/it385_test/customimages/it385testtemplate",
+        "size": "[parameters('size')]",
+        "userName": "[parameters('userName')]",
+        "password": "[parameters('password')]",
+        "labSubnetName": "[variables('labSubnetName')]",
+        "disallowPublicIpAddress": true,
+        "storageType": "StandardSSD",
+        "allowClaim": true,
+        "networkInterface": {
+          "sharedPublicIpAddressConfiguration": {
+            "inboundNatRules": [
+              {
+                "transportProtocol": "tcp",
+                "backendPort": 3389
+              }
+            ]
+          }
+        },
+        "hibernationEnabled": "[parameters('hibernationEnabled')]"
+      }
+    }
+  ]
+}

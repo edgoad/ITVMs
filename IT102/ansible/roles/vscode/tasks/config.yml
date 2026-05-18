@@ -1,0 +1,32 @@
+---
+- name: Create config dir
+  file:
+    path: "/home/{{ vscode_user }}/.config/Code/User"
+    state: directory
+
+- name: Write settings
+  copy:
+    dest: "/home/{{ vscode_user }}/.config/Code/User/settings.json"
+    content: "{{ vscode_settings | to_nice_json }}"
+
+- name: Install extensions
+  become_user: "{{ vscode_user }}"
+  shell: code --install-extension {{ item }} --force
+  loop: "{{ vscode_extensions }}"
+
+- name: Merge AI disable settings
+  set_fact:
+    vscode_settings: "{{ vscode_settings | combine({
+      'github.copilot.enable': false,
+      'github.copilot.inlineSuggest.enable': false,
+      'workbench.panel.chat.enabled': false,
+      'chat.experimental.enabled': false
+      }) }}"
+  when: vscode_disable_ai
+
+- name: Remove Copilot extensions
+  become_user: "{{ vscode_user }}"
+  shell: |
+    code --uninstall-extension GitHub.copilot || true
+    code --uninstall-extension GitHub.copilot-chat || true
+  when: vscode_disable_ai

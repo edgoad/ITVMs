@@ -1,0 +1,28 @@
+---
+- name: Install deps
+  apt:
+    name: [wget, tar]
+    state: present
+    update_cache: yes
+
+- name: Download tarball
+  get_url:
+    url: "https://code.visualstudio.com/sha/download?build=stable&os=linux-x64"
+    dest: "/tmp/vscode.tar.gz"
+
+- name: Extract
+  unarchive:
+    src: "/tmp/vscode.tar.gz"
+    dest: "/opt"
+    remote_src: yes
+
+- name: Move dir
+  command: mv /opt/VSCode-linux-x64 {{ vscode_install_dir }}
+  args:
+    creates: "{{ vscode_install_dir }}"
+
+- name: Symlink
+  file:
+    src: "{{ vscode_install_dir }}/bin/code"
+    dest: /usr/local/bin/code
+    state: link

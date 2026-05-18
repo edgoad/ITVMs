@@ -1,0 +1,6 @@
+---
+- name: Include install method
+  include_tasks: "{{ vscode_install_method }}.yml"
+
+- name: Configure VSCode
+  include_tasks: config.yml

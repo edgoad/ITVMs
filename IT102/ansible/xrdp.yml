@@ -1,0 +1,9 @@
+---
+- name: Configure Ubuntu for XRDP Enhanced Session
+  hosts: localhost
+  connection: local
+  gather_facts: yes
+  become: yes
+
+  roles:
+    - xrdp_setup

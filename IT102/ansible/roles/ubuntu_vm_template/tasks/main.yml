@@ -1,0 +1,90 @@
+---
+- name: Set system hostname to ubuntu
+  hostname:
+    name: ubuntu
+
+- name: Ensure required apt packages are installed
+  apt:
+    name:
+      - curl
+      - wget
+      - python3
+      - python3-pip
+      - telnet
+      - ftp
+      - git
+      - apt-transport-https
+      - gnupg
+      - snapd
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Upgrade all installed packages
+  apt:
+    upgrade: dist
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Autoremove unnecessary packages
+  apt:
+    autoremove: yes
+
+- name: Ensure snap package postman is installed
+  snap:
+    name: postman
+    state: present
+
+# - name: Add Microsoft VS Code apt key
+#   apt_key:
+#     url: https://packages.microsoft.com/keys/microsoft.asc
+#     state: present
+
+# - name: Add Microsoft VS Code apt repository
+#   apt_repository:
+#     repo: deb [arch=amd64,arm64,armhf] https://packages.microsoft.com/repos/code stable main
+#     filename: microsoft-vscode
+#     state: present
+#     update_cache: yes
+
+# - name: Install VS Code package
+#   apt:
+#     name: code
+#     state: present
+#     update_cache: yes
+#     cache_valid_time: 3600
+
+- name: Configure GNOME idle delay if desktop session is available
+  become: yes
+  become_user: "{{ ansible_user_id }}"
+  shell: |
+    dbus-launch gsettings set org.gnome.desktop.session idle-delay 0
+  register: gsettings_idle
+  changed_when: gsettings_idle.rc == 0
+  failed_when: false
+  environment:
+    LANG: C
+
+- name: Configure GNOME favorite apps if desktop session is available
+  become: yes
+  become_user: "{{ ansible_user_id }}"
+  shell: |
+    dbus-launch gsettings set org.gnome.shell favorite-apps "{{ gnome_favorite_apps }}"
+  args:
+    executable: /bin/bash
+  register: gsettings_favorites
+  changed_when: gsettings_favorites.rc == 0
+  failed_when: false
+  environment:
+    LANG: C
+
+- name: Remove shell script files from current user home directory
+  shell: rm -f "{{ ansible_env.HOME }}"/*.sh
+  args:
+    warn: false
+
+- name: Clear current shell history
+  shell: history -c
+  args:
+    warn: false
+  changed_when: false
