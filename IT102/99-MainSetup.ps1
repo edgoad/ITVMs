@@ -6,12 +6,12 @@
 #######################################################################
 
 # Compress / optimize vhds
-$vhds = Get-Item -Path "C:\vms\*.vhdx"
-Optimize-VHD $vhds -Mode full
+# $vhds = Get-Item -Path "C:\vms\*.vhdx"
+# Optimize-VHD $vhds -Mode full
 
-Get-VM | Stop-VM 
-Get-VM | Set-VM -SmartPagingFilePath D:\
-Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot" 
+# Get-VM | Stop-VM 
+# Get-VM | Set-VM -SmartPagingFilePath D:\
+# Get-VM | Checkpoint-VM -SnapshotName "Initial snapshot" 
 
 # setup rename
 #$command = 'powershell -Command "& { rename-computer -newname $( $( -join ((65..90) + (97..122) | Get-Random -Count 12 | %{[char]$_})) ).SubString(0,12) }"'

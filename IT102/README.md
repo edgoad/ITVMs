@@ -13,7 +13,7 @@ If multiple reboots needed, restart the script after reboot
 
 **UbuntuVM**
 1. Install Ubuntu Linux on Template with Static IP
-   - username/password - justincase/Password01
+   - username/password - student/Password01
 2. Configure Network
    - Internal Network
      - IP: 192.168.0.100/24
@@ -21,12 +21,9 @@ If multiple reboots needed, restart the script after reboot
      - DNS: 8.8.8.8
 3. Download and run Template setup script (NOTE: This may reboot and re-run to complete successfully)
 ```
-sudo su -
-wget https://raw.githubusercontent.com/edgoad/ITVMs/master/IT102/11-UbuntuTemplate.sh
-chmod +x 11-UbuntuTemplate.sh
-./11-UbuntuTemplate.sh
+wget -qO- https://raw.githubusercontent.com/edgoad/Python-vm-setup/main/bootstrap.sh | sudo bash
 ```
-4. Run the following as justincase
+4. Run the following as student
 ```
 gsettings set org.gnome.desktop.session idle-delay 0
 gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'code.desktop', 'org.gnome.Terminal.desktop', 'org.gnome.Nautilus.desktop', 'libreoffice-writer.desktop', 'snap-store_ubuntu-software.desktop', 'yelp.desktop']"
@@ -34,7 +31,8 @@ gsettings set org.gnome.shell favorite-apps "['firefox.desktop', 'code.desktop',
 5. Shutdown template
 6. Run the following in PowerShell to enable Enhanced Session Mode
 ```
-Get-VM ubuntu* | Set-VM -EnhancedSessionTransportType HvSocket
+Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT102/10-CloneVM.ps1" -OutFile $env:TEMP\10-CloneVM.ps1
+."$env:Temp\10-CloneVM.ps1"
 ```
 
 

@@ -129,17 +129,24 @@ Write-Host "Creating and configuring virtual machines..."
 if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
     Write-Host "Creating VM: UbuntuVM"
 	new-VM -Name "UbuntuVM" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
-    Set-VMFirmware "UbuntuVM" -EnableSecureBoot Off
+    Add-VMDvdDrive -VMName "UbuntuVM"
+    $vmHardDiskDrive = Get-VMHardDiskDrive -VMName "UbuntuVM"
+    $vmDVDDrive = Get-VMDvdDrive -VMName "UbuntuVM"
+    Set-VMFirmware "UbuntuVM" -EnableSecureBoot Off -BootOrder $vmDVDDrive,$vmHardDiskDrive
 }
-if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM-Basic")){
-    Write-Host "Creating VM: UbuntuVM-Basic"
-	new-VM -Name "UbuntuVM-Basic" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM-Basic.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal
-}
+# if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM-Basic")){
+#     Write-Host "Creating VM: UbuntuVM-Basic"
+# 	new-VM -Name "UbuntuVM-Basic" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM-Basic.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
+#     Add-VMDvdDrive -VMName "UbuntuVM-Basic"
+#     $vmHardDiskDrive = Get-VMHardDiskDrive -VMName "UbuntuVM-Basic"
+#     $vmDVDDrive = Get-VMDvdDrive -VMName "UbuntuVM-Basic"
+#     Set-VMFirmware "UbuntuVM-Basic" -EnableSecureBoot Off -BootOrder $vmDVDDrive,$vmHardDiskDrive
+# }
 
 #Mount ISO
 Write-Host "Mounting Ubuntu ISO into VMs..."
 Set-VMDvdDrive -VMName "UbuntuVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
-Set-VMDvdDrive -VMName "UbuntuVM-Basic" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+#Set-VMDvdDrive -VMName "UbuntuVM-Basic" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 
 # Set all VMs to NOT autostart
 Write-Host "Configuring VM startup behavior..."
@@ -150,7 +157,7 @@ Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 # Set VMs to 2 processors for optimization
 Write-Host "Applying VM processor settings..."
-Get-VM | Set-VMProcessor -Count 2
+Get-VM | Set-VMProcessor -Count 4
 
 # setup bginfo
 Write-Host "Applying desktop defaults and BGInfo setup..."
