@@ -150,14 +150,14 @@ Set-VMDvdDrive -VMName "UbuntuVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 
 # Set all VMs to NOT autostart
 Write-Host "Configuring VM startup behavior..."
-Get-VM | Set-VM -AutomaticStartAction Start
+Set-VM -VMName "UbuntuVM" -AutomaticStartAction Start
 
 # Set all VMs to shutdown at logoff
-Get-VM | Set-VM -AutomaticStopAction Shutdown
+Set-VM -VMName "UbuntuVM" -AutomaticStopAction Shutdown
 
 # Set VMs to 2 processors for optimization
 Write-Host "Applying VM processor settings..."
-Get-VM | Set-VMProcessor -Count 4
+Set-VMProcessor -VMName "UbuntuVM" -Count 4
 
 # setup bginfo
 Write-Host "Applying desktop defaults and BGInfo setup..."

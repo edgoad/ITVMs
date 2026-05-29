@@ -62,7 +62,10 @@ if (-not (Get-VM -Name $vmBasic -ErrorAction SilentlyContinue)) {
            -SwitchName $vmSwitch
 
     Set-VM -Name $vmBasic -ProcessorCount $cpuCount
+    Set-VM -Name $vmBasic -AutomaticStartAction none
+    Set-VM -Name $vmBasic -AutomaticStopAction shutdown
 
+    
     Write-Host "Created VM: $vmBasic with matching config"
 }
 else {
