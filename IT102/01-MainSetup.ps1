@@ -5,6 +5,13 @@
 #
 #######################################################################
 
+# Ensure running in Windows PowerShell 5.1 Desktop edition
+if ($PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSEdition -ne 'Desktop') {
+    Write-Host "This script must be run in Windows PowerShell 5.1 (Desktop edition)." -ForegroundColor Yellow
+    Write-Host "Please restart in PowerShell 5.1 and re-run the script." -ForegroundColor Yellow
+    exit 1
+}
+
 # Change directory to %TEMP% for working
 cd $env:TEMP
 
@@ -121,7 +128,7 @@ Set-VMDvdDrive -VMName "UbuntuVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 Set-VMDvdDrive -VMName "UbuntuVM-Basic" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 
 # Set all VMs to NOT autostart
-Get-VM | Set-VM -AutomaticStartAction Nothing
+Get-VM | Set-VM -AutomaticStartAction Start
 
 # Set all VMs to shutdown at logoff
 Get-VM | Set-VM -AutomaticStopAction Shutdown
