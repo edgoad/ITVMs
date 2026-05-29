@@ -41,14 +41,41 @@ if ( ! (Get-VMSwitch | Where-Object Name -eq 'Internal')){
 } else { Write-Host "Internal vSwitch already created" }
 
 # Setup second interface
-if ( ! (Get-NetAdapter | Where-Object Name -EQ 'Internal')){
+if (-not (Get-NetAdapter -Name 'Internal' -ErrorAction SilentlyContinue)) {
     Write-Host "Configuring Internal adapter"
-    Get-NetAdapter | where Name -NE 'Public' | Rename-NetAdapter -NewName Internal
-    New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
-} else { Write-Host "Internal adapter already exists. Confirm interfaces manually" }
+    $internalAdapter = Get-NetAdapter | Where-Object Name -NE 'Public' | Select-Object -First 1
+    if ($internalAdapter) {
+        Rename-NetAdapter -Name $internalAdapter.Name -NewName Internal
+    }
+    else {
+        Write-Host "No available adapter found to rename to Internal. Confirm interfaces manually."
+    }
+}
+else {
+    Write-Host "Internal adapter already exists."
+}
+
+$internalAdapter = Get-NetAdapter -Name 'Internal' -ErrorAction SilentlyContinue
+if ($internalAdapter) {
+    $internalIp = Get-NetIPAddress -InterfaceAlias 'Internal' -AddressFamily IPv4 -ErrorAction SilentlyContinue | Where-Object IPAddress -EQ '192.168.0.250'
+    if (-not $internalIp) {
+        Write-Host "Assigning Internal adapter IP address"
+        New-NetIPAddress -InterfaceAlias 'Internal' -IPAddress 192.168.0.250 -PrefixLength 24
+    }
+    else {
+        Write-Host "Internal adapter IP address already configured"
+    }
+}
+else {
+    Write-Host "Internal adapter not present; skipping IP assignment."
+}
 
 # Configure routing / NAT
-New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
+if (-not (Get-NetNat -Name external_routing -ErrorAction SilentlyContinue)) {
+    New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
+} else {
+    Write-Host "NetNat 'external_routing' already exists."
+}
 
 #######################################################################
 # Install some common tools
@@ -67,10 +94,7 @@ Set-HypervDefaults
 # Download Ubuntu ISO
 # Review URL for latest version
 Write-Host "Downloading Ubuntu (this may take some time)"
-#$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.2.0-desktop-amd64.iso"
-#$url = "https://releases.ubuntu.com/20.04/ubuntu-20.04.3-desktop-amd64.iso"
-$url = "https://old-releases.ubuntu.com/releases/20.04/ubuntu-20.04-desktop-amd64.iso"
-#$url = "https://releases.ubuntu.com/22.04.1/ubuntu-22.04.1-desktop-amd64.iso"
+$url = "https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 

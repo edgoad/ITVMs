@@ -546,8 +546,12 @@ function Set-AutoLogout{
 
     Install-Lithnet
     # Configure idle-logoff timeout
-    New-Item -Path "HKLM:\SOFTWARE\Lithnet"
-    New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff"
+    if (-not (Test-Path "HKLM:\SOFTWARE\Lithnet")) {
+        New-Item -Path "HKLM:\SOFTWARE\Lithnet" | Out-Null
+    }
+    if (-not (Test-Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff")) {
+        New-Item -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" | Out-Null
+    }
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Action" -Value 2 -Type "Dword" -Force
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "Enabled" -Value 1 -Type "Dword" -Force
     Set-ItemProperty -Path "HKLM:\SOFTWARE\Lithnet\IdleLogOff" -Name "IdleLimit" -Value 10 -Type "Dword" -Force
@@ -634,7 +638,9 @@ function Set-DesktopDefaults{
     Install-Firefox
 
     # Enable ping on firewall
-    netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+    if (-not (Get-NetFirewallRule -DisplayName "ICMP Allow incoming V4 echo request" -ErrorAction SilentlyContinue)) {
+        netsh advfirewall firewall add rule name="ICMP Allow incoming V4 echo request" protocol=icmpv4:8,any dir=in action=allow
+    }
 
     # Prompt user for new name after reboot
     #Add-RenameAfterReboot
@@ -654,13 +660,29 @@ function Clear-TempFiles{
 }
 
 function Add-DefenderExclusions{
+    $preference = Get-MpPreference
+
     # exclusion list from https://docs.microsoft.com/en-us/troubleshoot/windows-server/virtualization/antivirus-exclusions-for-hyper-v-hosts
-    # Exclude file types
-    Add-MpPreference -ExclusionExtension "vhd","vhdx","avhd","avhdx","vhds","vhdpmem","iso","rct","vsv","bin","bmcx","vmrs","vmgs","ova"
+    $extensions = @("vhd","vhdx","avhd","avhdx","vhds","vhdpmem","iso","rct","vsv","bin","bmcx","vmrs","vmgs","ova")
+    foreach ($extension in $extensions) {
+        if ($preference.ExclusionExtension -notcontains $extension) {
+            Add-MpPreference -ExclusionExtension $extension
+        }
+    }
+
     # Exclude Hyper-V Directories
-    Add-MpPreference -ExclusionPath "C:\VMs"
+    if ($preference.ExclusionPath -notcontains "C:\VMs") {
+        Add-MpPreference -ExclusionPath "C:\VMs"
+    }
+
     # Exclude Hyper-V Processes
-    Add-MpPreference -ExclusionProcess "%systemroot%\System32\Vmms.exe","%systemroot%\System32\Vmwp.exe","%systemroot%\System32\Vmsp.exe","%systemroot%\System32\Vmcompute.exe"
+    $processes = @("%systemroot%\System32\Vmms.exe","%systemroot%\System32\Vmwp.exe","%systemroot%\System32\Vmsp.exe","%systemroot%\System32\Vmcompute.exe")
+    foreach ($process in $processes) {
+        if ($preference.ExclusionProcess -notcontains $process) {
+            Add-MpPreference -ExclusionProcess $process
+        }
+    }
+
     Start-QuickScan
 }
 
@@ -823,6 +845,11 @@ function Install-Firefox {
         [string]$Language = "en-US",
         [string]$Architecture = "win64"
     )
+
+    if (Get-Command firefox.exe -ErrorAction SilentlyContinue) {
+        Write-Output "Firefox is already installed."
+        return
+    }
 
     # Construct the download URL
     $firefoxUrl = "https://download.mozilla.org/?product=firefox-latest&os=$Architecture&lang=$Language"
