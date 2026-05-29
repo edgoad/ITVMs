@@ -12,10 +12,14 @@ if ($PSVersionTable.PSVersion.Major -ne 5 -or $PSVersionTable.PSEdition -ne 'Des
     exit 1
 }
 
+Write-Host "Starting IT102 Hyper-V environment setup..."
+
 # Change directory to %TEMP% for working
+Write-Host "Switching working directory to TEMP..."
 cd $env:TEMP
 
 # Download and import CommonFunctions module
+Write-Host "Loading common helper functions..."
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/Common/CommonFunctions.psm1"
 $output = $(Join-Path $env:TEMP '/CommonFunctions.psm1')
 if (-not(Test-Path -Path $output -PathType Leaf)) {
@@ -25,12 +29,15 @@ Import-Module $output
 #Remove-Item $output
 
 # Disable Server Manager at startup
+Write-Host "Disabling Server Manager startup task..."
 Get-ScheduledTask -TaskName ServerManager | Disable-ScheduledTask -Verbose
 
 # Disable Windows Updates
+Write-Host "Disabling Windows Update service..."
 Disable-WindowsUpdates
 
 # Setup first interface
+Write-Host "Configuring host network adapters..."
 if ( $(Get-NetAdapter | Measure-Object).Count -eq 1 ){
     Write-Host "Setting Public adapter name"
     Get-NetAdapter | Rename-NetAdapter -NewName Public
@@ -38,7 +45,9 @@ if ( $(Get-NetAdapter | Measure-Object).Count -eq 1 ){
 else{
     Write-Host "Cannot set Public interface name. Confirm interfaces manually."
 }
+
 # Install Hyper-V
+Write-Host "Installing Hyper-V role and tools..."
 Install-HypervAndTools
 
 # Create virtual swith
@@ -78,6 +87,7 @@ else {
 }
 
 # Configure routing / NAT
+Write-Host "Configuring NAT and routing for the internal lab network..."
 if (-not (Get-NetNat -Name external_routing -ErrorAction SilentlyContinue)) {
     New-NetNat -Name external_routing -InternalIPInterfaceAddressPrefix 192.168.0.0/24
 } else {
@@ -87,20 +97,22 @@ if (-not (Get-NetNat -Name external_routing -ErrorAction SilentlyContinue)) {
 #######################################################################
 # Install some common tools
 #######################################################################
+Write-Host "Installing common host tools..."
 # Install 7-Zip
 Install-7Zip
 
 # Configure logout after 10 minutes
+Write-Host "Configuring automatic logout settings..."
 Set-Autologout
 
 #######################################################################
 # Start setting up Hyper-V
 #######################################################################
+Write-Host "Applying Hyper-V host defaults..."
 Set-HypervDefaults
 
 # Download Ubuntu ISO
-# Review URL for latest version
-Write-Host "Downloading Ubuntu (this may take some time)"
+Write-Host "Downloading Ubuntu ISO (this may take some time)..."
 $url = "https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
@@ -113,6 +125,7 @@ Set-VMHost -VirtualMachinePath "C:\VMs"
 # Setup VMs
 ##############################################################################
 #Create New VMs
+Write-Host "Creating and configuring virtual machines..."
 if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
     Write-Host "Creating VM: UbuntuVM"
 	new-VM -Name "UbuntuVM" -MemoryStartupBytes 8GB -BootDevice VHD -NewVHDPath "C:\VMs\Virtual Hard Disks\UbuntuVM.vhdx" -NewVHDSizeBytes 100GB -SwitchName Internal -Generation 2
@@ -124,22 +137,27 @@ if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM-Basic")){
 }
 
 #Mount ISO
+Write-Host "Mounting Ubuntu ISO into VMs..."
 Set-VMDvdDrive -VMName "UbuntuVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 Set-VMDvdDrive -VMName "UbuntuVM-Basic" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 
 # Set all VMs to NOT autostart
+Write-Host "Configuring VM startup behavior..."
 Get-VM | Set-VM -AutomaticStartAction Start
 
 # Set all VMs to shutdown at logoff
 Get-VM | Set-VM -AutomaticStopAction Shutdown
 
 # Set VMs to 2 processors for optimization
+Write-Host "Applying VM processor settings..."
 Get-VM | Set-VMProcessor -Count 2
 
 # setup bginfo
+Write-Host "Applying desktop defaults and BGInfo setup..."
 Set-DesktopDefaults
 
 # Download logon information
+Write-Host "Downloading student resource files..."
 Write-Host "Downloading Logon Information"
 $url = "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT102/Logon%20Information.txt"
 $output = "c:\Users\Public\Desktop\Logon Information.txt"
