@@ -1,0 +1,50 @@
+#cloud-config
+autoinstall:
+  version: 1
+
+  locale: en_US.UTF-8
+  keyboard:
+    layout: us
+
+  timezone: America/Los_Angeles
+
+  identity:
+    hostname: ubuntu
+    username: student
+    password: "$6$rounds=4096$JZsW2JST2YB3Ja4C$5S0DPo1c9H2hy8D1OFBdP82sC6H6fHqmf2YcL8x2GJ3M9YAjr4M7mS8E2Qe0CLcOvt0wr8tUQ9hR6iY.NGfVb/"  # Password01
+
+  ssh:
+    install-server: true
+    allow-pw: true
+
+  storage:
+    layout:
+      name: direct   # no encryption, automatic partitioning
+
+  apt:
+    geoip: true
+
+  packages: []
+
+  late-commands: []
+
+  user-data:
+    disable_root: false
+
+  network:
+    version: 2
+    ethernets:
+      eth0:
+        dhcp4: false
+        addresses:
+          - 192.168.0.100/24
+        gateway4: 192.168.0.250
+        nameservers:
+          addresses:
+            - 8.8.8.8
+            - 1.1.1.1
+
+  updates: security
+
+  codecs:
+    install: true   # third-party software (codecs/drivers)

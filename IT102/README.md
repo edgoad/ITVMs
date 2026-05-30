@@ -43,6 +43,21 @@ Invoke-WebRequest "https://raw.githubusercontent.com/edgoad/ITVMs/master/IT102/9
 ."$env:Temp\99-MainSetup.ps1"
 ```
 
+# Create seed ISO for Ubuntu
+
+1. Edit meta-data and user-data
+2. In Linux, run the command
+```shell
+sudo apt install genisoimage
+genisoimage -output seed.iso -volid CIDATA -joliet -rock user-data meta-data
+```
+3. Create VM with 2 DVD drives
+* Drive 1: Ubuntu 26 desktop
+* Drive 2: seed.iso
+4. boot VM to autoinstall
+
+
+
 
 # IT 102 Python alt
 Alternate using Ubuntu VM instead of Windows

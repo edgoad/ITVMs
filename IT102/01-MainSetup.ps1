@@ -117,6 +117,12 @@ $url = "https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
+# Download seed ISO
+Write-Host "Downloading seed ISO (this may take some time)..."
+$url = "https://github.com/edgoad/ITVMs/raw/master/IT102/seed.iso"
+$output = "c:\VMs\seed.iso"
+Get-WebFile -DownloadUrl $url -TargetFilePath $output
+
 # Setup Hyper-V default file locations
 Set-VMHost -VirtualHardDiskPath "C:\VMs"
 Set-VMHost -VirtualMachinePath "C:\VMs"
@@ -133,6 +139,9 @@ if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
     $vmHardDiskDrive = Get-VMHardDiskDrive -VMName "UbuntuVM"
     $vmDVDDrive = Get-VMDvdDrive -VMName "UbuntuVM"
     Set-VMFirmware "UbuntuVM" -EnableSecureBoot Off -BootOrder $vmDVDDrive,$vmHardDiskDrive
+
+    Set-VMDvdDrive $vmDVDDrive -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+    Add-VMDvdDrive -VMName "UbuntuVM" | Set-VMDvdDrive -Path "c:\VMs\seed.iso"
 }
 # if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM-Basic")){
 #     Write-Host "Creating VM: UbuntuVM-Basic"
