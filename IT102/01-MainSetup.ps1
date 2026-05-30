@@ -138,7 +138,7 @@ if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
     Add-VMDvdDrive -VMName "UbuntuVM"
     $vmHardDiskDrive = Get-VMHardDiskDrive -VMName "UbuntuVM"
     $vmDVDDrive = Get-VMDvdDrive -VMName "UbuntuVM"
-    Set-VMFirmware "UbuntuVM" -EnableSecureBoot Off -BootOrder $vmDVDDrive,$vmHardDiskDrive
+    Set-VMFirmware "UbuntuVM" -EnableSecureBoot Off -BootOrder $vmHardDiskDrive,$vmDVDDrive
 
     Set-VMDvdDrive $vmDVDDrive -Path "c:\VMs\ubuntu-desktop-amd64.iso"
     Add-VMDvdDrive -VMName "UbuntuVM" | Set-VMDvdDrive -Path "c:\VMs\seed.iso"
