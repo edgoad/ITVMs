@@ -114,18 +114,31 @@ function Install-HypervAndToolsServer {
         Write-Error "This script only applies to machines that can run Hyper-V."
     }
     else {
-        Write-Output "Installing Hyper-V, if needed."
-        $roleInstallStatus = Install-WindowsFeature -Name Hyper-V -IncludeManagementTools
-        if ($roleInstallStatus.RestartNeeded -eq 'Yes') {
-            Write-Error "\n\nRestart required to finish installing the Hyper-V role .  Please restart and re-run this script.\n\n"
-            Exit
-        }  
+        $hypervFeature = Get-WindowsFeature -Name Hyper-V
+        if ($hypervFeature.Installed -eq $false) {
+            Write-Output "Installing Hyper-V and Management Tools."
+            $roleInstallStatus = Install-WindowsFeature -Name Hyper-V -IncludeManagementTools
+            if ($roleInstallStatus.RestartNeeded -eq 'Yes') {
+                Write-Error "\n\nRestart required to finish installing the Hyper-V role .  Please restart and re-run this script.\n\n"
+                Exit
+            }  
+        }
+        else {
+            Write-Output "Hyper-V is already installed."
+        }
     } 
 
     # Install PowerShell cmdlets
-    $featureStatus = Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell
-    if ($featureStatus.RestartNeeded -eq $true) {
-        Write-Error "\n\nRestart required to finish installing the Hyper-V PowerShell Module.  Please restart and re-run this script.\n\n"
+    $psFeature = Get-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell
+    if ($psFeature.State -ne 'Enabled') {
+        Write-Output "Enabling Hyper-V PowerShell Module."
+        $featureStatus = Enable-WindowsOptionalFeature -Online -FeatureName Microsoft-Hyper-V-Management-PowerShell -NoRestart
+        if ($featureStatus.RestartNeeded -eq $true) {
+            Write-Error "\n\nRestart required to finish installing the Hyper-V PowerShell Module.  Please restart and re-run this script.\n\n"
+        }
+    }
+    else {
+        Write-Output "Hyper-V PowerShell Module is already enabled."
     }
 }
 
@@ -138,23 +151,28 @@ function Install-HypervAndToolsClient {
     param()
 
     
-    if ($null -eq $(Get-WindowsOptionalFeature -Online -FeatureName 'Microsoft-Hyper-V-All')) {
+    $hypervFeature = Get-WindowsOptionalFeature -Online -FeatureName 'Microsoft-Hyper-V-All'
+    if ($null -eq $hypervFeature) {
         Write-Error "This script only applies to machines that can run Hyper-V."
     }
     else {
-        Write-Output "Installing Hyper-V, if needed."
-        $roleInstallStatus = Enable-WindowsOptionalFeature -Online -FeatureName 'Microsoft-Hyper-V-All'
-        if ($roleInstallStatus.RestartNeeded) {
-            Write-Error "Restart required to finish installing the Hyper-V role .  Please restart and re-run this script."
-            Exit
+        if ($hypervFeature.State -ne 'Enabled') {
+            Write-Output "Enabling Hyper-V."
+            $roleInstallStatus = Enable-WindowsOptionalFeature -Online -FeatureName 'Microsoft-Hyper-V-All' -NoRestart
+            if ($roleInstallStatus.RestartNeeded) {
+                Write-Error "\n\nRestart required to finish installing Hyper-V.  Please restart and re-run this script.\n\n"
+                Exit
+            }
+        }
+        else {
+            Write-Output "Hyper-V is already enabled."
         }
 
         $featureEnableStatus = Get-WmiObject -Class Win32_OptionalFeature -Filter "name='Microsoft-Hyper-V-Hypervisor'"
         if ($featureEnableStatus.InstallState -ne 1) {
             Write-Error "This script only applies to machines that can run Hyper-V."
-            goto(finally)
+            Exit
         }
-
     } 
 }
 
