@@ -113,7 +113,8 @@ Set-HypervDefaults
 
 # Download Ubuntu ISO
 Write-Host "Downloading Ubuntu ISO (this may take some time)..."
-$url = "https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso"
+$url = "https://releases.ubuntu.com/24.04/ubuntu-24.04.4-desktop-amd64.iso"
+#$url = "https://releases.ubuntu.com/26.04/ubuntu-26.04-desktop-amd64.iso"
 $output = "c:\VMs\ubuntu-desktop-amd64.iso"
 Get-WebFile -DownloadUrl $url -TargetFilePath $output
 
@@ -154,7 +155,7 @@ if ( ! (Get-VM | Where-Object Name -EQ "UbuntuVM")){
 
 #Mount ISO
 Write-Host "Mounting Ubuntu ISO into VMs..."
-Set-VMDvdDrive -VMName "UbuntuVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
+# Set-VMDvdDrive -VMName "UbuntuVM" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 #Set-VMDvdDrive -VMName "UbuntuVM-Basic" -Path "c:\VMs\ubuntu-desktop-amd64.iso"
 
 # Set all VMs to NOT autostart

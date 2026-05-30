@@ -11,7 +11,7 @@ autoinstall:
   identity:
     hostname: ubuntu
     username: student
-    password: "$6$rounds=4096$JZsW2JST2YB3Ja4C$5S0DPo1c9H2hy8D1OFBdP82sC6H6fHqmf2YcL8x2GJ3M9YAjr4M7mS8E2Qe0CLcOvt0wr8tUQ9hR6iY.NGfVb/"  # Password01
+    password: "$6$KCZ30T.pBobQcvvd$q.PzmcCdIsuvqlJ/zd6xUmRKMldTpWMt8OtqS6QMXvJ4Q3s/Q4Z111wEELYiQrxPXOGm6CfCoF9XiJHWj1zQy/"  # Password01
 
   ssh:
     install-server: true
